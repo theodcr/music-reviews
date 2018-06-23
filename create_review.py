@@ -87,9 +87,10 @@ def write_review(content, folder, filename, root=os.getcwd(), ext='wiki'):
             print('Artist not known yet, created folder')
         filepath = os.path.join(root, folder, filename + "." + ext)
         if os.path.exists(filepath):
-            input("Warning: file exists, please cancel now ")
-        with open(filepath, 'w') as file_content:
-            file_content.write(content)
+            print("File exists, operation aborted")
+        else:
+            with open(filepath, 'w') as file_content:
+                file_content.write(content)
 
 
 def create_review(albums):
