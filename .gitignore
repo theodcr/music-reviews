@@ -1,7 +1,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
 *.wiki
-# all subfolders containing music reviews
+!template.wiki
+# subfolders contain music reviews
 */*

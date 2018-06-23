@@ -1,0 +1,11 @@
+%date {date}
+%artist {artist}
+%album {album}
+%year {year}
+%rating {rating}
+%state .
+
+*Résumé :*
+
+*Picks :*
+

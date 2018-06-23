@@ -63,4 +63,5 @@ def markdown_wiki_to_markdown(string):
 if __name__ == '__main__':
     filename = find_review()
     content = read_file(filename)
-
+    #os.path.basename(os.path.dirname(b)) # for artist
+    # for album: see generate_lists
