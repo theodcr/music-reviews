@@ -14,6 +14,17 @@ STATES_DESCRIPTION = {'P': 'Publié',
                       '.': 'Noté et idées',
                       ' ': 'Non noté ou inconnu'}
 
+def decode_tags(path, album):
+    """Read the content of a review to find its fields, and fill the data"""
+    with open(path) as file_content:
+        for _ in range(6):
+            words = file_content.readline().split()
+            tag = words[0][1:]
+            album[tag] = " ".join(words[1:])
+        album['year'] = int(album['year'])
+        album['rating'] = int(album['rating'])
+    return album
+
 
 def build_database(root_dir=os.getcwd()):
     """Builds the database of ratings"""
@@ -33,16 +44,7 @@ def build_database(root_dir=os.getcwd()):
                      'rating': 0,
                      'state': " "}
             path = os.path.join(root_dir, artist_tag, filename)
-            # find the fields in the first lines of the file
-            with open(path) as file_content:
-                i = 0
-                while i < 6:
-                    words = file_content.readline().split()
-                    tag = words[0][1:]
-                    album[tag] = " ".join(words[1:])
-                    album['year'] = int(album['year'])
-                    album['rating'] = int(album['rating'])
-                    i += 1
+            album = decode_tags(path, album)
             albums.append(album)
     return albums
 
