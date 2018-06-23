@@ -14,9 +14,23 @@ STATES_DESCRIPTION = {'P': 'Publié',
                       '.': 'Noté et idées',
                       ' ': 'Non noté ou inconnu'}
 
-def decode_tags(path, album):
-    """Read the content of a review to find its fields, and fill the data"""
-    with open(path) as file_content:
+
+def empty_album():
+    """Returns an empty dictionary to store album data"""
+    return {'artist_tag': "",
+            'album_tag': "",
+            'artist': "",
+            'album': "",
+            'year': 0,
+            'rating': 0,
+            'state': " "}
+
+
+def decode_tags(path, album=None):
+    """Read the content of a review to find the album fields"""
+    if album is None:
+        album = empty_album()
+    with open(path, 'r') as file_content:
         for _ in range(6):
             words = file_content.readline().split()
             tag = words[0][1:]
@@ -36,15 +50,11 @@ def build_database(root_dir=os.getcwd()):
     for artist_tag in artist_tags:
         for filename in glob.glob(os.path.join(root_dir, artist_tag,
                                                '*.wiki')):
-            album = {'artist_tag': artist_tag,
-                     'album_tag': os.path.splitext(os.path.basename(filename))[0],
-                     'artist': "",
-                     'album': "",
-                     'year': 0,
-                     'rating': 0,
-                     'state': " "}
             path = os.path.join(root_dir, artist_tag, filename)
-            album = decode_tags(path, album)
+            album = decode_tags(path)
+            # could do something easier using just the path
+            album['artist_tag'] = artist_tag
+            album['album_tag'] = os.path.splitext(os.path.basename(filename))[0]
             albums.append(album)
     return albums
 
