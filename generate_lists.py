@@ -176,22 +176,18 @@ def format_header(string):
 
 def format_artist(index, artist):
     """Returns a formatted line of text describing the artist"""
-    return "{}. [[{}/|{}]] - {}\n".format(
-        index, artist['artist_tag'], artist['artist'], artist['rating'])
+    return "{}. [[{artist_tag}/|{artist}]] - {rating}\n".format(index, **artist)
 
 
 def format_album(index, album):
     """Returns a formatted line of text describing the album"""
-    return "{}. {} - {} - {} - {} - [[{}/{}|review]]\n".format(
-        index, album['artist'], album['album'],
-        album['year'], album['rating'],
-        album['artist_tag'], album['album_tag'])
+    return """{}. {artist} - {album} - {year} - {rating} - \
+              [[{artist_tag}/{album_tag}|review]]\n""".format(index, **album)
 
 
 def format_review(album):
     """Returns a formatted line showing the review state and its reference"""
-    return "- [{}] [[{}/{}]]\n".format(
-        album['state'], album['artist_tag'], album['album_tag'])
+    return "- [{state}] [[{artist_tag}/{album_tag}]]\n".format(**album)
 
 
 def main():
