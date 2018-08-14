@@ -14,7 +14,6 @@ MIN_RATING = 0
 MAX_RATING = 100
 
 
-
 def import_template(filename="template.wiki"):
     """Returns the review template as a string"""
     with open(filename) as file_content:
@@ -64,7 +63,6 @@ def alphanumeric_lowercase(string):
     characters stripped out"""
     regex = re.compile('[^a-zA-Z0-9]')
     return regex.sub('', string).lower()
-
 
 
 def fill_template(template, artist, album, year, rating):

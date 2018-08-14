@@ -181,8 +181,8 @@ def format_artist(index, artist):
 
 def format_album(index, album):
     """Returns a formatted line of text describing the album"""
-    return """{}. {artist} - {album} - {year} - {rating} - \
-              [[{artist_tag}/{album_tag}|review]]\n""".format(index, **album)
+    return ("{}. {artist} - {album} - {year} - {rating} - " +
+            "[[{artist_tag}/{album_tag}|review]]\n").format(index, **album)
 
 
 def format_review(album):
