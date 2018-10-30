@@ -1,7 +1,14 @@
+# python
 __pycache__/
 *.py[cod]
 *$py.class
+
+# data
 *.wiki
 !template.wiki
+
 # subfolders contain music reviews
 */*
+
+# misc
+tags
