@@ -2,17 +2,20 @@
 """Searches the reviews and generates various sorted lists of the reviews and
 ratings"""
 
-import os
 import glob
+import os
 
+from config import CONFIG
 
 SORTED_STATES = ['P', 'X', 'O', 'o', '.', ' ']
-STATES_DESCRIPTION = {'P': 'Publié',
-                      'X': 'Terminé (relire)',
-                      'O': 'En écriture',
-                      'o': 'Débuté',
-                      '.': 'Noté et idées',
-                      ' ': 'Non noté ou inconnu'}
+STATES_DESCRIPTION = {
+    'P': 'Publié',
+    'X': 'Terminé (relire)',
+    'O': 'En écriture',
+    'o': 'Débuté',
+    '.': 'Noté et idées',
+    ' ': 'Non noté ou inconnu'
+}
 
 
 def empty_album():
@@ -192,14 +195,29 @@ def format_review(album):
 
 def main():
     """Imports all reviews and writes all possible files"""
-    albums = build_database()
-    write_file(sort_ratings(albums), 'sorted_albums.wiki')
-    write_file(sort_ratings_by_year(albums), 'sorted_by_year.wiki')
-    write_file(sort_ratings_by_decade(albums), 'sorted_by_decade.wiki')
-    write_file(all_reviews(albums), 'reviews.wiki')
-    write_file(sort_reviews_state(albums), 'reviews_state.wiki')
-    write_file(sort_reviews_date(albums), 'reviews_date.wiki')
-    write_file(sort_artists(albums), 'sorted_artists.wiki')
+    root_dir = os.path.abspath(CONFIG['path']['reviews_directory'])
+    print(CONFIG['path']['reviews_directory'])
+    albums = build_database(root_dir)
+    functions = [
+        sort_ratings,
+        sort_ratings_by_year,
+        sort_ratings_by_decade,
+        all_reviews,
+        sort_reviews_state,
+        sort_reviews_date,
+        sort_artists,
+    ]
+    file_names = [
+        'sorted_albums.wiki',
+        'sorted_by_year.wiki',
+        'sorted_by_decade.wiki',
+        'reviews.wiki',
+        'reviews_state.wiki',
+        'reviews_date.wiki',
+        'sorted_artists.wiki',
+    ]
+    for func, file_name in zip(functions, file_names):
+        write_file(func(albums), os.path.join(root_dir, file_name))
     return albums
 
 if __name__ == '__main__':
