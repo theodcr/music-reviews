@@ -29,13 +29,17 @@ def check_integer_input(prompt_text, min_value, max_value):
         value = input(prompt_text)
         if min_value <= int(value) <= max_value:
             break
-        print("Error, please enter a number between {} and {}".format(
-            min_value, max_value))
+        print(
+            "Error, please enter a number between {} and {}".format(
+                min_value, max_value
+            )
+        )
     return value
 
 
 def completion_input(prompt_text, commands):
     """Prompts and allows tab-complete on the given list of commands"""
+
     def complete(text, state):
         """Completion function for readline"""
         for cmd in commands:
@@ -44,6 +48,7 @@ def completion_input(prompt_text, commands):
                     return cmd
                 else:
                     state -= 1
+
     readline.parse_and_bind("tab: complete")
     readline.set_completer(complete)
     # tab completion on commands will stay enabled outside this scope
@@ -70,17 +75,16 @@ def alphanumeric_lowercase(string):
 def fill_template(template, artist, album, year, rating):
     """Fills the template review with the input"""
     day = datetime.datetime.now().strftime("%Y-%m-%d")
-    return template.format(date=day,
-                           artist=artist,
-                           album=album,
-                           year=year,
-                           rating=rating)
+    return template.format(
+        date=day, artist=artist, album=album, year=year, rating=rating
+    )
 
 
 def write_review(content, folder, filename, root=os.getcwd(), ext='wiki'):
     """Writes the review file using the given data"""
-    confirmation = input("Confirm creation of review (y/N) {}/{}? ".format(
-        folder, filename))
+    confirmation = input(
+        "Confirm creation of review (y/N) {}/{}? ".format(folder, filename)
+    )
     if confirmation == 'y':
         if not os.path.exists(os.path.join(root, folder)):
             os.makedirs(os.path.join(root, folder))

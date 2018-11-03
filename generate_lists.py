@@ -14,19 +14,21 @@ STATES_DESCRIPTION = {
     'O': 'En écriture',
     'o': 'Débuté',
     '.': 'Noté et idées',
-    ' ': 'Non noté ou inconnu'
+    ' ': 'Non noté ou inconnu',
 }
 
 
 def empty_album():
     """Returns an empty dictionary to store album data"""
-    return {'artist_tag': "",
-            'album_tag': "",
-            'artist': "",
-            'album': "",
-            'year': 0,
-            'rating': 0,
-            'state': " "}
+    return {
+        'artist_tag': "",
+        'album_tag': "",
+        'artist': "",
+        'album': "",
+        'year': 0,
+        'rating': 0,
+        'state': " ",
+    }
 
 
 def decode_tags(path, album=None):
@@ -47,12 +49,13 @@ def build_database(root_dir=os.getcwd()):
     """Builds the database of ratings"""
     albums = []
     # find reviews in folders
-    artist_tags = [f for f in os.listdir(root_dir)
-                   if os.path.isdir(os.path.join(root_dir, f))
-                   and f != '__pycache__']
+    artist_tags = [
+        f
+        for f in os.listdir(root_dir)
+        if os.path.isdir(os.path.join(root_dir, f)) and f != '__pycache__'
+    ]
     for artist_tag in artist_tags:
-        for filename in glob.glob(os.path.join(root_dir, artist_tag,
-                                               '*.wiki')):
+        for filename in glob.glob(os.path.join(root_dir, artist_tag, '*.wiki')):
             path = os.path.join(root_dir, artist_tag, filename)
             album = decode_tags(path)
             # could do something easier using just the path
@@ -81,12 +84,16 @@ def sort_artists(albums):
         specific_albums = [x for x in albums if x['artist_tag'] == artist_tag]
         if len(specific_albums) > 1:
             rating = compute_artist_rating([x['rating'] for x in specific_albums])
-            artists.append({'artist_tag': artist_tag,
-                            'artist': specific_albums[0]['artist'],
-                            'rating': rating})
+            artists.append(
+                {
+                    'artist_tag': artist_tag,
+                    'artist': specific_albums[0]['artist'],
+                    'rating': rating,
+                }
+            )
     sorted_artists = sorted(artists, key=lambda x: x['rating'], reverse=True)
     for i, artist in enumerate(sorted_artists):
-        output += format_artist(i+1, artist)
+        output += format_artist(i + 1, artist)
     return output
 
 
@@ -95,7 +102,7 @@ def sort_ratings(albums):
     sorted_albums = sorted(albums, key=lambda x: x['rating'], reverse=True)
     output = ""
     for i, album in enumerate(sorted_albums):
-        output += format_album(i+1, album)
+        output += format_album(i + 1, album)
     return output
 
 
@@ -108,10 +115,13 @@ def sort_ratings_by_year(albums):
     for year in sorted(years, reverse=True):
         # title formatting for each year
         output += format_header(year)
-        sorted_albums = sorted([x for x in albums if x['year'] == year],
-                               key=lambda x: x['rating'], reverse=True)
+        sorted_albums = sorted(
+            [x for x in albums if x['year'] == year],
+            key=lambda x: x['rating'],
+            reverse=True,
+        )
         for i, album in enumerate(sorted_albums):
-            output += format_album(i+1, album)
+            output += format_album(i + 1, album)
     return output
 
 
@@ -124,10 +134,13 @@ def sort_ratings_by_decade(albums):
     decades = set([album['decade'] for album in albums])
     for decade in sorted(decades, reverse=True):
         output += format_header(decade)
-        sorted_albums = sorted([x for x in albums if x['decade'] == decade],
-                               key=lambda x: x['rating'], reverse=True)
+        sorted_albums = sorted(
+            [x for x in albums if x['decade'] == decade],
+            key=lambda x: x['rating'],
+            reverse=True,
+        )
         for i, album in enumerate(sorted_albums):
-            output += format_album(i+1, album)
+            output += format_album(i + 1, album)
     return output
 
 
@@ -184,8 +197,10 @@ def format_artist(index, artist):
 
 def format_album(index, album):
     """Returns a formatted line of text describing the album"""
-    return ("{}. {artist} - {album} - {year} - {rating} - " +
-            "[[{artist_tag}/{album_tag}|review]]\n").format(index, **album)
+    return (
+        "{}. {artist} - {album} - {year} - {rating} - "
+        + "[[{artist_tag}/{album_tag}|review]]\n"
+    ).format(index, **album)
 
 
 def format_review(album):
@@ -219,6 +234,7 @@ def main():
     for func, file_name in zip(functions, file_names):
         write_file(func(albums), os.path.join(root_dir, file_name))
     return albums
+
 
 if __name__ == '__main__':
     main()
