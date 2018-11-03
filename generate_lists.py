@@ -171,7 +171,7 @@ def compute_decade(year):
 
 def format_header(string):
     """Returns the string as a header in the vimwiki format"""
-    return f"\n= {string} =\n\n"
+    return "\n= {string} =\n\n".format(string)
 
 
 def format_artist(index, artist):
