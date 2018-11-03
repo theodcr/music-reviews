@@ -7,7 +7,7 @@ import re
 import readline
 import generate_lists
 
-from config import CONFIG
+from .config import CONFIG
 
 
 MIN_YEAR = int(CONFIG['creation']['min_year'])
@@ -57,8 +57,8 @@ def completion_input(prompt_text, commands):
 
 def prompt_info(albums):
     """Prompts for album info input and returns the fields as strings"""
-    commands = [x['artist'] for x in albums]
-    artist = completion_input("Artist: ", commands)
+    known_artists = [x['artist'] for x in albums]
+    artist = completion_input("Artist: ", known_artists)
     album = input("Album: ")
     year = check_integer_input("Year: ", MIN_YEAR, MAX_YEAR)
     rating = check_integer_input("Rating: ", MIN_RATING, MAX_RATING)
@@ -88,7 +88,7 @@ def write_review(content, folder, filename, root=os.getcwd(), ext='wiki'):
     if confirmation == 'y':
         if not os.path.exists(os.path.join(root, folder)):
             os.makedirs(os.path.join(root, folder))
-            print('Artist not known yet, created folder')
+            print("Artist not known yet, created folder")
         filepath = os.path.join(root, folder, filename + "." + ext)
         if os.path.exists(filepath):
             print("File exists, operation aborted")

@@ -5,7 +5,8 @@ ratings"""
 import glob
 import os
 
-from config import CONFIG
+from .config import CONFIG
+
 
 SORTED_STATES = ['P', 'X', 'O', 'o', '.', ' ']
 STATES_DESCRIPTION = {

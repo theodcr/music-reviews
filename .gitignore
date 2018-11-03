@@ -8,8 +8,5 @@ __pycache__/
 !template.wiki
 config.cfg
 
-# subfolders contain music reviews
-*/*
-
 # misc
 tags
