@@ -6,6 +6,7 @@ __pycache__/
 # data
 *.wiki
 !template.wiki
+config.cfg
 
 # subfolders contain music reviews
 */*
