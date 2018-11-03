@@ -7,11 +7,13 @@ import re
 import readline
 import generate_lists
 
+from config import CONFIG
 
-MIN_YEAR = 1900
+
+MIN_YEAR = int(CONFIG['creation']['min_year'])
 MAX_YEAR = datetime.datetime.now().year
-MIN_RATING = 0
-MAX_RATING = 100
+MIN_RATING = int(CONFIG['creation']['min_rating'])
+MAX_RATING = int(CONFIG['creation']['max_rating'])
 
 
 def import_template(filename="template.wiki"):
