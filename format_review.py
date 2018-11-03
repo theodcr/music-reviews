@@ -4,7 +4,6 @@
 import os
 import re
 import sys
-import generate_lists
 
 
 def read_file(filename):
@@ -53,8 +52,8 @@ def format_rating(album):
     return output
 
 
-def markdown_wiki_to_markdown(string):
-    """Translates the strin from Wiki format to Markdown"""
+def wiki_to_markdown(string):
+    """Translates the string from Wiki format to Markdown"""
     string = re.sub('\*', '**', string)
     string = re.sub('_', '*', string)
     return string
