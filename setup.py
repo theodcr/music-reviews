@@ -24,6 +24,10 @@ setup(
     python_requires='>=3.6.0',
     url='https://github.com/theolamayo/music-reviews',
     packages=find_packages(),
+    entry_points='''
+        [console_scripts]
+        musicreviews=musicreviews.cli:main
+    ''',
     install_requires=['Click'],
     licence='MIT',
 )
