@@ -40,9 +40,9 @@ def get_spotify_info(uri):
     return artist, album, year
 
 
-def import_template(filename="template.wiki"):
+def import_template(root=os.getcwd(), filename="template.wiki"):
     """Returns the review template as a string"""
-    with open(filename) as file_content:
+    with open(os.path.join(root, filename)) as file_content:
         template = file_content.read()
     return template
 
@@ -75,7 +75,7 @@ def write_review(content, folder, filename, root=os.getcwd(), ext='wiki'):
 def create_review(root_dir):
     """Conducts the full procedure to create a review"""
     template = import_template()
-    #artist, album, year = prompt_info(albums)
+    # artist, album, year = prompt_info(albums)
     uri = input("uri: ")
     artist, album, year = get_spotify_info(uri)
     rating = prompt_rating()
