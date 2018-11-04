@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Searches the reviews and generates various sorted lists of the reviews and
 ratings"""
 
@@ -209,11 +208,8 @@ def format_review(album):
     return "- [{state}] [[{artist_tag}/{album_tag}]]\n".format(**album)
 
 
-def main():
-    """Imports all reviews and writes all possible files"""
-    root_dir = os.path.abspath(CONFIG['path']['reviews_directory'])
-    print(CONFIG['path']['reviews_directory'])
-    albums = build_database(root_dir)
+def generate_all_lists(albums, root_dir):
+    """Imports reviews and writes all possible files"""
     functions = [
         sort_ratings,
         sort_ratings_by_year,
@@ -235,7 +231,3 @@ def main():
     for func, file_name in zip(functions, file_names):
         write_file(func(albums), os.path.join(root_dir, file_name))
     return albums
-
-
-if __name__ == '__main__':
-    main()
