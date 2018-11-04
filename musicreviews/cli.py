@@ -4,7 +4,8 @@ CLI of the package to access functions
 
 import click
 
-from musicreviews import generation
+from musicreviews import creation, generation
+from musicreviews.config import CONFIG
 
 
 GREET = """
@@ -31,6 +32,21 @@ def main(ctx, username):
 @main.command()
 @click.pass_context
 def generate(ctx):
+    generation.generate_all_lists(ctx.obj['albums'], ctx.obj['root_dir'])
+
+
+@main.command()
+@click.option('--uri', '-u')
+@click.pass_context
+def create(ctx, uri):
+    # if uri is not None:
+    # else:
+    #     uri = 
+    # artist, album, year = creation.get_spotify_info(uri)
+    # rating = prompt_rating()
+    # creation.create_review(root_dir)
+    # # update albums database
+    # ctx.obj['albums'] = generation.build_database(root_dir)
     generation.generate_all_lists(ctx.obj['albums'], ctx.obj['root_dir'])
 
 
