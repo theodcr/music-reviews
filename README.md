@@ -1,7 +1,5 @@
 # music-reviews
 
-Scripts for managing written music reviews.
+Python package for managing written music reviews. Uses my other package [powerspot](https://github.com/theolamayo/powerspot).
 
-Copy `config.example.cfg` to `config.cfg`.
-
-Needs Python 3.6. Work in progress.
+Work in progress.
