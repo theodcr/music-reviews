@@ -5,9 +5,9 @@ import os
 import datetime
 import re
 import readline
-import generate_lists
 
 from .config import CONFIG
+from . import generation
 
 
 MIN_YEAR = int(CONFIG['creation']['min_year'])
@@ -108,6 +108,6 @@ def create_review(albums):
 
 
 if __name__ == '__main__':
-    ALBUMS = generate_lists.build_database()
+    ALBUMS = generation.build_database()
     create_review(ALBUMS)
-    generate_lists.main()
+    generation.main()
