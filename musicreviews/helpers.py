@@ -3,19 +3,18 @@
 import re
 import readline
 
+import click
 
-def check_integer_input(prompt_text, min_value, max_value):
+
+def check_integer_input(value, min_value, max_value):
     """Prompts for an integer and checks if it is in the given range"""
-    while True:
-        value = input(prompt_text)
-        if min_value <= int(value) <= max_value:
-            break
-        print(
-            "Error, please enter a number between {} and {}".format(
-                min_value, max_value
-            )
-        )
-    return value
+    try:
+        value = int(value)
+    except ValueError:
+        raise click.BadParameter(f"{value} is not a valid integer", param=value)
+    if min_value <= value <= max_value:
+        return value
+    raise click.BadParameter(f"{value} is not between {min_value} and {max_value}")
 
 
 def completion_input(prompt_text, commands):
@@ -33,7 +32,7 @@ def completion_input(prompt_text, commands):
     readline.parse_and_bind("tab: complete")
     readline.set_completer(complete)
     # tab completion on commands will stay enabled outside this scope
-    return input(prompt_text)
+    return click.prompt(prompt_text)
 
 
 def alphanumeric_lowercase(string):
