@@ -6,9 +6,8 @@ import os
 from functools import partial
 
 import click
-from musicreviews import creation, generation
+from musicreviews import creation, generation, helpers
 from musicreviews.config import CONFIG
-from musicreviews.helpers import check_integer_input
 
 MIN_RATING = int(CONFIG['creation']['min_rating'])
 MAX_RATING = int(CONFIG['creation']['max_rating'])
@@ -41,20 +40,20 @@ def generate(ctx):
 
 
 @main.command()
-@click.option('--uri', '-u')
+@click.option('--uri', '-u', prompt="Album URI (leave empty to skip)", default="")
 @click.pass_context
 def create(ctx, uri):
+    if uri == "":
+        ctx.obj['albums'] = generation.build_database(root_dir)
+        known_artists = [x['artist'] for x in ctx.obj['albums']]
+        artist = helpers.completion_input("Artist", known_artists)
     click.prompt(
         "Rating",
         value_proc=partial(
-            check_integer_input, min_value=MIN_RATING, max_value=MAX_RATING
+            helpers.check_integer_input, min_value=MIN_RATING, max_value=MAX_RATING
         ),
     )
-    # if uri is not None:
-    # else:
-    #     uri =
     # artist, album, year = creation.get_spotify_info(uri)
-    # rating = prompt_rating()
     # creation.create_review(root_dir)
     # # update albums database
     # ctx.obj['albums'] = generation.build_database(root_dir)
