@@ -8,6 +8,7 @@ from functools import partial
 import click
 from musicreviews import creation, generation, helpers
 from musicreviews.config import CONFIG
+from powerspot.operations import search_artist
 
 MIN_RATING = int(CONFIG['creation']['min_rating'])
 MAX_RATING = int(CONFIG['creation']['max_rating'])
@@ -40,15 +41,27 @@ def generate(ctx):
 
 
 @main.command()
-@click.option('--uri', '-u', prompt="Album URI (leave empty to skip)", default="")
+@click.option('--uri', '-u', prompt="Album URI (skip to use search)", default="")
 @click.pass_context
 def create(ctx, uri):
     if uri == "":
-        ctx.obj['albums'] = generation.build_database(root_dir)
         known_artists = [x['artist'] for x in ctx.obj['albums']]
-        artist = helpers.completion_input("Artist", known_artists)
+        artist_query = helpers.completion_input(style_prompt("Artist search"), known_artists)
+        results = search_artist(artist_query)['items']
+        artists = [results[i]['name'] for i in range(len(results))]
+        for i, artist in enumerate(artists):
+            click.echo(
+                click.style(str(i), fg='magenta') + ' ' + click.style(artist, fg='blue')
+            )
+        artist_id = click.prompt(
+            style_prompt("Choose artist index"),
+            value_proc=partial(
+                helpers.check_integer_input, min_value=0, max_value=len(artists) - 1
+            ),
+            default=0,
+        )
     click.prompt(
-        "Rating",
+        style_prompt("Rating"),
         value_proc=partial(
             helpers.check_integer_input, min_value=MIN_RATING, max_value=MAX_RATING
         ),
@@ -57,7 +70,11 @@ def create(ctx, uri):
     # creation.create_review(root_dir)
     # # update albums database
     # ctx.obj['albums'] = generation.build_database(root_dir)
-    generation.generate_all_lists(ctx.obj['albums'], ctx.obj['root_dir'])
+
+
+def style_prompt(message):
+    """Returns a unified style for click prompts"""
+    return click.style(message, fg='cyan')
 
 
 if __name__ == '__main__':
