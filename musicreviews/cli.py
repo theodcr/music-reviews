@@ -2,16 +2,20 @@
 CLI of the package to access functions
 """
 
+import datetime
 import os
 from functools import partial
 
 import click
+
 from musicreviews import creation, generation, helpers
 from musicreviews.config import CONFIG
-from powerspot.operations import get_artist_albums, search_artist
+from powerspot.operations import get_album, get_artist_albums, search_artist
 
 MIN_RATING = int(CONFIG['creation']['min_rating'])
 MAX_RATING = int(CONFIG['creation']['max_rating'])
+MIN_YEAR = int(CONFIG['creation']['min_year'])
+MAX_YEAR = datetime.datetime.now().year
 
 GREET = """
     __  ___           _      ____            _
@@ -41,49 +45,69 @@ def generate(ctx):
 
 
 @main.command()
-@click.option('--uri', '-u', prompt="Album URI (skip to use search)", default="")
+@click.option('--uri', '-u', help="direct input of album URI")
+@click.option('--manual', '-m', is_flag=True, help="manual input of album data")
 @click.pass_context
-def create(ctx, uri):
-    if uri == "":
-        known_artists = [x['artist'] for x in ctx.obj['albums']]
-        artist_query = helpers.completion_input(
-            style_prompt("Artist search"), known_artists
-        )
-        res_artists = search_artist(artist_query)['items']
-        artists = [res_artists[i]['name'] for i in range(len(res_artists))]
-        for i, artist in enumerate(artists):
-            click.echo(style_enumerate(i, artist))
-        artist_id = click.prompt(
-            style_prompt("Choose artist index"),
+def create(ctx, uri, manual):
+    """Create a review using data retrieved from Spotify or manually entered"""
+    known_artists = [x['artist'] for x in ctx.obj['albums']]
+    if manual:
+        # manual input of data
+        artist = helpers.completion_input(style_prompt("Artist"), known_artists)
+        album = click.prompt(style_prompt("Album"))
+        year = click.prompt(
+            style_prompt("Year"),
             value_proc=partial(
-                helpers.check_integer_input, min_value=0, max_value=len(artists) - 1
+                helpers.check_integer_input, min_value=MIN_YEAR, max_value=MAX_YEAR
             ),
-            default=0,
         )
-        artist_uri = res_artists[artist_id]['uri']
-        res_albums = get_artist_albums(artist_uri)['items']
-        albums = [res_albums[i]['name'] for i in range(len(res_albums))]
-        for i, album in enumerate(albums):
-            click.echo(style_enumerate(i, album))
-        album_id = click.prompt(
-            style_prompt("Choose album index"),
-            value_proc=partial(
-                helpers.check_integer_input, min_value=0, max_value=len(albums) - 1
-            ),
-            default=0,
-        )
-        album_data = res_albums[album_id]
-        album_uri = album_data['uri']
-    click.prompt(
+    else:
+        if uri is not None:
+            # direct data fetch
+            album_data = get_album(uri)
+        else:
+            # incremental search to select album in Spotify collection
+            artist_query = helpers.completion_input(
+                style_prompt("Artist search"), known_artists
+            )
+
+            res_artists = search_artist(artist_query)['items']
+            artists = [res_artists[i]['name'] for i in range(len(res_artists))]
+            for i, artist in enumerate(artists):
+                click.echo(style_enumerate(i, artist))
+            artist_id = click.prompt(
+                style_prompt("Choose artist index"),
+                value_proc=partial(
+                    helpers.check_integer_input, min_value=0, max_value=len(artists) - 1
+                ),
+                default=0,
+            )
+            artist_uri = res_artists[artist_id]['uri']
+
+            res_albums = get_artist_albums(artist_uri)['items']
+            albums = [res_albums[i]['name'] for i in range(len(res_albums))]
+            for i, album in enumerate(albums):
+                click.echo(style_enumerate(i, album))
+            album_id = click.prompt(
+                style_prompt("Choose album index"),
+                value_proc=partial(
+                    helpers.check_integer_input, min_value=0, max_value=len(albums) - 1
+                ),
+                default=0,
+            )
+            album_data = res_albums[album_id]
+            uri = album_data['uri']
+        # retrieve useful fields from Spotify data
+        artist = album_data['artists'][0]['name']
+        album = album_data['name']
+        year = album_data['release_date'][:4]
+    rating = click.prompt(
         style_prompt("Rating"),
         value_proc=partial(
             helpers.check_integer_input, min_value=MIN_RATING, max_value=MAX_RATING
         ),
     )
-    # artist, album, year = creation.get_spotify_info(uri)
     # creation.create_review(root_dir)
-    # # update albums database
-    # ctx.obj['albums'] = generation.build_database(root_dir)
 
 
 def style_prompt(message):
