@@ -56,41 +56,38 @@ def create(ctx, uri, manual, y):
             ),
         )
     else:
-        if uri is not None:
-            # direct data fetch
-            album_data = get_album(uri)
-        else:
+        if uri is None:
             # incremental search to select album in Spotify collection
             artist_query = helpers.completion_input(
                 ui.style_prompt("Artist search"), known_artists
             )
 
             res_artists = search_artist(artist_query)['items']
-            artists = [res_artists[i]['name'] for i in range(len(res_artists))]
+            artists = [artist['name'] for artist in res_artists]
             for i, artist in enumerate(artists):
                 click.echo(ui.style_enumerate(i, artist))
-            artist_id = click.prompt(
+            artist_idx = click.prompt(
                 ui.style_prompt("Choose artist index"),
                 value_proc=partial(
                     helpers.check_integer_input, min_value=0, max_value=len(artists) - 1
                 ),
                 default=0,
             )
-            artist_uri = res_artists[artist_id]['uri']
+            artist_uri = res_artists[artist_idx]['uri']
 
             res_albums = get_artist_albums(artist_uri)['items']
             albums = [res_albums[i]['name'] for i in range(len(res_albums))]
             for i, album in enumerate(albums):
                 click.echo(ui.style_enumerate(i, album))
-            album_id = click.prompt(
+            album_idx = click.prompt(
                 ui.style_prompt("Choose album index"),
                 value_proc=partial(
                     helpers.check_integer_input, min_value=0, max_value=len(albums) - 1
                 ),
                 default=0,
             )
-            album_data = res_albums[album_id]
-            uri = album_data['uri']
+            uri = res_albums[album_idx]['uri']
+        album_data = get_album(uri)
         # retrieve useful fields from Spotify data
         artist = album_data['artists'][0]['name']
         album = album_data['name']
