@@ -92,12 +92,18 @@ def create(ctx, uri, manual, y):
         artist = album_data['artists'][0]['name']
         album = album_data['name']
         year = album_data['release_date'][:4]
+        tracks = [track['name'] for track in album_data['tracks']['items']]
+        # list tracks, starting at index 1
+        for i, track in enumerate(tracks):
+            click.echo(ui.style_enumerate(i+1, track))
+
     rating = click.prompt(
         ui.style_prompt("Rating"),
         value_proc=partial(
             helpers.check_integer_input, min_value=MIN_RATING, max_value=MAX_RATING
         ),
     )
+
     root_dir = ctx.obj['root_dir']
     folder = helpers.alphanumeric_lowercase(artist)
     filename = helpers.alphanumeric_lowercase(album)

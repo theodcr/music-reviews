@@ -25,4 +25,4 @@ def style_info(message):
 
 def style_enumerate(i, val):
     """Returns a unified style for enumerate items"""
-    return click.style(str(i), fg='magenta') + ' ' + click.style(val, fg='blue')
+    return click.style(f'{i:2d}', fg='magenta') + ' ' + click.style(val, fg='blue')
