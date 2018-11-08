@@ -97,6 +97,13 @@ def create(ctx, uri, manual, y):
         for i, track in enumerate(tracks):
             click.echo(ui.style_enumerate(i+1, track))
 
+        tracks_idx = click.prompt(
+            ui.style_prompt("Favorite tracks numbers"),
+            value_proc=partial(
+                helpers.list_integers_input, min_value=1, max_value=len(tracks)
+            ),
+        )
+
     rating = click.prompt(
         ui.style_prompt("Rating"),
         value_proc=partial(

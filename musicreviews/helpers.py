@@ -7,7 +7,7 @@ import click
 
 
 def check_integer_input(value, min_value, max_value):
-    """Prompts for an integer and checks if it is in the given range"""
+    """Converts and checks if the integer from the click prompt is in the given range"""
     try:
         value = int(value)
     except ValueError:
@@ -17,8 +17,16 @@ def check_integer_input(value, min_value, max_value):
     raise click.BadParameter(f"{value} is not between {min_value} and {max_value}")
 
 
+def list_integers_input(string, min_value, max_value):
+    """Converts and checks a string containing a list of integers"""
+    indices = set(re.split('\W+', string))
+    indices.discard('')
+    clean_indices = [check_integer_input(idx, min_value, max_value) for idx in indices]
+    return clean_indices
+
+
 def completion_input(prompt_text, commands):
-    """Prompts and allows tab-complete on the given list of commands"""
+    """Returns a click prompt with tab-completion on the given list of commands"""
 
     def complete(text, state):
         """Completion function for readline"""
