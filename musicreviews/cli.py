@@ -47,8 +47,9 @@ def generate(ctx):
 @main.command()
 @click.option('--uri', '-u', help="direct input of album URI")
 @click.option('--manual', '-m', is_flag=True, help="manual input of album data")
+@click.option('-y', is_flag=True, help="confirm review creation")
 @click.pass_context
-def create(ctx, uri, manual):
+def create(ctx, uri, manual, y):
     """Create a review using data retrieved from Spotify or manually entered"""
     known_artists = [x['artist'] for x in ctx.obj['albums']]
     if manual:
@@ -107,7 +108,29 @@ def create(ctx, uri, manual):
             helpers.check_integer_input, min_value=MIN_RATING, max_value=MAX_RATING
         ),
     )
-    # creation.create_review(root_dir)
+    root_dir = ctx.obj['root_dir']
+    folder = helpers.alphanumeric_lowercase(artist)
+    filename = helpers.alphanumeric_lowercase(album)
+    click.echo(
+        '\n'
+        + click.style("Creating review for album:", fg='cyan')
+        + '\n'
+        + click.style(artist, fg='magenta', bold=True)
+        + click.style(' - ', fg='white')
+        + click.style(album, fg='blue', bold=True)
+        + '\n'
+        + click.style("Filename: ", fg='cyan')
+        + click.style(root_dir + '/', fg='white')
+        + click.style(folder, fg='magenta', bold=True)
+        + click.style('/', fg='white')
+        + click.style(filename, fg='blue', bold=True)
+        + '\n'
+    )
+    if click.confirm(style_prompt("Confirm creation of review")):
+        template = creation.import_template(root=root_dir)
+        review = fill_template(template, artist, album, year, rating)
+        write_review(review, folder, filename, root=root_dir)
+        click.echo(click.style("Review created", fg='cyan'))
 
 
 def style_prompt(message):

@@ -1,9 +1,9 @@
-"""Generates a review file using user input"""
+"""
+Helpers for generating a review file using album data
+"""
 
 import datetime
 import os
-
-from .helpers import alphanumeric_lowercase
 
 
 def import_template(root=os.getcwd(), filename="template.wiki"):
@@ -23,25 +23,12 @@ def fill_template(template, artist, album, year, rating):
 
 def write_review(content, folder, filename, root=os.getcwd(), ext='wiki'):
     """Writes the review file using the given data"""
-    confirmation = input(
-        "Confirm creation of review (y/N) {}/{}? ".format(folder, filename)
-    )
-    if confirmation == 'y':
-        if not os.path.exists(os.path.join(root, folder)):
-            os.makedirs(os.path.join(root, folder))
-            print("Artist not known yet, created folder")
-        filepath = os.path.join(root, folder, filename + "." + ext)
-        if os.path.exists(filepath):
-            print("File exists, operation aborted")
-        else:
-            with open(filepath, 'w') as file_content:
-                file_content.write(content)
-
-
-def create_review(root_dir, artist, album, year, rating):
-    """Create a review file using provided fields"""
-    template = import_template()
-    review = fill_template(template, artist, album, year, rating)
-    folder = alphanumeric_lowercase(artist)
-    filename = alphanumeric_lowercase(album)
-    write_review(review, folder, filename, root=root_dir)
+    if not os.path.exists(os.path.join(root, folder)):
+        os.makedirs(os.path.join(root, folder))
+        print("Artist not known yet, created folder")
+    filepath = os.path.join(root, folder, filename + "." + ext)
+    if os.path.exists(filepath):
+        print("File exists, operation aborted")
+    else:
+        with open(filepath, 'w') as file_content:
+            file_content.write(content)
