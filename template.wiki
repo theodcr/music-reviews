@@ -2,7 +2,9 @@
 %artist {artist}
 %album {album}
 %year {year}
+%uri {uri}
 %rating {rating}
+%picks {picks}
 %state .
 
 *Résumé :*
