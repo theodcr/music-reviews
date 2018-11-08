@@ -55,6 +55,12 @@ def create(ctx, uri, manual, y):
                 helpers.check_integer_input, min_value=MIN_YEAR, max_value=MAX_YEAR
             ),
         )
+        tracks_idx = click.prompt(
+            ui.style_prompt("Favorite tracks numbers"),
+            value_proc=partial(
+                helpers.list_integers_input, min_value=1, max_value=100
+            ),
+        )
     else:
         if uri is None:
             # incremental search to select album in Spotify collection
@@ -76,7 +82,7 @@ def create(ctx, uri, manual, y):
             artist_uri = res_artists[artist_idx]['uri']
 
             res_albums = get_artist_albums(artist_uri)['items']
-            albums = [res_albums[i]['name'] for i in range(len(res_albums))]
+            albums = [album['name'] for album in res_albums]
             for i, album in enumerate(albums):
                 click.echo(ui.style_enumerate(i, album))
             album_idx = click.prompt(
@@ -131,8 +137,8 @@ def create(ctx, uri, manual, y):
     )
     if click.confirm(ui.style_prompt("Confirm creation of review")):
         template = creation.import_template(root=root_dir)
-        review = fill_template(template, artist, album, year, rating)
-        write_review(review, folder, filename, root=root_dir)
+        review = creation.fill_template(template, artist, album, year, rating)
+        creation.write_review(review, folder, filename, root=root_dir)
         click.echo(ui.style_info("Review created"))
 
 
