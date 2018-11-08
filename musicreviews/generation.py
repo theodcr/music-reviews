@@ -1,9 +1,10 @@
-"""Searches the reviews and generates various sorted lists of the reviews and
-ratings"""
+"""
+Functions for building a database of local reviews
+and generating various sorted lists of the reviews and ratings
+"""
 
 import glob
 import os
-
 
 SORTED_STATES = ['P', 'X', 'O', 'o', '.', ' ']
 STATES_DESCRIPTION = {

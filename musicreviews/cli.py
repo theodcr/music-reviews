@@ -42,6 +42,7 @@ def main(ctx):
 @click.pass_context
 def generate(ctx):
     generation.generate_all_lists(ctx.obj['albums'], ctx.obj['root_dir'])
+    click.echo(click.style("Lists generated", fg='cyan'))
 
 
 @main.command()
