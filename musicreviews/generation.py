@@ -26,7 +26,11 @@ def empty_album():
         'album': "",
         'year': 0,
         'rating': 0,
+        'uri': None,
+        'tracks': None,
+        'picks': None,
         'state': " ",
+        'content': "",
     }
 
 
@@ -41,6 +45,7 @@ def decode_tags(path, album=None):
             album[tag] = " ".join(words[1:])
         album['year'] = int(album['year'])
         album['rating'] = int(album['rating'])
+        album['content'] = file_content.read()
     return album
 
 
