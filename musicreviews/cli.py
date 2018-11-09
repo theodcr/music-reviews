@@ -55,12 +55,14 @@ def create(ctx, uri, manual, y):
                 helpers.check_integer_input, min_value=MIN_YEAR, max_value=MAX_YEAR
             ),
         )
+        # arbitrary maximum number of tracks
         tracks_idx = click.prompt(
             ui.style_prompt("Favorite tracks numbers"),
             value_proc=partial(
                 helpers.list_integers_input, min_value=1, max_value=100
             ),
         )
+        tracks = None
     else:
         if uri is None:
             # incremental search to select album in Spotify collection
@@ -137,7 +139,9 @@ def create(ctx, uri, manual, y):
     )
     if click.confirm(ui.style_prompt("Confirm creation of review")):
         template = creation.import_template(root=root_dir)
-        review = creation.fill_template(template, artist, album, year, rating)
+        review = creation.fill_template(
+            template, artist, album, year, rating, uri, picks=tracks_idx, tracks=tracks
+        )
         creation.write_review(review, folder, filename, root=root_dir)
         click.echo(ui.style_info("Review created"))
 
