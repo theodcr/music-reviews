@@ -1,5 +1,5 @@
 """
-Functions for building a database of local reviews
+Functions for building a database of reviews
 and generating various sorted lists of the reviews and ratings
 """
 

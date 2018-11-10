@@ -8,7 +8,7 @@ from functools import partial
 
 import click
 
-from musicreviews import creation, generation, helpers, ui
+from musicreviews import creator, indexer, utils, ui
 from musicreviews.config import CONFIG
 from powerspot.operations import get_album, get_artist_albums, search_artist
 
@@ -24,7 +24,7 @@ def main(ctx):
     """CLI for music reviews management"""
     click.echo(click.style(ui.GREET, fg='magenta', bold=True))
     root_dir = os.path.abspath(CONFIG['path']['reviews_directory'])
-    albums = generation.build_database(root_dir)
+    albums = indexer.build_database(root_dir)
     ctx.obj = {}
     ctx.obj['root_dir'] = root_dir
     ctx.obj['albums'] = albums
@@ -34,7 +34,7 @@ def main(ctx):
 @click.pass_context
 def generate(ctx):
     """Generate lists of reviews indexes"""
-    generation.generate_all_lists(ctx.obj['albums'], ctx.obj['root_dir'])
+    indexer.generate_all_lists(ctx.obj['albums'], ctx.obj['root_dir'])
     click.echo(ui.style_info("Lists generated"))
 
 
@@ -48,24 +48,24 @@ def create(ctx, uri, manual, y):
     known_artists = [x['artist'] for x in ctx.obj['albums']]
     if manual:
         # manual input of data
-        artist = helpers.completion_input(ui.style_prompt("Artist"), known_artists)
+        artist = utils.completion_input(ui.style_prompt("Artist"), known_artists)
         album = click.prompt(ui.style_prompt("Album"))
         year = click.prompt(
             ui.style_prompt("Year"),
             value_proc=partial(
-                helpers.check_integer_input, min_value=MIN_YEAR, max_value=MAX_YEAR
+                utils.check_integer_input, min_value=MIN_YEAR, max_value=MAX_YEAR
             ),
         )
         # arbitrary maximum number of tracks
         tracks_idx = click.prompt(
             ui.style_prompt("Favorite tracks numbers"),
-            value_proc=partial(helpers.list_integers_input, min_value=1, max_value=100),
+            value_proc=partial(utils.list_integers_input, min_value=1, max_value=100),
         )
         tracks = None
     else:
         if uri is None:
             # incremental search to select album in Spotify collection
-            artist_query = helpers.completion_input(
+            artist_query = utils.completion_input(
                 ui.style_prompt("Artist search"), known_artists
             )
 
@@ -76,7 +76,7 @@ def create(ctx, uri, manual, y):
             artist_idx = click.prompt(
                 ui.style_prompt("Choose artist index"),
                 value_proc=partial(
-                    helpers.check_integer_input, min_value=0, max_value=len(artists) - 1
+                    utils.check_integer_input, min_value=0, max_value=len(artists) - 1
                 ),
                 default=0,
             )
@@ -89,7 +89,7 @@ def create(ctx, uri, manual, y):
             album_idx = click.prompt(
                 ui.style_prompt("Choose album index"),
                 value_proc=partial(
-                    helpers.check_integer_input, min_value=0, max_value=len(albums) - 1
+                    utils.check_integer_input, min_value=0, max_value=len(albums) - 1
                 ),
                 default=0,
             )
@@ -107,20 +107,20 @@ def create(ctx, uri, manual, y):
         tracks_idx = click.prompt(
             ui.style_prompt("Favorite tracks numbers"),
             value_proc=partial(
-                helpers.list_integers_input, min_value=1, max_value=len(tracks)
+                utils.list_integers_input, min_value=1, max_value=len(tracks)
             ),
         )
 
     rating = click.prompt(
         ui.style_prompt("Rating"),
         value_proc=partial(
-            helpers.check_integer_input, min_value=MIN_RATING, max_value=MAX_RATING
+            utils.check_integer_input, min_value=MIN_RATING, max_value=MAX_RATING
         ),
     )
 
     root_dir = ctx.obj['root_dir']
-    folder = helpers.alphanumeric_lowercase(artist)
-    filename = helpers.alphanumeric_lowercase(album)
+    folder = utils.alphanumeric_lowercase(artist)
+    filename = utils.alphanumeric_lowercase(album)
     click.echo(
         '\n'
         + click.style("Creating review for album:", fg='cyan')
@@ -137,11 +137,11 @@ def create(ctx, uri, manual, y):
         + '\n'
     )
     if click.confirm(ui.style_prompt("Confirm creation of review")):
-        template = creation.import_template(root=root_dir)
-        review = creation.fill_template(
+        template = creator.import_template(root=root_dir)
+        review = creator.fill_template(
             template, artist, album, year, rating, uri, picks=tracks_idx, tracks=tracks
         )
-        creation.write_review(review, folder, filename, root=root_dir)
+        creator.write_review(review, folder, filename, root=root_dir)
         click.echo(ui.style_info("Review created"))
 
 

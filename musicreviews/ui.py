@@ -1,5 +1,5 @@
 """
-Helpers for CLI and UI
+Helpers for CLI appearence and UI
 """
 
 import click

@@ -1,5 +1,5 @@
 """
-Helpers for generating a review file using album data
+Helpers for creating a review file using given album data
 """
 
 import datetime

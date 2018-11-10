@@ -1,4 +1,6 @@
-"""CLI and helper functions"""
+"""
+CLI helpers for specific prompts, and various helper functions
+"""
 
 import re
 import readline
