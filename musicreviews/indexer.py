@@ -5,6 +5,12 @@ and generating various sorted lists of the reviews and ratings
 
 import glob
 import os
+import re
+
+import yaml
+
+START_HEADER = '---'
+END_HEADER = '\.\.\.'
 
 SORTED_STATES = ['P', 'X', 'O', 'o', '.', ' ']
 STATES_DESCRIPTION = {
@@ -56,8 +62,15 @@ def build_database(root_dir=os.getcwd(), placeholders=False):
 
 
 def decode_yaml(path, album=None):
-    """Read the content of a review to find the album tags written in YAML"""
-    pass
+    """Read the content of a review to find the album tags written in a YAML header"""
+    if album is None:
+        album = empty_album()
+    with open(path, 'r') as file_content:
+        review = file_content.read()
+    __, header, album['content'] = re.split(f'{START_HEADER}|{END_HEADER}', review)
+    for key, value in yaml.load(header).items():
+        album[key] = value
+    return album
 
 
 def decode_placeholders(path, album=None):

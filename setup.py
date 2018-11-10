@@ -28,6 +28,6 @@ setup(
         [console_scripts]
         musicreviews=musicreviews.cli:main
     ''',
-    install_requires=['Click'],
+    install_requires=['Click', 'PyYAML'],
     licence='MIT',
 )
