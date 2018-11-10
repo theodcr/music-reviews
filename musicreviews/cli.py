@@ -8,7 +8,7 @@ from functools import partial
 
 import click
 
-from musicreviews import creator, indexer, utils, ui
+from musicreviews import creator, indexer, ui, utils
 from musicreviews.config import CONFIG
 from powerspot.operations import get_album, get_artist_albums, search_artist
 
