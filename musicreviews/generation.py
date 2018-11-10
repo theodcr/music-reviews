@@ -34,44 +34,53 @@ def empty_album():
     }
 
 
-def decode_tags(path, album=None):
-    """Read the content of a review to find the album fields"""
+def build_database(root_dir=os.getcwd(), placeholders=False):
+    """Finds reviews and builds a database using their tags and content
+    Set placeholders to True if tags are written as '%tag: value'
+    """
+    albums = []
+    # find reviews in folders
+    artist_tags = [
+        f for f in os.listdir(root_dir) if os.path.isdir(os.path.join(root_dir, f))
+    ]
+    for artist_tag in artist_tags:
+        for file_path in glob.glob(os.path.join(root_dir, artist_tag, '*.wiki')):
+            if placeholders:
+                album = decode_placeholders(file_path)
+            else:
+                album = decode_yaml(file_path)
+            album['artist_tag'] = artist_tag
+            album['album_tag'] = os.path.splitext(os.path.basename(file_path))[0]
+            albums.append(album)
+    return albums
+
+
+def decode_yaml(path, album=None):
+    """Read the content of a review to find the album tags written in YAML"""
+    pass
+
+
+def decode_placeholders(path, album=None):
+    """Read the content of a review to find the album tags written as placeholders"""
     if album is None:
         album = empty_album()
     with open(path, 'r') as file_content:
-        for _ in range(6):
+        while True:
             words = file_content.readline().split()
+            if len(words) == 0 or words[0][0] != '%':
+                break
             tag = words[0][1:]
             album[tag] = " ".join(words[1:])
         album['year'] = int(album['year'])
         album['rating'] = int(album['rating'])
         album['content'] = file_content.read()
+        print(album)
     return album
 
 
-def build_database(root_dir=os.getcwd()):
-    """Builds the database of ratings"""
-    albums = []
-    # find reviews in folders
-    artist_tags = [
-        f
-        for f in os.listdir(root_dir)
-        if os.path.isdir(os.path.join(root_dir, f)) and f != '__pycache__'
-    ]
-    for artist_tag in artist_tags:
-        for filename in glob.glob(os.path.join(root_dir, artist_tag, '*.wiki')):
-            path = os.path.join(root_dir, artist_tag, filename)
-            album = decode_tags(path)
-            # could do something easier using just the path
-            album['artist_tag'] = artist_tag
-            album['album_tag'] = os.path.splitext(os.path.basename(filename))[0]
-            albums.append(album)
-    return albums
-
-
-def write_file(content, filename, newline=False):
-    """Writes the given content in a file, with a newline at the end"""
-    with open(filename, 'w') as file_content:
+def write_file(content, path, newline=False):
+    """Writes the given content in a file, with an optional newline at the end"""
+    with open(path, 'w') as file_content:
         file_content.write(content)
         if newline:
             file_content.write("\n")
@@ -213,7 +222,7 @@ def format_review(album):
 
 
 def generate_all_lists(albums, root_dir):
-    """Imports reviews and writes all possible files"""
+    """Imports reviews and writes all possible files in vimwiki format"""
     functions = [
         sort_ratings,
         sort_ratings_by_year,

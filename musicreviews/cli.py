@@ -33,6 +33,7 @@ def main(ctx):
 @main.command()
 @click.pass_context
 def generate(ctx):
+    """Generate lists of reviews indexes"""
     generation.generate_all_lists(ctx.obj['albums'], ctx.obj['root_dir'])
     click.echo(ui.style_info("Lists generated"))
 
