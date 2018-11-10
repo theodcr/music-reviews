@@ -9,6 +9,6 @@ tracks:
 {tracks}
 picks:
 {picks}
-state: .
+state: {state}
 ...
-
+{content}

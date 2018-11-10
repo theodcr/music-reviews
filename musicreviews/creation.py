@@ -15,24 +15,45 @@ def import_template(root=os.getcwd(), filename="template.wiki"):
     return template
 
 
-def fill_template(template, artist, album, year, rating, uri=None, picks=None, tracks=None):
+def fill_template(
+    template,
+    artist,
+    album,
+    year,
+    rating,
+    uri=None,
+    picks=None,
+    tracks=None,
+    state=None,
+    content=None,
+):
     """Converts the fiels and fills the template review"""
     today = datetime.datetime.now().strftime("%Y-%m-%d")
     uri = uri or ''
+    state = state or ''
+    content = content or ''
     if picks is not None:
         picks_string = '\n'.join([f'- {pick}' for pick in picks])
     else:
         picks_string = ''
     if tracks is not None:
-        length_digits = max(str(len(tracks)))
+        # indent track list
         tracks_string = '\n'.join(
-            [f'{i+1:{length_digits}d}: {track}' for i, track in enumerate(tracks)]
+            [f'    {i+1}: {track}' for i, track in enumerate(tracks)]
         )
     else:
         tracks_string = ''
     return template.format(
-        date=today, artist=artist, album=album, year=year, uri=uri,
-        rating=rating, picks=picks_string, tracks=tracks_string,
+        date=today,
+        artist=artist,
+        album=album,
+        year=year,
+        uri=uri,
+        rating=rating,
+        picks=picks_string,
+        tracks=tracks_string,
+        state=state,
+        content=content,
     )
 
 

@@ -58,9 +58,7 @@ def create(ctx, uri, manual, y):
         # arbitrary maximum number of tracks
         tracks_idx = click.prompt(
             ui.style_prompt("Favorite tracks numbers"),
-            value_proc=partial(
-                helpers.list_integers_input, min_value=1, max_value=100
-            ),
+            value_proc=partial(helpers.list_integers_input, min_value=1, max_value=100),
         )
         tracks = None
     else:
@@ -103,7 +101,7 @@ def create(ctx, uri, manual, y):
         tracks = [track['name'] for track in album_data['tracks']['items']]
         # list tracks, starting at index 1
         for i, track in enumerate(tracks):
-            click.echo(ui.style_enumerate(i+1, track))
+            click.echo(ui.style_enumerate(i + 1, track))
 
         tracks_idx = click.prompt(
             ui.style_prompt("Favorite tracks numbers"),
