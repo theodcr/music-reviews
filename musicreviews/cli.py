@@ -1,8 +1,11 @@
 """
 CLI of the package to access functions
+Note: queue subcommands should be associeted to a queue group, but nesting chain
+commands is not possible in click yet
 """
 
 import datetime
+import json
 import os
 from functools import partial
 
@@ -10,7 +13,13 @@ import click
 
 from musicreviews import creator, indexer, ui, utils
 from musicreviews.config import CONFIG
-from powerspot.operations import get_album, get_artist_albums, search_artist
+from powerspot.helpers import get_username
+from powerspot.operations import (
+    get_album,
+    get_artist_albums,
+    get_saved_albums,
+    search_artist,
+)
 
 MIN_RATING = int(CONFIG['creation']['min_rating'])
 MAX_RATING = int(CONFIG['creation']['max_rating'])
@@ -20,14 +29,22 @@ MAX_YEAR = datetime.datetime.now().year
 
 @click.group(chain=True)
 @click.pass_context
-def main(ctx):
+@click.option('--username', default=lambda: os.getenv('SPOTIFY_USER'))
+def main(ctx, username):
     """CLI for music reviews management"""
     click.echo(click.style(ui.GREET, fg='magenta', bold=True))
     root_dir = os.path.abspath(CONFIG['path']['reviews_directory'])
+    click.echo(ui.style_info(f"Review library in directory {root_dir}"))
     albums = indexer.build_database(root_dir)
+
+    if username is None:
+        username = get_username()
+    click.echo(ui.style_info(f"Welcome {username}\n"))
+
     ctx.obj = {}
     ctx.obj['root_dir'] = root_dir
     ctx.obj['albums'] = albums
+    ctx.obj['username'] = username
 
 
 @main.command()
@@ -36,6 +53,62 @@ def generate(ctx):
     """Generate lists of reviews indexes"""
     indexer.generate_all_lists(ctx.obj['albums'], ctx.obj['root_dir'])
     click.echo(ui.style_info("Lists generated"))
+
+
+@main.command()
+@click.pass_context
+def queue(ctx):
+    """Manage the queue of album to review"""
+    queue_path = os.path.abspath(CONFIG['path']['queue'])
+    click.echo(ui.style_info(f"Managing queue stored in {queue_path}"))
+
+    # retrieve queue
+    if os.path.exists(queue_path):
+        with open(queue_path, 'r') as file_content:
+            queue = json.load(file_content)
+    else:
+        queue = []
+    click.echo(ui.style_info(f"Queue contains {len(queue)} albums"))
+
+    # update queue with user library albums
+    if click.confirm(ui.style_prompt("Update queue with library albums")):
+        saved_albums = get_saved_albums(ctx.obj['username'])
+        saved_uris = set([album['album']['uri'] for album in saved_albums])
+        known_uris = set([album['uri'] for album in ctx.obj['albums']])
+        queue_uris = set([album['uri'] for album in queue])
+        for uri in saved_uris - known_uris - queue_uris:
+            album_data = get_album(uri)
+            queue.append({
+                'artist': album_data['artists'][0]['name'],
+                'album': album_data['name'],
+                'year': album_data['release_date'][:4],
+                'uri': uri,
+            })
+        click.echo(ui.style_info(f"Queue contains {len(queue)} albums"))
+    # save updated queue
+    with open(queue_path, 'w') as file_content:
+        file_content.write(json.dumps(queue))
+
+    # update queue with user library albums
+    idx = 0
+    length = len(queue)
+    uris_to_pop = []
+    for album in queue:
+        idx += 1
+        click.echo(
+            click.style(f"Item {idx}/{length}: ", fg='white')
+            + click.style(album['artist'], fg='magenta', bold=True)
+            + click.style(' - ', fg='white')
+            + click.style(album['album'], fg='blue', bold=True)
+        )
+        if click.confirm(ui.style_prompt("Review this album")):
+            if ctx.invoke(create, uri=album['uri']):
+                uris_to_pop.append(album['uri'])
+    updated_queue = [album for album in queue if album['uri'] not in uris_to_pop]
+
+    # save updated queue
+    with open(queue_path, 'w') as file_content:
+        file_content.write(json.dumps(updated_queue))
 
 
 @main.command()
@@ -143,6 +216,8 @@ def create(ctx, uri, manual, y):
         )
         creator.write_review(review, folder, filename, root=root_dir)
         click.echo(ui.style_info("Review created"))
+        return True
+    return False
 
 
 if __name__ == '__main__':

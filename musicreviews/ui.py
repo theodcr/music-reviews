@@ -20,7 +20,7 @@ def style_prompt(message):
 
 def style_info(message):
     """Returns a unified style for general echos about program state"""
-    return click.style(message, fg='cyan')
+    return click.style(message, fg='blue')
 
 
 def style_enumerate(i, val):
