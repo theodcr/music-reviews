@@ -85,7 +85,7 @@ def queue(ctx):
                 'uri': uri,
             })
         click.echo(ui.style_info(f"Queue contains {len(queue)} albums"))
-    # save updated queue
+    # save current queue
     with open(queue_path, 'w') as file_content:
         file_content.write(json.dumps(queue))
 
@@ -209,7 +209,7 @@ def create(ctx, uri, manual, y):
         + click.style(filename, fg='blue', bold=True)
         + '\n'
     )
-    if click.confirm(ui.style_prompt("Confirm creation of review")):
+    if click.confirm(ui.style_prompt("Confirm creation of review"), default=True):
         template = creator.import_template(root=root_dir)
         review = creator.fill_template(
             template, artist, album, year, rating, uri, picks=tracks_idx, tracks=tracks
