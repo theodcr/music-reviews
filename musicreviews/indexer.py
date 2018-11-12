@@ -9,8 +9,8 @@ import re
 
 import yaml
 
-START_HEADER = '---'
-END_HEADER = '\.\.\.'
+START_HEADER = '---\n'
+END_HEADER = '\n\.\.\.\n'
 
 SORTED_STATES = ['P', 'X', 'O', 'o', '.', ' ']
 STATES_DESCRIPTION = {
