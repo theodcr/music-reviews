@@ -26,3 +26,19 @@ def style_info(message):
 def style_enumerate(i, val):
     """Returns a unified style for enumerate items"""
     return click.style(f'{i:2d}', fg='magenta') + ' ' + click.style(val, fg='blue')
+
+
+def style_album(artist, album, year):
+    """Returns a unified style for albums"""
+    return (
+        click.style(artist, fg='magenta', bold=True)
+        + click.style(' - ', fg='white')
+        + click.style(album, fg='blue', bold=True)
+        + click.style(' - ', fg='white')
+        + click.style(year, fg='white', bold=True)
+    )
+
+
+def style_info_path(message, path):
+    """Returns a unified style for information about a path"""
+    return style_info(message) + ' ' + click.style(path, fg='white')

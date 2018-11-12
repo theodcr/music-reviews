@@ -34,7 +34,7 @@ def main(ctx, username):
     """CLI for music reviews management"""
     click.echo(click.style(ui.GREET, fg='magenta', bold=True))
     root_dir = os.path.abspath(CONFIG['path']['reviews_directory'])
-    click.echo(ui.style_info(f"Review library in directory {root_dir}"))
+    click.echo(ui.style_info_path("Review library in directory", root_dir))
     albums = indexer.build_database(root_dir)
 
     if username is None:
@@ -60,7 +60,7 @@ def generate(ctx):
 def queue(ctx):
     """Manage the queue of album to review"""
     queue_path = os.path.abspath(CONFIG['path']['queue'])
-    click.echo(ui.style_info(f"Managing queue stored in {queue_path}"))
+    click.echo(ui.style_info_path("Managing queue stored in", queue_path))
 
     # retrieve queue
     if os.path.exists(queue_path):
@@ -85,9 +85,9 @@ def queue(ctx):
                 'uri': uri,
             })
         click.echo(ui.style_info(f"Queue contains {len(queue)} albums"))
-    # save current queue
-    with open(queue_path, 'w') as file_content:
-        file_content.write(json.dumps(queue))
+        # save current queue
+        with open(queue_path, 'w') as file_content:
+            file_content.write(json.dumps(queue))
 
     # update queue with user library albums
     idx = 0
@@ -97,9 +97,7 @@ def queue(ctx):
         idx += 1
         click.echo(
             click.style(f"Item {idx}/{length}: ", fg='white')
-            + click.style(album['artist'], fg='magenta', bold=True)
-            + click.style(' - ', fg='white')
-            + click.style(album['album'], fg='blue', bold=True)
+            + ui.style_album(album['artist'], album['album'], album['year'])
         )
         if click.confirm(ui.style_prompt("Review this album")):
             if ctx.invoke(create, uri=album['uri']):
@@ -198,9 +196,7 @@ def create(ctx, uri, manual, y):
         '\n'
         + click.style("Creating review for album:", fg='cyan')
         + '\n'
-        + click.style(artist, fg='magenta', bold=True)
-        + click.style(' - ', fg='white')
-        + click.style(album, fg='blue', bold=True)
+        + ui.style_album(artist, album, year)
         + '\n'
         + click.style("Filename: ", fg='cyan')
         + click.style(root_dir + '/', fg='white')
