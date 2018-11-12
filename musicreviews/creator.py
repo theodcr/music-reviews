@@ -4,8 +4,10 @@ Helpers for creating a review file using given album data
 
 import datetime
 import os
+import re
 
 import click
+from .utils import escape_yaml_specials
 
 
 def import_template(root=os.getcwd(), filename="template.wiki"):
@@ -30,7 +32,7 @@ def fill_template(
     """Converts the fiels and fills the template review"""
     today = datetime.datetime.now().strftime("%Y-%m-%d")
     uri = uri or ''
-    state = state or ''
+    state = state or '.'
     content = content or ''
     if picks is not None:
         picks_string = '\n'.join([f'- {pick}' for pick in picks])
@@ -38,15 +40,17 @@ def fill_template(
         picks_string = ''
     if tracks is not None:
         # indent track list
+        track = ''
         tracks_string = '\n'.join(
-            [f'    {i+1}: {track}' for i, track in enumerate(tracks)]
+            [f'    {i+1}: {escape_yaml_specials(track)}'
+             for i, track in enumerate(tracks)]
         )
     else:
         tracks_string = ''
     return template.format(
         date=today,
-        artist=artist,
-        album=album,
+        artist=escape_yaml_specials(artist),
+        album=escape_yaml_specials(album),
         year=year,
         uri=uri,
         rating=rating,
