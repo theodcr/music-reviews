@@ -62,13 +62,17 @@ def fill_template(
 
 
 def write_review(content, folder, filename, root=os.getcwd(), ext='wiki'):
-    """Writes the review file using the given data"""
+    """Writes the review file using the given data.
+    Returns True to confirm review creation
+    """
     if not os.path.exists(os.path.join(root, folder)):
         os.makedirs(os.path.join(root, folder))
         click.echo(click.style("Artist not known yet, created folder", fg='cyan'))
     filepath = os.path.join(root, folder, filename + "." + ext)
     if os.path.exists(filepath):
         click.echo(click.style("File exists, operation aborted", fg='red'))
+        return False
     else:
         with open(filepath, 'w') as file_content:
             file_content.write(content)
+    return True

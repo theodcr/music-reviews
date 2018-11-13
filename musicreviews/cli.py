@@ -1,7 +1,5 @@
 """
 CLI of the package to access functions
-Note: queue subcommands should be associeted to a queue group, but nesting chain
-commands is not possible in click yet
 """
 
 import datetime
@@ -89,7 +87,7 @@ def queue(ctx):
         with open(queue_path, 'w') as file_content:
             file_content.write(json.dumps(queue))
 
-    # update queue with user library albums
+    # prompt the user for each album in the queue
     idx = 0
     length = len(queue)
     uris_to_pop = []
@@ -100,6 +98,7 @@ def queue(ctx):
             + ui.style_album(album['artist'], album['album'], album['year'])
         )
         if click.confirm(ui.style_prompt("Review this album")):
+            # pop album from queue only if review creation is confirmed
             if ctx.invoke(create, uri=album['uri']):
                 uris_to_pop.append(album['uri'])
     updated_queue = [album for album in queue if album['uri'] not in uris_to_pop]
@@ -210,9 +209,9 @@ def create(ctx, uri, manual, y):
         review = creator.fill_template(
             template, artist, album, year, rating, uri, picks=tracks_idx, tracks=tracks
         )
-        creator.write_review(review, folder, filename, root=root_dir)
-        click.echo(ui.style_info("Review created"))
-        return True
+        if creator.write_review(review, folder, filename, root=root_dir):
+            click.echo(ui.style_info("Review created"))
+            return True
     return False
 
 
