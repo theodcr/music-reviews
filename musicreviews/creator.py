@@ -71,8 +71,8 @@ def write_review(content, folder, filename, root=os.getcwd(), ext='wiki'):
     filepath = os.path.join(root, folder, filename + "." + ext)
     if os.path.exists(filepath):
         click.echo(click.style("File exists, operation aborted", fg='red'))
-        return False
     else:
         with open(filepath, 'w') as file_content:
             file_content.write(content)
+        click.echo(ui.style_info("Review created"))
     return True

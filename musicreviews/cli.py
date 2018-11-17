@@ -84,11 +84,28 @@ def queue(ctx):
         with open(queue_path, 'w') as file_content:
             file_content.write(json.dumps(queue))
 
-    # prompt the user for each album in the queue
-    idx = 0
-    length = len(queue)
+    # show artists in queue
+    artists_in_queue = sorted(set([album['artist'] for album in queue]))
+    click.echo(ui.style_info("Artists in queue:"))
+    for i, artist in enumerate(artists_in_queue):
+        click.echo(ui.style_enumerate(i, artist))
+
+    # prompt the user for a direct artist search
+    artist = utils.completion_input(
+        ui.style_prompt("Search artist in queue"), [album['artist'] for album in queue]
+    )
+    matches = [album for album in queue if album['artist'] == artist]
+
+    # if no matches, prompt the user for each album in the queue
+    if len(matches) == 0:
+        click.echo(ui.style_info("No matches found, going over the whole queue"))
+        matches = queue
+
+    # prompt for review creation and delete reviewed albums from queue
     uris_to_pop = []
-    for album in queue:
+    idx = 0
+    length = len(matches)
+    for album in matches:
         idx += 1
         click.echo(
             click.style(f"Item {idx}/{length}: ", fg='white')
@@ -216,9 +233,8 @@ def create(ctx, uri, manual, y):
         review = creator.fill_template(
             template, artist, album, year, rating, uri, picks=tracks_idx, tracks=tracks
         )
-        if creator.write_review(review, folder, filename, root=root_dir):
-            click.echo(ui.style_info("Review created"))
-            return True
+        creator.write_review(review, folder, filename, root=root_dir)
+        return True
     return False
 
 
