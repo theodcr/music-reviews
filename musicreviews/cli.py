@@ -10,7 +10,7 @@ from functools import partial
 import click
 
 from musicreviews import creator, indexer, ui, utils
-from musicreviews.config import CONFIG
+from musicreviews.config import CONFIG, CONFIG_PATH, PROJECT_ROOT
 from powerspot.helpers import get_username
 from powerspot.operations import (
     get_album,
@@ -236,6 +236,20 @@ def create(ctx, uri, manual, y):
         creator.write_review(review, folder, filename, root=root_dir)
         return True
     return False
+
+
+@main.command()
+@click.pass_context
+def config(ctx):
+    """Configure review library settings"""
+    for category_name, category in CONFIG.items():
+        for field, value in category.items():
+            new_value = click.prompt(ui.style_prompt(field), default=value)
+            CONFIG[category_name][field] = new_value
+
+    with open(CONFIG_PATH, 'w') as configfile:
+        click.echo(ui.style_info_path("Saving configuration at", CONFIG_PATH))
+        CONFIG.write(configfile)
 
 
 if __name__ == '__main__':
