@@ -7,6 +7,7 @@ import os
 import re
 
 import click
+
 from .utils import escape_yaml_specials
 
 
@@ -42,8 +43,10 @@ def fill_template(
         # indent track list
         track = ''
         tracks_string = '\n'.join(
-            [f'    {i+1}: {escape_yaml_specials(track)}'
-             for i, track in enumerate(tracks)]
+            [
+                f'    {i+1}: {escape_yaml_specials(track)}'
+                for i, track in enumerate(tracks)
+            ]
         )
     else:
         tracks_string = ''
