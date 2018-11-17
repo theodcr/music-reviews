@@ -19,11 +19,6 @@ from powerspot.operations import (
     search_artist,
 )
 
-MIN_RATING = int(CONFIG['creation']['min_rating'])
-MAX_RATING = int(CONFIG['creation']['max_rating'])
-MIN_YEAR = int(CONFIG['creation']['min_year'])
-MAX_YEAR = datetime.datetime.now().year
-
 
 @click.group(chain=True)
 @click.pass_context
@@ -131,7 +126,9 @@ def create(ctx, uri, manual, y):
         year = click.prompt(
             ui.style_prompt("Year"),
             value_proc=partial(
-                utils.check_integer_input, min_value=MIN_YEAR, max_value=MAX_YEAR
+                utils.check_integer_input,
+                min_value=int(CONFIG['creation']['min_year']),
+                max_value=datetime.datetime.now().year,
             ),
         )
         # arbitrary maximum number of tracks
@@ -192,7 +189,9 @@ def create(ctx, uri, manual, y):
     rating = click.prompt(
         ui.style_prompt("Rating"),
         value_proc=partial(
-            utils.check_integer_input, min_value=MIN_RATING, max_value=MAX_RATING
+            utils.check_integer_input,
+            min_value=int(CONFIG['creation']['min_rating']),
+            max_value=int(CONFIG['creation']['max_rating']),
         ),
     )
 
