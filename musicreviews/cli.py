@@ -76,12 +76,14 @@ def queue(ctx):
         queue_uris = set([album['uri'] for album in queue])
         for uri in saved_uris - known_uris - queue_uris:
             album_data = get_album(uri)
-            queue.append({
-                'artist': album_data['artists'][0]['name'],
-                'album': album_data['name'],
-                'year': album_data['release_date'][:4],
-                'uri': uri,
-            })
+            queue.append(
+                {
+                    'artist': album_data['artists'][0]['name'],
+                    'album': album_data['name'],
+                    'year': album_data['release_date'][:4],
+                    'uri': uri,
+                }
+            )
         click.echo(ui.style_info(f"Queue contains {len(queue)} albums"))
         # save current queue
         with open(queue_path, 'w') as file_content:
@@ -101,11 +103,17 @@ def queue(ctx):
             # pop album from queue only if review creation is confirmed
             if ctx.invoke(create, uri=album['uri']):
                 uris_to_pop.append(album['uri'])
-    updated_queue = [album for album in queue if album['uri'] not in uris_to_pop]
-
-    # save updated queue
-    with open(queue_path, 'w') as file_content:
-        file_content.write(json.dumps(updated_queue))
+                # rewrite queue in case procedure is canceled later
+                with open(queue_path, 'w') as file_content:
+                    file_content.write(
+                        json.dumps(
+                            [
+                                album
+                                for album in queue
+                                if album['uri'] not in uris_to_pop
+                            ]
+                        )
+                    )
 
 
 @main.command()
