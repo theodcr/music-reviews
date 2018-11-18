@@ -9,7 +9,7 @@ from functools import partial
 
 import click
 
-from musicreviews import creator, indexer, ui, utils
+from musicreviews import creator, indexer, reader, ui, utils
 from musicreviews.config import CONFIG, CONFIG_PATH, PROJECT_ROOT
 from powerspot.helpers import get_username
 from powerspot.operations import (
@@ -28,7 +28,7 @@ def main(ctx, username):
     click.echo(click.style(ui.GREET, fg='magenta', bold=True))
     root_dir = os.path.abspath(CONFIG['path']['reviews_directory'])
     click.echo(ui.style_info_path("Review library in directory", root_dir))
-    albums = indexer.build_database(root_dir)
+    albums = reader.build_database(root_dir)
 
     if username is None:
         username = get_username()
@@ -42,7 +42,7 @@ def main(ctx, username):
 
 @main.command()
 @click.pass_context
-def generate(ctx):
+def index(ctx):
     """Generate lists of reviews indexes"""
     indexer.generate_all_lists(ctx.obj['albums'], ctx.obj['root_dir'])
     click.echo(ui.style_info("Lists generated"))
@@ -236,6 +236,13 @@ def create(ctx, uri, manual, y):
         creator.write_review(review, folder, filename, root=root_dir)
         return True
     return False
+
+
+@main.command()
+@click.pass_context
+def debug(ctx):
+    """debug"""
+    print(ctx.obj['albums'])
 
 
 @main.command()

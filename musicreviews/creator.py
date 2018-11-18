@@ -9,6 +9,7 @@ import re
 import click
 
 from .utils import escape_yaml_specials
+from .ui import style_info
 
 
 def import_template(root=os.getcwd(), filename="template.wiki"):
@@ -77,5 +78,5 @@ def write_review(content, folder, filename, root=os.getcwd(), ext='wiki'):
     else:
         with open(filepath, 'w') as file_content:
             file_content.write(content)
-        click.echo(ui.style_info("Review created"))
+        click.echo(style_info("Review created"))
     return True
