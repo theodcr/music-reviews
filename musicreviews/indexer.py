@@ -1,8 +1,11 @@
 """
-Functions for generating various sorted lists of the reviews and ratings
+Functions for generating various sorted lists and indexes of the reviews and ratings
+Each indexer function returns sorted data and parsed data as a string in vimwiki format
 """
 
 import os
+
+from . import wiki_formatter
 
 SORTED_STATES = ['P', 'X', 'O', 'o', '.', ' ']
 STATES_DESCRIPTION = {
@@ -15,18 +18,9 @@ STATES_DESCRIPTION = {
 }
 
 
-def write_file(content, path, newline=False):
-    """Writes the given content in a file, with an optional newline at the end"""
-    with open(path, 'w') as file_content:
-        file_content.write(content)
-        if newline:
-            file_content.write("\n")
-
-
 def sort_artists(albums):
     """Returns the artists sorted by decreasing rating, only artists with more
     than 1 reviewed albums"""
-    output = ""
     artist_tags = set([album['artist_tag'] for album in albums])
     artists = []
     # build the list of artists and compute their ratings
@@ -42,97 +36,108 @@ def sort_artists(albums):
                 }
             )
     sorted_artists = sorted(artists, key=lambda x: x['rating'], reverse=True)
-    for i, artist in enumerate(sorted_artists):
-        output += format_artist(i + 1, artist)
-    return output
+    return (
+        sorted_artists,
+        wiki_formatter.parse_list(sorted_artists, wiki_formatter.format_artist),
+    )
 
 
 def sort_ratings(albums):
     """Returns the rated albums sorted by decreasing rating"""
     sorted_albums = sorted(albums, key=lambda x: x['rating'], reverse=True)
-    output = ""
-    for i, album in enumerate(sorted_albums):
-        output += format_album(i + 1, album)
-    return output
+    return (
+        sorted_albums,
+        wiki_formatter.parse_list(sorted_albums, wiki_formatter.format_album),
+    )
 
 
 def sort_ratings_by_year(albums):
     """Returns the rated albums sorted by decreasing year and
     decreasing rating"""
-    output = ""
     # only work with years present in the database
     years = set([album['year'] for album in albums])
+    sorted_albums = {}
     for year in sorted(years, reverse=True):
-        # title formatting for each year
-        output += format_header(year)
-        sorted_albums = sorted(
+        sorted_albums[year] = sorted(
             [x for x in albums if x['year'] == year],
             key=lambda x: x['rating'],
             reverse=True,
         )
-        for i, album in enumerate(sorted_albums):
-            output += format_album(i + 1, album)
-    return output
+    return (
+        sorted_albums,
+        wiki_formatter.parse_categorised_lists(
+            sorted_albums, wiki_formatter.format_album
+        ),
+    )
 
 
 def sort_ratings_by_decade(albums):
     """Returns the rated albums sorted by decreasing decade and
     decreasing rating"""
-    output = ""
     for album in albums:
         album['decade'] = compute_decade(album['year'])
     decades = set([album['decade'] for album in albums])
+    sorted_albums = {}
     for decade in sorted(decades, reverse=True):
-        output += format_header(decade)
-        sorted_albums = sorted(
+        sorted_albums[decade] = sorted(
             [x for x in albums if x['decade'] == decade],
             key=lambda x: x['rating'],
             reverse=True,
         )
-        for i, album in enumerate(sorted_albums):
-            output += format_album(i + 1, album)
-    return output
+    return (
+        sorted_albums,
+        wiki_formatter.parse_categorised_lists(
+            sorted_albums, wiki_formatter.format_album
+        ),
+    )
 
 
 def all_reviews(albums):
     """Returns a todo list with all reviews and their state"""
-    output = ""
     sorted_albums = sorted(albums, key=lambda x: (x['artist_tag'], x['year']))
-    for album in sorted_albums:
-        output += format_review(album)
-    return output
+    return (
+        sorted_albums,
+        wiki_formatter.parse_list(sorted_albums, wiki_formatter.format_review),
+    )
 
 
 def sort_reviews_date(albums):
     """Returns the reviews sorted by generation date"""
-    output = ""
     sorted_albums = sorted(albums, key=lambda x: x['date'], reverse=True)
-    for album in sorted_albums:
-        output += format_review(album)
-    return output
+    return (
+        sorted_albums,
+        wiki_formatter.parse_list(sorted_albums, wiki_formatter.format_review),
+    )
 
 
 def sort_reviews_state(albums):
     """Returns the reviews sorted by state"""
-    output = ""
     sorted_albums = sorted(albums, key=lambda x: (x['artist_tag'], x['year']))
+    filtered_albums = {}
     for state in SORTED_STATES:
         # title formatting for each state
-        output += format_header(STATES_DESCRIPTION[state])
-        filtered_albums = [x for x in sorted_albums if x['state'] == state]
-        for album in filtered_albums:
-            output += format_review(album)
-    return output
+        state_description = STATES_DESCRIPTION[state]
+        filtered_albums[state_description] = [
+            x for x in sorted_albums if x['state'] == state
+        ]
+    return (
+        sorted_albums,
+        wiki_formatter.parse_categorised_lists(
+            filtered_albums,
+            wiki_formatter.format_review,
+            sorted_keys=(STATES_DESCRIPTION[state] for state in SORTED_STATES),
+        ),
+    )
 
 
 def playlists_by_year(albums):
     """Returns yealy playlists of favorite tracks from albums
     sorted by decreasing year and decreasing rating"""
-    output = ""
     years = set([album['year'] for album in albums])
+    sorted_tracks = {}
     for year in sorted(years, reverse=True):
         i = 0
-        output += format_header(year)
+        sorted_tracks[year] = []
         sorted_albums = sorted(
             [x for x in albums if x['year'] == year],
             key=lambda x: x['rating'],
@@ -141,16 +146,21 @@ def playlists_by_year(albums):
         for album in sorted_albums:
             if album['picks'] is None:
                 continue
-            tracks = [{
-                'artist': album['artist'],
-                'album': album['album'],
-                'track': album['tracks'][p],
-            } for p in album['picks']]
-            for track in tracks:
-                i += 1
-                output += format_track(i, track)
-    print(output)
-    return output
+            tracks = [
+                {
+                    'artist': album['artist'],
+                    'album': album['album'],
+                    'track': album['tracks'][p],
+                }
+                for p in album['picks']
+            ]
+            sorted_tracks[year].extend(tracks)
+    return (
+        sorted_tracks,
+        wiki_formatter.parse_categorised_lists(
+            sorted_tracks, wiki_formatter.format_track
+        ),
+    )
 
 
 def compute_artist_rating(ratings):
@@ -163,39 +173,9 @@ def compute_decade(year):
     return 10 * (year // 10)
 
 
-def format_header(string):
-    """Returns the string as a header in the vimwiki format"""
-    return "\n= {} =\n\n".format(string)
-
-
-def format_artist(index, artist):
-    """Returns a formatted line of text describing the artist"""
-    return "{}. [[{artist_tag}/|{artist}]] - {rating}\n".format(index, **artist)
-
-
-def format_album(index, album):
-    """Returns a formatted line of text describing the album"""
-    return (
-        "{}. {artist} - {album} - {year} - {rating} - "
-        + "[[{artist_tag}/{album_tag}|review]]\n"
-    ).format(index, **album)
-
-
-def format_track(index, track):
-    """Returns a formatted line of text describing the track"""
-    return (
-        "{}. {artist} - {album} - {track}\n"
-    ).format(index, **track)
-
-
-def format_review(album):
-    """Returns a formatted line showing the review state and its reference"""
-    return "- [{state}] [[{artist_tag}/{album_tag}]]\n".format(**album)
-
-
 def generate_all_lists(albums, root_dir):
-    """Imports reviews and writes all possible files in vimwiki format"""
-    functions = [
+    """Writes all possible indexes in vimwiki format"""
+    functions = (
         sort_ratings,
         sort_ratings_by_year,
         sort_ratings_by_decade,
@@ -204,7 +184,7 @@ def generate_all_lists(albums, root_dir):
         sort_reviews_date,
         sort_artists,
         playlists_by_year,
-    ]
+    )
     file_names = [
         'sorted_albums.wiki',
         'sorted_by_year.wiki',
@@ -216,5 +196,5 @@ def generate_all_lists(albums, root_dir):
         'playlists_by_year.wiki',
     ]
     for func, file_name in zip(functions, file_names):
-        write_file(func(albums), os.path.join(root_dir, file_name))
+        wiki_formatter.write_file(func(albums)[1], os.path.join(root_dir, file_name))
     return albums
