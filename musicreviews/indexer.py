@@ -125,6 +125,34 @@ def sort_reviews_state(albums):
     return output
 
 
+def playlists_by_year(albums):
+    """Returns yealy playlists of favorite tracks from albums
+    sorted by decreasing year and decreasing rating"""
+    output = ""
+    years = set([album['year'] for album in albums])
+    for year in sorted(years, reverse=True):
+        i = 0
+        output += format_header(year)
+        sorted_albums = sorted(
+            [x for x in albums if x['year'] == year],
+            key=lambda x: x['rating'],
+            reverse=True,
+        )
+        for album in sorted_albums:
+            if album['picks'] is None:
+                continue
+            tracks = [{
+                'artist': album['artist'],
+                'album': album['album'],
+                'track': album['tracks'][p],
+            } for p in album['picks']]
+            for track in tracks:
+                i += 1
+                output += format_track(i, track)
+    print(output)
+    return output
+
+
 def compute_artist_rating(ratings):
     """Returns an artist rating based on the given ratings of its albums"""
     return float(sum(ratings)) / max(len(ratings), 1)
@@ -153,6 +181,13 @@ def format_album(index, album):
     ).format(index, **album)
 
 
+def format_track(index, track):
+    """Returns a formatted line of text describing the track"""
+    return (
+        "{}. {artist} - {album} - {track}\n"
+    ).format(index, **track)
+
+
 def format_review(album):
     """Returns a formatted line showing the review state and its reference"""
     return "- [{state}] [[{artist_tag}/{album_tag}]]\n".format(**album)
@@ -168,6 +203,7 @@ def generate_all_lists(albums, root_dir):
         sort_reviews_state,
         sort_reviews_date,
         sort_artists,
+        playlists_by_year,
     ]
     file_names = [
         'sorted_albums.wiki',
@@ -177,6 +213,7 @@ def generate_all_lists(albums, root_dir):
         'reviews_state.wiki',
         'reviews_date.wiki',
         'sorted_artists.wiki',
+        'playlists_by_year.wiki',
     ]
     for func, file_name in zip(functions, file_names):
         write_file(func(albums), os.path.join(root_dir, file_name))

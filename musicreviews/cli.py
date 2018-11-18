@@ -242,7 +242,7 @@ def create(ctx, uri, manual, y):
 @click.pass_context
 def debug(ctx):
     """debug"""
-    print(ctx.obj['albums'])
+    indexer.playlists_by_year(ctx.obj['albums'])
 
 
 @main.command()
