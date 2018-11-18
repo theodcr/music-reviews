@@ -42,7 +42,7 @@ def format_header(string):
 
 def format_artist(index, data):
     """Returns a formatted line of text describing the artist"""
-    return "{}. [[{artist_tag}/|{artist}]] - {rating}\n".format(index, **data)
+    return "{}. [[{artist_tag}/|{artist}]] - {rating:.1f}\n".format(index, **data)
 
 
 def format_album(index, data):
