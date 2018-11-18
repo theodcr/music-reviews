@@ -175,26 +175,18 @@ def compute_decade(year):
 
 def generate_all_lists(albums, root_dir):
     """Writes all possible indexes in vimwiki format"""
-    functions = (
-        sort_ratings,
-        sort_ratings_by_year,
-        sort_ratings_by_decade,
-        all_reviews,
-        sort_reviews_state,
-        sort_reviews_date,
-        sort_artists,
-        playlists_by_year,
+    pipelines = (
+        (sort_ratings, 'sorted_albums.wiki'),
+        (sort_ratings_by_year, 'sorted_by_year.wiki'),
+        (sort_ratings_by_decade, 'sorted_by_decade.wiki'),
+        (all_reviews, 'reviews.wiki'),
+        (sort_reviews_state, 'reviews_state.wiki'),
+        (sort_reviews_date, 'reviews_date.wiki'),
+        (sort_artists, 'sorted_artists.wiki'),
+        (playlists_by_year, 'playlists_by_year.wiki'),
     )
-    file_names = [
-        'sorted_albums.wiki',
-        'sorted_by_year.wiki',
-        'sorted_by_decade.wiki',
-        'reviews.wiki',
-        'reviews_state.wiki',
-        'reviews_date.wiki',
-        'sorted_artists.wiki',
-        'playlists_by_year.wiki',
-    ]
-    for func, file_name in zip(functions, file_names):
-        wiki_formatter.write_file(func(albums)[1], os.path.join(root_dir, file_name))
+    for function, file_name in pipelines:
+        wiki_formatter.write_file(
+            function(albums)[1], os.path.join(root_dir, file_name)
+        )
     return albums
