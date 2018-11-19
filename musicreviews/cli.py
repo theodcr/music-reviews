@@ -69,6 +69,17 @@ def queue(ctx):
         saved_uris = set([album['album']['uri'] for album in saved_albums])
         known_uris = set([album['uri'] for album in ctx.obj['albums']])
         queue_uris = set([album['uri'] for album in queue])
+        # prompt for unreviewed albums that were removed from library
+        for uri in queue_uris - saved_uris:
+            album = next(album for album in queue if album['uri'] == uri)
+            click.echo(
+                click.style(f"Unreviewed album was removed from library: ", fg='white')
+                + ui.style_album(album['artist'], album['album'], album['year'])
+            )
+            if click.confirm(ui.style_prompt(f"Remove from queue"), default=True):
+                queue_uris.remove(uri)
+                queue.remove(album)
+        # add new uris to queue
         for uri in saved_uris - known_uris - queue_uris:
             album_data = get_album(uri)
             queue.append(
@@ -92,7 +103,7 @@ def queue(ctx):
 
     # prompt the user for a direct artist search
     artist = utils.completion_input(
-        ui.style_prompt("Search artist in queue"), [album['artist'] for album in queue]
+        ui.style_prompt("Search artist in queue"), artists_in_queue
     )
     matches = [album for album in queue if album['artist'] == artist]
 
