@@ -255,7 +255,21 @@ def create(ctx, uri, manual, y):
 @click.pass_context
 def debug(ctx):
     """debug"""
-    indexer.playlists_by_year(ctx.obj['albums'])
+    sorted_albums = indexer.sort_ratings_by_year(ctx.obj['albums'])[0]
+    picks = {}
+    for year, albums in sorted_albums.items():
+        picks[year] = []
+        for album in albums:
+            print(album)
+            return
+            album_data = get_album(album['uri'])
+            picks[year].append(
+                [
+                    track['uri']
+                    for i, track in enumerate(album_date['tracks']['items'])
+                    if i + 1 in album['picks']
+                ]
+            )
 
 
 @main.command()
