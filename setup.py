@@ -10,7 +10,7 @@ with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
 
 if not os.path.exists(os.path.join(here, 'config', 'config.cfg')):
     shutil.copy(
-        os.path.join(here, 'config', 'config.example.cfg'),
+        os.path.join(here, 'config', 'config.template.cfg'),
         os.path.join(here, 'config', 'config.cfg'),
     )
 
