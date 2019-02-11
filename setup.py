@@ -30,5 +30,6 @@ setup(
     ''',
     install_requires=['Click', 'PyYAML'],
     package_data={'musicreviews': ['config/config.cfg']},
+    include_package_data=True,
     licence='MIT',
 )
