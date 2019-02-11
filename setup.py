@@ -29,5 +29,6 @@ setup(
         musicreviews=musicreviews.cli:main
     ''',
     install_requires=['Click', 'PyYAML'],
+    package_data={'musicreviews': ['config/config.cfg']},
     licence='MIT',
 )

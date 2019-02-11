@@ -10,7 +10,7 @@ from functools import partial
 import click
 
 from musicreviews import creator, indexer, reader, ui, utils
-from musicreviews.config import CONFIG, CONFIG_PATH, PROJECT_ROOT
+from musicreviews.config import CONFIG, CONFIG_PATH
 from powerspot.helpers import get_username
 from powerspot.operations import (
     get_album,
