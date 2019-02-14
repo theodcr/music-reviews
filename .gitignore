@@ -14,3 +14,6 @@ venv/
 
 # misc
 tags*
+
+# spotipy cache
+.cache*
