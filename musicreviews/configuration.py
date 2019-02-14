@@ -1,7 +1,8 @@
 import os
-import click
 from configparser import ConfigParser
 from pkg_resources import Requirement, resource_filename
+
+import click
 
 
 APP_NAME = 'musicreviews'

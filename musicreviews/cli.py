@@ -25,7 +25,7 @@ def main(ctx, username):
     config_path, config_content = configuration.load_config()
     click.echo(ui.style_info_path("Loading configuration at", config_path))
     if config_content is None:
-        click.echo(ui.style_info("Configuration not found, running config command"))
+        click.echo(ui.style_error("Configuration not found, running config command"))
         config_content = ctx.invoke(config)
 
     root_dir = os.path.abspath(config_content['path']['reviews_directory'])

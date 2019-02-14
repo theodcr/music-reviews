@@ -23,6 +23,11 @@ def style_info(message):
     return click.style(message, fg='blue')
 
 
+def style_error(message):
+    """Returns a unified style for error echos"""
+    return click.style(message, fg='red')
+
+
 def style_enumerate(i, val):
     """Returns a unified style for enumerate items"""
     return click.style(f'{i:2d}', fg='magenta') + ' ' + click.style(val, fg='blue')
@@ -41,4 +46,4 @@ def style_album(artist, album, year):
 
 def style_info_path(message, path):
     """Returns a unified style for information about a path"""
-    return style_info(message) + ' ' + click.style(path, fg='white')
+    return style_info(message) + ' ' + click.style(click.format_filename(path), fg='white')
