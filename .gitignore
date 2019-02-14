@@ -11,7 +11,6 @@ venv/
 # data
 *.wiki
 !template.wiki
-config.cfg
 
 # misc
-tags
+tags*
