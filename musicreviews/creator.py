@@ -9,7 +9,7 @@ import re
 import click
 
 from .utils import escape_yaml_specials
-from .ui import style_info
+from .ui import style_info, style_error
 
 
 def import_template(root=os.getcwd(), filename="template.wiki"):
@@ -74,7 +74,7 @@ def write_review(content, folder, filename, root=os.getcwd(), ext='wiki'):
         click.echo(click.style("Artist not known yet, created folder", fg='cyan'))
     filepath = os.path.join(root, folder, filename + "." + ext)
     if os.path.exists(filepath):
-        click.echo(click.style("File exists, operation aborted", fg='red'))
+        click.echo(style_error("File exists, operation aborted"))
     else:
         with open(filepath, 'w') as file_content:
             file_content.write(content)

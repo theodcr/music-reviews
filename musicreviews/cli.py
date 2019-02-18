@@ -9,15 +9,9 @@ from functools import partial
 
 import click
 
-from musicreviews import creator, indexer, reader, ui, utils
-from musicreviews.config import CONFIG, CONFIG_PATH, PROJECT_ROOT
+from musicreviews import configuration, creator, indexer, reader, ui, utils
 from powerspot.helpers import get_username
-from powerspot.operations import (
-    get_album,
-    get_artist_albums,
-    get_saved_albums,
-    search_artist,
-)
+from powerspot.operations import get_album, get_artist_albums, get_saved_albums, search_artist
 
 
 @click.group(chain=True)
@@ -26,7 +20,15 @@ from powerspot.operations import (
 def main(ctx, username):
     """CLI for music reviews management"""
     click.echo(click.style(ui.GREET, fg='magenta', bold=True))
-    root_dir = os.path.abspath(CONFIG['path']['reviews_directory'])
+    ctx.obj = {}
+
+    config_path, config_content = configuration.load_config()
+    click.echo(ui.style_info_path("Loading configuration at", config_path))
+    if config_content is None:
+        click.echo(ui.style_error("Configuration not found, running config command"))
+        config_content = ctx.invoke(config)
+
+    root_dir = os.path.abspath(config_content['path']['reviews_directory'])
     click.echo(ui.style_info_path("Review library in directory", root_dir))
     albums = reader.build_database(root_dir)
 
@@ -34,10 +36,10 @@ def main(ctx, username):
         username = get_username()
     click.echo(ui.style_info(f"Welcome {username}\n"))
 
-    ctx.obj = {}
     ctx.obj['root_dir'] = root_dir
     ctx.obj['albums'] = albums
     ctx.obj['username'] = username
+    ctx.obj['config'] = config_content
 
 
 @main.command()
@@ -52,7 +54,7 @@ def index(ctx):
 @click.pass_context
 def queue(ctx):
     """Manage the queue of album to review"""
-    queue_path = os.path.abspath(CONFIG['path']['queue'])
+    queue_path = os.path.abspath(ctx.obj['config']['path']['queue'])
     click.echo(ui.style_info_path("Managing queue stored in", queue_path))
 
     # retrieve queue
@@ -102,9 +104,7 @@ def queue(ctx):
         click.echo(ui.style_enumerate(i, artist))
 
     # prompt the user for a direct artist search
-    artist = utils.completion_input(
-        ui.style_prompt("Search artist in queue"), artists_in_queue
-    )
+    artist = utils.completion_input(ui.style_prompt("Search artist in queue"), artists_in_queue)
     matches = [album for album in queue if album['artist'] == artist]
 
     # if no matches, prompt the user for each album in the queue
@@ -129,13 +129,7 @@ def queue(ctx):
                 # rewrite queue in case procedure is canceled later
                 with open(queue_path, 'w') as file_content:
                     file_content.write(
-                        json.dumps(
-                            [
-                                album
-                                for album in queue
-                                if album['uri'] not in uris_to_pop
-                            ]
-                        )
+                        json.dumps([album for album in queue if album['uri'] not in uris_to_pop])
                     )
 
 
@@ -155,7 +149,7 @@ def create(ctx, uri, manual, y):
             ui.style_prompt("Year"),
             value_proc=partial(
                 utils.check_integer_input,
-                min_value=int(CONFIG['creation']['min_year']),
+                min_value=int(ctx.obj['config']['creation']['min_year']),
                 max_value=datetime.datetime.now().year,
             ),
         )
@@ -168,9 +162,7 @@ def create(ctx, uri, manual, y):
     else:
         if uri is None:
             # incremental search to select album in Spotify collection
-            artist_query = utils.completion_input(
-                ui.style_prompt("Artist search"), known_artists
-            )
+            artist_query = utils.completion_input(ui.style_prompt("Artist search"), known_artists)
 
             res_artists = search_artist(artist_query)['items']
             artists = [artist['name'] for artist in res_artists]
@@ -186,7 +178,7 @@ def create(ctx, uri, manual, y):
             artist_uri = res_artists[artist_idx]['uri']
 
             res_albums = get_artist_albums(
-                artist_uri, country=CONFIG['spotify']['country']
+                artist_uri, country=ctx.obj['config']['spotify']['country']
             )['items']
             albums = [album['name'] for album in res_albums]
             for i, album in enumerate(albums):
@@ -211,17 +203,15 @@ def create(ctx, uri, manual, y):
 
         tracks_idx = click.prompt(
             ui.style_prompt("Favorite tracks numbers"),
-            value_proc=partial(
-                utils.list_integers_input, min_value=1, max_value=len(tracks)
-            ),
+            value_proc=partial(utils.list_integers_input, min_value=1, max_value=len(tracks)),
         )
 
     rating = click.prompt(
         ui.style_prompt("Rating"),
         value_proc=partial(
             utils.check_integer_input,
-            min_value=int(CONFIG['creation']['min_rating']),
-            max_value=int(CONFIG['creation']['max_rating']),
+            min_value=int(ctx.obj['config']['creation']['min_rating']),
+            max_value=int(ctx.obj['config']['creation']['max_rating']),
         ),
     )
 
@@ -276,14 +266,21 @@ def debug(ctx):
 @click.pass_context
 def config(ctx):
     """Configure review library settings"""
-    for category_name, category in CONFIG.items():
+    config_path, config = configuration.load_config()
+    if config is None:
+        config_path, config = configuration.load_config(load_template=True)
+
+    click.echo(ui.style_info("Setting configuration fields"))
+    for category_name, category in config.items():
         for field, value in category.items():
             new_value = click.prompt(ui.style_prompt(field), default=value)
-            CONFIG[category_name][field] = new_value
+            if category_name == 'path':
+                new_value = os.path.abspath(new_value)
+                print(new_value)
+            config[category_name][field] = new_value
 
-    with open(CONFIG_PATH, 'w') as configfile:
-        click.echo(ui.style_info_path("Saving configuration at", CONFIG_PATH))
-        CONFIG.write(configfile)
+    click.echo(ui.style_info_path("Saving configuration at", configuration.write_config(config)))
+    return config
 
 
 if __name__ == '__main__':

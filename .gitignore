@@ -1,13 +1,19 @@
 # python
-__pycache__/
-*.py[cod]
-*$py.class
+build/
+dist/
 *.egg-info
+*.egg
+*.py[cod]
+__pycache__/
+*$py.class
+venv/
 
 # data
 *.wiki
 !template.wiki
-config.cfg
 
 # misc
-tags
+tags*
+
+# spotipy cache
+.cache*

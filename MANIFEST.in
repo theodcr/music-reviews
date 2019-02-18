@@ -1,0 +1,4 @@
+include *.md
+include LICENSE
+include config.template.cfg
+recursive-include musicreviews *.py
