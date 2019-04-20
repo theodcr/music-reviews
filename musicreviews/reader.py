@@ -1,5 +1,5 @@
 """
-Functions for building the database of reviews
+Functions for building the database of reviews by reading the present files.
 """
 
 import glob
@@ -13,7 +13,7 @@ END_HEADER = '\n\.\.\.\n'
 
 
 def empty_album():
-    """Returns an empty dictionary to store album data"""
+    """Returns an empty dictionary to store album data."""
     return {
         'artist_tag': "",
         'album_tag': "",
@@ -30,8 +30,9 @@ def empty_album():
 
 
 def build_database(root_dir=os.getcwd(), placeholders=False):
-    """Finds reviews and builds a database using their tags and content
-    Set placeholders to True if tags are written as '%tag: value'
+    """Finds reviews and builds a database using their tags and content.
+    By default decodes the yaml header to decode tags.
+    If placeholders is set to True, docdes tags written as '%tag: value'.
     """
     albums = []
     # find reviews in folders
@@ -53,7 +54,7 @@ def build_database(root_dir=os.getcwd(), placeholders=False):
 
 
 def decode_yaml(file_content, album):
-    """Read the content of a review to find the album tags written in a YAML header"""
+    """Read the content of a review to find the album tags written in a YAML header."""
     review = file_content.read()
     __, header, album['content'] = re.split(
         f'{START_HEADER}|{END_HEADER}', review, maxsplit=2
@@ -64,7 +65,7 @@ def decode_yaml(file_content, album):
 
 
 def decode_placeholders(file_content, album):
-    """Read the content of a review to find the album tags written as placeholders"""
+    """Read the content of a review to find the album tags written as placeholders."""
     while True:
         words = file_content.readline().split()
         if len(words) == 0 or words[0][0] != '%':
@@ -76,4 +77,3 @@ def decode_placeholders(file_content, album):
     album['content'] = file_content.read()
     print(album)
     return album
-

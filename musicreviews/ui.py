@@ -1,5 +1,5 @@
 """
-Helpers for CLI appearence and UI
+Helpers for CLI appearence and UI.
 """
 
 import click
@@ -14,27 +14,27 @@ GREET = """
 
 
 def style_prompt(message):
-    """Returns a unified style for click prompts"""
+    """Returns a unified style for click prompts."""
     return click.style(message, fg='cyan')
 
 
 def style_info(message):
-    """Returns a unified style for general echos about program state"""
+    """Returns a unified style for general echos about program state."""
     return click.style(message, fg='blue')
 
 
 def style_error(message):
-    """Returns a unified style for error echos"""
+    """Returns a unified style for error echos."""
     return click.style(message, fg='red')
 
 
 def style_enumerate(i, val):
-    """Returns a unified style for enumerate items"""
+    """Returns a unified style for enumerate items."""
     return click.style(f'{i:2d}', fg='magenta') + ' ' + click.style(val, fg='blue')
 
 
 def style_album(artist, album, year):
-    """Returns a unified style for albums"""
+    """Returns a unified style for albums."""
     return (
         click.style(artist, fg='magenta', bold=True)
         + click.style(' - ', fg='white')
@@ -45,5 +45,5 @@ def style_album(artist, album, year):
 
 
 def style_info_path(message, path):
-    """Returns a unified style for information about a path"""
+    """Returns a unified style for information about a path."""
     return style_info(message) + ' ' + click.style(click.format_filename(path), fg='white')

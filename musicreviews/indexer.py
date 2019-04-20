@@ -1,6 +1,8 @@
 """
-Functions for generating various sorted lists and indexes of the reviews and ratings
-Each indexer function returns sorted data and parsed data as a string in vimwiki format
+Functions for generating various sorted lists and indexes of the reviews and ratings.
+Each indexer function returns:
+- sorted data as a dictionary
+- parsed data as a string in vimwiki format
 """
 
 import os
@@ -19,8 +21,9 @@ STATES_DESCRIPTION = {
 
 
 def sort_artists(albums):
-    """Returns the artists sorted by decreasing rating, only artists with more
-    than 1 reviewed albums"""
+    """Returns the artists sorted by decreasing mean album rating.
+    Only artists with more than 1 reviewed albums are considered.
+    """
     artist_tags = set([album['artist_tag'] for album in albums])
     artists = []
     # build the list of artists and compute their ratings
@@ -43,7 +46,7 @@ def sort_artists(albums):
 
 
 def sort_ratings(albums):
-    """Returns the rated albums sorted by decreasing rating"""
+    """Returns the rated albums sorted by decreasing rating."""
     sorted_albums = sorted(albums, key=lambda x: x['rating'], reverse=True)
     return (
         sorted_albums,
@@ -52,9 +55,7 @@ def sort_ratings(albums):
 
 
 def sort_ratings_by_year(albums):
-    """Returns the rated albums sorted by decreasing year and
-    decreasing rating"""
-    # only work with years present in the database
+    """Returns the rated albums sorted by decreasing year and rating."""
     years = set([album['year'] for album in albums])
     sorted_albums = {}
     for year in sorted(years, reverse=True):
@@ -72,8 +73,7 @@ def sort_ratings_by_year(albums):
 
 
 def sort_ratings_by_decade(albums):
-    """Returns the rated albums sorted by decreasing decade and
-    decreasing rating"""
+    """Returns the rated albums sorted by decreasing decade and rating."""
     for album in albums:
         album['decade'] = compute_decade(album['year'])
     decades = set([album['decade'] for album in albums])
@@ -93,7 +93,7 @@ def sort_ratings_by_decade(albums):
 
 
 def all_reviews(albums):
-    """Returns a todo list with all reviews and their state"""
+    """Returns a todo list with all album reviews and their state."""
     sorted_albums = sorted(albums, key=lambda x: (x['artist_tag'], x['year']))
     return (
         sorted_albums,
@@ -102,7 +102,7 @@ def all_reviews(albums):
 
 
 def sort_reviews_date(albums):
-    """Returns the reviews sorted by generation date"""
+    """Returns the reviews sorted by generation date."""
     sorted_albums = sorted(albums, key=lambda x: x['date'], reverse=True)
     return (
         sorted_albums,
@@ -111,7 +111,7 @@ def sort_reviews_date(albums):
 
 
 def sort_reviews_state(albums):
-    """Returns the reviews sorted by state"""
+    """Returns the reviews sorted by state."""
     sorted_albums = sorted(albums, key=lambda x: (x['artist_tag'], x['year']))
     filtered_albums = {}
     for state in SORTED_STATES:
@@ -131,8 +131,9 @@ def sort_reviews_state(albums):
 
 
 def playlists_by_year(albums):
-    """Returns yealy playlists of favorite tracks from albums
-    sorted by decreasing year and decreasing rating"""
+    """Returns yearly playlists of favorite tracks from albums
+    sorted by decreasing year and decreasing rating.
+    """
     years = set([album['year'] for album in albums])
     sorted_tracks = {}
     for year in sorted(years, reverse=True):
@@ -164,17 +165,17 @@ def playlists_by_year(albums):
 
 
 def compute_artist_rating(ratings):
-    """Returns an artist rating based on the given ratings of its albums"""
+    """Returns an artist rating based on the ratings of its albums."""
     return float(sum(ratings)) / max(len(ratings), 1)
 
 
 def compute_decade(year):
-    """Returns the decade of the given year"""
+    """Returns the decade of the given year."""
     return 10 * (year // 10)
 
 
 def generate_all_lists(albums, root_dir):
-    """Writes all possible indexes in vimwiki format"""
+    """Writes all possible indexes in vimwiki format."""
     pipelines = (
         (sort_ratings, 'sorted_albums.wiki'),
         (sort_ratings_by_year, 'sorted_by_year.wiki'),

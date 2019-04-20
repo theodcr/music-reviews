@@ -1,5 +1,5 @@
 """
-Helpers for creating a review file using given album data
+Helpers for creating a review file using given album data.
 """
 
 import datetime
@@ -13,7 +13,7 @@ from .ui import style_info, style_error
 
 
 def import_template(root=os.getcwd(), filename="template.wiki"):
-    """Returns the review template as a string"""
+    """Returns the review template as a string."""
     with open(os.path.join(root, filename)) as file_content:
         template = file_content.read()
     return template
@@ -31,7 +31,7 @@ def fill_template(
     state=None,
     content=None,
 ):
-    """Converts the fiels and fills the template review"""
+    """Converts the fields and fills the template review."""
     today = datetime.datetime.now().strftime("%Y-%m-%d")
     uri = uri or ''
     state = state or '.'
@@ -67,7 +67,7 @@ def fill_template(
 
 def write_review(content, folder, filename, root=os.getcwd(), ext='wiki'):
     """Writes the review file using the given data.
-    Returns True to confirm review creation
+    Returns True to confirm review creation.
     """
     if not os.path.exists(os.path.join(root, folder)):
         os.makedirs(os.path.join(root, folder))

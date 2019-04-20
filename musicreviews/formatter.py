@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Formats and exports a review file"""
+"""
+Formats and exports a review file.
+WIP: some functions are deprecated, and a formatting system must be built.
+"""
 
 import os
 import re
@@ -7,20 +10,20 @@ import sys
 
 
 def read_file(filename):
-    """Returns the review as a string"""
+    """Returns the review as a string."""
     with open(filename, 'r') as file_content:
         output = file_content.read()
     return output
 
 
 def write_file(content, filename):
-    """Writes the given content in a file"""
+    """Writes the given content in a file."""
     with open(filename, 'w') as file_content:
         file_content.write(content)
 
 
 def find_review():
-    """Returns the relative path to the review"""
+    """Returns the relative path to the review."""
     if len(sys.argv) > 1:
         path = sys.argv[1]
         if os.path.exists(path):
@@ -30,7 +33,7 @@ def find_review():
 
 
 def strip_review(string):
-    """Returns the body of the review, strips the header and footer"""
+    """Returns the body of the review, strips the header and footer."""
     lines = string.split("\n")
     body = ""
     for line in lines:
@@ -44,7 +47,7 @@ def strip_review(string):
 
 
 def format_rating(album):
-    """Format the album rating in a short note in Wiki syntax"""
+    """Format the album rating in a short note in Wiki syntax."""
     output = f"\n*Note :* {album['rating']}/100"
     if album['rating'] % 10 != 0:
         output += f", arrondi à {round(album['rating']/10)}/10"
