@@ -93,7 +93,7 @@ def sort_ratings_by_decade(albums):
 
 
 def all_reviews(albums):
-    """Returns a todo list with all album reviews and their state."""
+    """Returns a list of all album reviews and their state."""
     sorted_albums = sorted(albums, key=lambda x: (x['artist_tag'], x['year']))
     return (
         sorted_albums,

@@ -7,7 +7,7 @@ import click
 
 APP_NAME = 'musicreviews'
 CONFIG_FILENAME = 'config.cfg'
-TEMPLATE_FILENAME = 'config/config.template.cfg'
+TEMPLATE_FILENAME = 'config.template.cfg'
 
 
 def write_config(config):
