@@ -243,27 +243,6 @@ def create(ctx, uri, manual, y):
 
 @main.command()
 @click.pass_context
-def debug(ctx):
-    """debug"""
-    sorted_albums = indexer.sort_ratings_by_year(ctx.obj['albums'])[0]
-    picks = {}
-    for year, albums in sorted_albums.items():
-        picks[year] = []
-        for album in albums:
-            print(album)
-            return
-            album_data = get_album(album['uri'])
-            picks[year].append(
-                [
-                    track['uri']
-                    for i, track in enumerate(album_date['tracks']['items'])
-                    if i + 1 in album['picks']
-                ]
-            )
-
-
-@main.command()
-@click.pass_context
 def config(ctx):
     """Configure review library settings."""
     config_path, config = configuration.load_config()
@@ -281,6 +260,36 @@ def config(ctx):
 
     click.echo(ui.style_info_path("Saving configuration at", configuration.write_config(config)))
     return config
+
+
+@main.command()
+@click.pass_context
+@click.option('--all', '-a', is_flag=True, help="export all reviews in library")
+@click.option('--format', '-f', help="export format: md/html")
+def export(ctx, all, format):
+    """Exports a review or all reviews to markdown or HTML."""
+    pass
+
+
+@main.command()
+@click.pass_context
+def debug(ctx):
+    """debug"""
+    sorted_albums = indexer.sort_ratings_by_year(ctx.obj['albums'])[0]
+    picks = {}
+    for year, albums in sorted_albums.items():
+        picks[year] = []
+        for album in albums:
+            print(album)
+            return
+            album_data = get_album(album['uri'])
+            picks[year].append(
+                [
+                    track['uri']
+                    for i, track in enumerate(album_date['tracks']['items'])
+                    if i + 1 in album['picks']
+                ]
+            )
 
 
 if __name__ == '__main__':
