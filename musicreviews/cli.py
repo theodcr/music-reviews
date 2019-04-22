@@ -245,18 +245,33 @@ def create(ctx, uri, manual, y):
 @click.pass_context
 def config(ctx):
     """Configure review library settings."""
-    config_path, config = configuration.load_config()
+    __, template_config = configuration.load_config(load_template=True)
+    __, config = configuration.load_config()
     if config is None:
-        config_path, config = configuration.load_config(load_template=True)
+        config = template_config
 
-    click.echo(ui.style_info("Setting configuration fields"))
+    click.echo(ui.style_info("Setting configuration fields:"))
     for category_name, category in config.items():
         for field, value in category.items():
             new_value = click.prompt(ui.style_prompt(field), default=value)
             if category_name == 'path':
                 new_value = os.path.abspath(new_value)
-                print(new_value)
+                click.echo(ui.style_info_path("Absolute path is", new_value))
             config[category_name][field] = new_value
+
+    click.echo(ui.style_info("Checking configuration:"))
+    for category_name, category in template_config.items():
+        if category_name not in config:
+            click.echo(ui.style_error(f"Category {category_name} not in config, creating"))
+            config[category_name] = {}
+        for field, value in category.items():
+            if field not in config[category_name]:
+                click.echo(ui.style_error(f"Field {field} not in config, creating"))
+                new_value = click.prompt(ui.style_prompt(field), default=value)
+                if category_name == 'path':
+                    new_value = os.path.abspath(new_value)
+                    click.echo(ui.style_info_path("Absolute path is", new_value))
+                config[category_name][field] = new_value
 
     click.echo(ui.style_info_path("Saving configuration at", configuration.write_config(config)))
     return config
