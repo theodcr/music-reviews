@@ -59,7 +59,7 @@ def decode_yaml(file_content, album):
     __, header, album['content'] = re.split(
         f'{START_HEADER}|{END_HEADER}', review, maxsplit=2
     )
-    for key, value in yaml.load(header).items():
+    for key, value in yaml.safe_load(header).items():
         album[key] = value
     return album
 
