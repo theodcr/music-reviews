@@ -8,6 +8,7 @@ Each indexer function returns:
 import os
 
 from . import wiki_formatter as formatter
+from .utils import write_file
 
 SORTED_STATES = ['P', 'X', 'O', 'o', '.', ' ']
 STATES_DESCRIPTION = {
@@ -181,5 +182,5 @@ def generate_all_lists(albums, root_dir):
         (playlists_by_year, 'playlists_by_year.wiki'),
     )
     for function, file_name in pipelines:
-        formatter.write_file(function(albums)[1], os.path.join(root_dir, file_name))
+        write_file(function(albums)[1], os.path.join(root_dir, file_name))
     return albums

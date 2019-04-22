@@ -7,14 +7,6 @@ Functions for writing indexed reviews lists in vimwiki format.
 import re
 
 
-def write_file(content, path, newline=False):
-    """Writes the given content in a file, with an optional newline at the end."""
-    with open(path, 'w') as file_content:
-        file_content.write(content)
-        if newline:
-            file_content.write("\n")
-
-
 def parse_list(data, formatter, index_shift=1):
     """Parses each element in data using a formatter function.
     Data is a list of dicts.
