@@ -280,7 +280,7 @@ def config(ctx):
 @main.command()
 @click.pass_context
 @click.option('--all', '-a', is_flag=True, help="export all reviews in library")
-@click.option('--format', '-f', help="export format: md/html")
+@click.option('--format', '-f', help="export format: md/html", default='md')
 def export(ctx, all, format):
     """Exports a review or all reviews to markdown or HTML."""
     if all:
