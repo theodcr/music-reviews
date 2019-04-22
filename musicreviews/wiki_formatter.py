@@ -4,6 +4,8 @@ Functions for writing indexed reviews lists in vimwiki format.
 - Parsers format and combine lists of dictionaries using formatters.
 """
 
+import re
+
 
 def write_file(content, path, newline=False):
     """Writes the given content in a file, with an optional newline at the end."""
@@ -65,3 +67,19 @@ def format_review(__, data):
     Dummy argument to respect standard formatter definition.
     """
     return "- [{state}] [[{artist_tag}/{album_tag}]]\n".format(**data)
+
+
+def format_rating(album):
+    """Format the album rating in a short note in vimwiki syntax."""
+    output = f"\n*Note :* {album['rating']}/100"
+    if album['rating'] % 10 != 0:
+        output += f", arrondi à {round(album['rating']/10)}/10"
+    output += "\n"
+    return output
+
+
+def wiki_to_markdown(string):
+    """Translates the string from vimwiki format to markdown."""
+    string = re.sub('\*', '**', string)
+    string = re.sub('_', '*', string)
+    return string
