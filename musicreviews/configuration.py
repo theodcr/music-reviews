@@ -11,7 +11,7 @@ TEMPLATE_FILENAME = 'config.template.cfg'
 
 
 def write_config(config):
-    """Writes config in local config path and returns this path"""
+    """Writes config object in local config path and returns this path."""
     directory = config_directory()
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -22,7 +22,7 @@ def write_config(config):
 
 
 def load_config(load_template=False):
-    """Loads configuration and returns configuration and path"""
+    """Loads configuration and returns path and configuration object."""
     config = ConfigParser()
     path = template_config_path() if load_template else config_path()
     if os.path.exists(path):
@@ -33,15 +33,15 @@ def load_config(load_template=False):
 
 
 def template_config_path():
-    """Returns package template configuration path"""
+    """Returns path to package template configuration."""
     return resource_filename(Requirement.parse("music-reviews"), TEMPLATE_FILENAME)
 
 
 def config_path():
-    """Returns local package configuration path"""
+    """Returns path to local package configuration."""
     return os.path.join(config_directory(), CONFIG_FILENAME)
 
 
 def config_directory():
-    """Returns local package configuration directory"""
+    """Returns local package configuration directory."""
     return os.path.join(click.get_app_dir(APP_NAME))

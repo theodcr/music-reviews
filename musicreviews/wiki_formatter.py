@@ -1,10 +1,12 @@
 """
-Functions for writing indexed reviews lists in vimwiki format
+Functions for writing indexed reviews lists in vimwiki format.
+- Formatters take an integer index and a dictionary as inputs.
+- Parsers format and combine lists of dictionaries using formatters.
 """
 
 
 def write_file(content, path, newline=False):
-    """Writes the given content in a file, with an optional newline at the end"""
+    """Writes the given content in a file, with an optional newline at the end."""
     with open(path, 'w') as file_content:
         file_content.write(content)
         if newline:
@@ -12,17 +14,17 @@ def write_file(content, path, newline=False):
 
 
 def parse_list(data, formatter, index_shift=1):
-    """Parses each element in data using a formatter
-    Data is a list of dicts
+    """Parses each element in data using a formatter function.
+    Data is a list of dicts.
     """
     output = ''.join([formatter(i + index_shift, item) for i, item in enumerate(data)])
     return output
 
 
 def parse_categorised_lists(data, formatter, index_shift=1, sorted_keys=None):
-    """Parses each element in data using a formatter
-    Data is a dict, each key is a category and each value is a list of dicts
-    Title formatting for each category
+    """Parses each element in data using a formatter function.
+    Data is a dict, each key is a category and each value is a list of dicts.
+    Adds a title formatting for each category.
     """
     if sorted_keys is None:
         sorted_keys = sorted(data.keys(), reverse=True)
@@ -36,17 +38,17 @@ def parse_categorised_lists(data, formatter, index_shift=1, sorted_keys=None):
 
 
 def format_header(string):
-    """Returns the string as a header in the vimwiki format"""
+    """Returns the string as a header in the vimwiki format."""
     return "\n= {} =\n\n".format(string)
 
 
 def format_artist(index, data):
-    """Returns a formatted line of text describing the artist"""
+    """Returns a formatted line of text describing the artist."""
     return "{}. [[{artist_tag}/|{artist}]] - {rating:.1f}\n".format(index, **data)
 
 
 def format_album(index, data):
-    """Returns a formatted line of text describing the album"""
+    """Returns a formatted line of text describing the album."""
     return (
         "{}. {artist} - {album} - {year} - {rating} - "
         + "[[{artist_tag}/{album_tag}|review]]\n"
@@ -54,12 +56,12 @@ def format_album(index, data):
 
 
 def format_track(index, data):
-    """Returns a formatted line of text describing the track"""
+    """Returns a formatted line of text describing the track."""
     return ("{}. {artist} - {album} - {track}\n").format(index, **data)
 
 
 def format_review(__, data):
-    """Returns a formatted line showing the review state and its reference
-    Dummy argument to respect standard formatter definition
+    """Returns a formatted line showing the review state and its reference tags.
+    Dummy argument to respect standard formatter definition.
     """
     return "- [{state}] [[{artist_tag}/{album_tag}]]\n".format(**data)

@@ -1,5 +1,5 @@
 """
-CLI of the package to access functions
+CLI of the package to access functions.
 """
 
 import datetime
@@ -18,7 +18,7 @@ from powerspot.operations import get_album, get_artist_albums, get_saved_albums,
 @click.pass_context
 @click.option('--username', default=lambda: os.getenv('SPOTIFY_USER'))
 def main(ctx, username):
-    """CLI for music reviews management"""
+    """CLI for album reviews management."""
     click.echo(click.style(ui.GREET, fg='magenta', bold=True))
     ctx.obj = {}
 
@@ -45,7 +45,7 @@ def main(ctx, username):
 @main.command()
 @click.pass_context
 def index(ctx):
-    """Generate lists of reviews indexes"""
+    """Generate various reviews indexes and lists."""
     indexer.generate_all_lists(ctx.obj['albums'], ctx.obj['root_dir'])
     click.echo(ui.style_info("Lists generated"))
 
@@ -53,7 +53,7 @@ def index(ctx):
 @main.command()
 @click.pass_context
 def queue(ctx):
-    """Manage the queue of album to review"""
+    """Manage the queue of albums to review."""
     queue_path = os.path.abspath(ctx.obj['config']['path']['queue'])
     click.echo(ui.style_info_path("Managing queue stored in", queue_path))
 
@@ -139,7 +139,7 @@ def queue(ctx):
 @click.option('-y', is_flag=True, help="confirm review creation")
 @click.pass_context
 def create(ctx, uri, manual, y):
-    """Create a review using data retrieved from Spotify or manually entered"""
+    """Create a review using data retrieved from Spotify or manually entered."""
     known_artists = [x['artist'] for x in ctx.obj['albums']]
     if manual:
         # manual input of data
@@ -265,7 +265,7 @@ def debug(ctx):
 @main.command()
 @click.pass_context
 def config(ctx):
-    """Configure review library settings"""
+    """Configure review library settings."""
     config_path, config = configuration.load_config()
     if config is None:
         config_path, config = configuration.load_config(load_template=True)
