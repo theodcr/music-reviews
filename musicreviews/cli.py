@@ -283,14 +283,20 @@ def config(ctx):
 @click.option('--format', '-f', help="export format: md/html")
 def export(ctx, all, format):
     """Exports a review or all reviews to markdown or HTML."""
-    if not all:
+    if all:
+        albums_to_export = ctx.obj['albums']
+    else:
         artist_tags = [x['artist_tag'] for x in ctx.obj['albums']]
         artist_tag = utils.completion_input(ui.style_prompt("Artist tag of review to export"), artist_tags)
 
-        album_tags = [album['album_tag'] for album in ctx.obj['albums'] if album['artist_tag'] == artist_tag]
+        artist_albums = [album for album in ctx.obj['albums'] if album['artist_tag'] == artist_tag]
+        album_tags = [album['album_tag'] for album in artist_albums]
+        click.echo(ui.style_info("Album reviews tags:"))
         for i, tag in enumerate(album_tags):
             click.echo(ui.style_enumerate(i, tag))
         album_tag = utils.completion_input(ui.style_prompt("Album tag of review to export"), album_tags)
+
+        albums_to_export = [album for album in artist_albums if album['album_tag'] == album_tag]
 
 
 @main.command()
