@@ -9,7 +9,7 @@ from functools import partial
 
 import click
 
-from musicreviews import configuration, creator, indexer, reader, ui, utils
+from musicreviews import configuration, creator, exporter, indexer, reader, ui, utils
 from powerspot.helpers import get_username
 from powerspot.operations import get_album, get_artist_albums, get_saved_albums, search_artist
 
@@ -286,6 +286,7 @@ def export(ctx, all, format):
     if all:
         albums_to_export = ctx.obj['albums']
     else:
+        # TODO: input validation
         artist_tags = [x['artist_tag'] for x in ctx.obj['albums']]
         artist_tag = utils.completion_input(ui.style_prompt("Artist tag of review to export"), artist_tags)
 
@@ -297,6 +298,11 @@ def export(ctx, all, format):
         album_tag = utils.completion_input(ui.style_prompt("Album tag of review to export"), album_tags)
 
         albums_to_export = [album for album in artist_albums if album['album_tag'] == album_tag]
+
+    export_dir = ctx.obj['config']['path']['export_directory']
+    click.echo(ui.style_info_path("Exporting in directory", export_dir))
+    for album in albums_to_export:
+        exporter.export_review(album, root=export_dir, extension=format)
 
 
 @main.command()

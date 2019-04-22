@@ -65,15 +65,23 @@ def fill_template(
     )
 
 
-def write_review(content, folder, filename, root=os.getcwd(), ext='wiki'):
+def write_review(
+    content,
+    folder,
+    filename,
+    root=os.getcwd(),
+    extension='wiki',
+    is_export=False
+):
     """Writes the review file using the given data.
     Returns True to confirm review creation.
+    Set is_export to True if review is not created but exported in a different format.
     """
     if not os.path.exists(os.path.join(root, folder)):
         os.makedirs(os.path.join(root, folder))
         click.echo(click.style("Artist not known yet, created folder", fg='cyan'))
-    filepath = os.path.join(root, folder, filename + "." + ext)
-    if os.path.exists(filepath):
+    filepath = os.path.join(root, folder, filename + "." + extension)
+    if os.path.exists(filepath) and not export:
         click.echo(style_error("File exists, operation aborted"))
     else:
         with open(filepath, 'w') as file_content:
