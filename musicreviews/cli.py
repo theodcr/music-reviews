@@ -237,6 +237,7 @@ def create(ctx, uri, manual, y):
             template, artist, album, year, rating, uri, picks=tracks_idx, tracks=tracks
         )
         creator.write_review(review, folder, filename, root=root_dir)
+        click.echo(style_info("Review created"))
         return True
     return False
 
@@ -303,6 +304,7 @@ def export(ctx, all, format):
     click.echo(ui.style_info_path("Exporting in directory", export_dir))
     for album in albums_to_export:
         exporter.export_review(album, root=export_dir, extension=format)
+    click.echo(ui.style_info("Reviews exported"))
 
 
 @main.command()
