@@ -21,7 +21,7 @@ setup(
         [console_scripts]
         musicreviews=musicreviews.cli:main
     ''',
-    install_requires=['Click', 'powerspot', 'PyYAML'],
+    install_requires=['Click', 'Jinja2', 'powerspot', 'PyYAML'],
     include_package_data=True,
     licence='MIT',
 )
