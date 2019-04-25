@@ -8,8 +8,8 @@ import re
 
 import click
 
-from .utils import escape_yaml_specials
 from .ui import style_info, style_error
+from .utils import escape_yaml_specials, write_file
 
 
 def import_template(root=os.getcwd(), filename="template.wiki"):
@@ -87,6 +87,5 @@ def write_review(
         click.echo(style_error("File exists, operation aborted"))
         return True
 
-    with open(filepath, 'w') as file_content:
-        file_content.write(content)
+    write_file(content, filepath)
     return True
