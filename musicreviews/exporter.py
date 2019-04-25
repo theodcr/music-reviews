@@ -14,10 +14,10 @@ from .creator import fill_template, import_template, write_review
 def export_review(data, root=os.getcwd(), extension='md'):
     """Exports review in given format. Formats metadata and content."""
     template = import_template(root, 'template.' + extension)
-    content = replace_track_tags(data['content']).format(**data)
+    data['content'] = replace_track_tags(data['content']).format(**data)
 
     if extension == 'md':
-        content = wiki_to_markdown(content)
+        data['content'] = wiki_to_markdown(data['content'])
         # ensure tracks are sorted
         tracks = [data['tracks'][i] for i in sorted(data['tracks'])]
         # use general review template
@@ -31,10 +31,11 @@ def export_review(data, root=os.getcwd(), extension='md'):
             picks=data['picks'],
             tracks=tracks,
             state=data['state'],
-            content=content,
+            content=data['content'],
             date=data['date']
         )
     else:
+        data['content'] = wiki_to_html(data['content'])
         formatted_review = fill_html(template, data)
     write_review(
         content=formatted_review,
@@ -55,6 +56,11 @@ def wiki_to_markdown(string):
     """Translates the string from vimwiki format to markdown."""
     string = re.sub('\*', '**', string)
     string = re.sub('_', '*', string)
+    return string
+
+
+def wiki_to_html(string):
+    """Translates the string from vimwiki format to HTML."""
     return string
 
 
