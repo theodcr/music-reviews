@@ -68,10 +68,3 @@ def format_rating(album):
         output += f", arrondi à {round(album['rating']/10)}/10"
     output += "\n"
     return output
-
-
-def wiki_to_markdown(string):
-    """Translates the string from vimwiki format to markdown."""
-    string = re.sub('\*', '**', string)
-    string = re.sub('_', '*', string)
-    return string
