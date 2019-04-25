@@ -32,6 +32,7 @@ def export_review(data, root=os.getcwd(), extension='md'):
             tracks=tracks,
             state=data['state'],
             content=content,
+            date=data['date']
         )
     else:
         formatted_review = fill_html(template, data)

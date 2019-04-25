@@ -30,9 +30,11 @@ def fill_template(
     tracks=None,
     state=None,
     content=None,
+    date=None
 ):
     """Converts the fields and fills the template review."""
-    today = datetime.datetime.now().strftime("%Y-%m-%d")
+    if date is None:
+        date = datetime.datetime.now().strftime("%Y-%m-%d")
     uri = uri or ''
     state = state or '.'
     content = content or ''
@@ -52,7 +54,7 @@ def fill_template(
     else:
         tracks_string = ''
     return template.format(
-        date=today,
+        date=date,
         artist=escape_yaml_specials(artist),
         album=escape_yaml_specials(album),
         year=year,
