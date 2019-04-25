@@ -3,7 +3,11 @@ CLI helpers for specific prompts, and various helper functions.
 """
 
 import re
-import readline
+try:
+    import readline
+    readline_available = True
+except ImportError:
+    readline_available = False
 
 import click
 
@@ -47,9 +51,10 @@ def completion_input(prompt_text, commands):
                 else:
                     state -= 1
 
-    readline.parse_and_bind("tab: complete")
-    readline.set_completer(complete)
-    # tab completion on commands will stay enabled outside this scope
+    if readline_available:
+        readline.parse_and_bind("tab: complete")
+        readline.set_completer(complete)
+        # tab completion on commands will stay enabled outside this scope
     return click.prompt(prompt_text)
 
 
