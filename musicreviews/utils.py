@@ -39,7 +39,7 @@ def list_integers_input(string, min_value, max_value):
     return clean_indices
 
 
-def completion_input(prompt_text, commands):
+def completion_input(prompt_text, commands, **kwargs):
     """Returns a click prompt with tab-completion on the given list of commands."""
 
     def complete(text, state):
@@ -55,7 +55,7 @@ def completion_input(prompt_text, commands):
         readline.parse_and_bind("tab: complete")
         readline.set_completer(complete)
         # tab completion on commands will stay enabled outside this scope
-    return click.prompt(prompt_text)
+    return click.prompt(prompt_text, **kwargs)
 
 
 def alphanumeric_lowercase(string):
