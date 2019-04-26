@@ -79,3 +79,16 @@ def escape_yaml_specials(string):
         return '"' + string + '"'
     else:
         return string
+
+
+def replace_enclosed_text_tags(string, tag_to_sub, opening_tag, closing_tag=None):
+    """Replaces tags around enclosed text.
+    For example _test_ -> **test** or <b>test</b>
+    """
+    closing_tag = closing_tag or opening_tag
+    string = re.sub(
+        '{0}([^{0}]+){0}'.format(tag_to_sub),
+        f'{opening_tag}\\1{closing_tag}',
+        string
+    )
+    return string

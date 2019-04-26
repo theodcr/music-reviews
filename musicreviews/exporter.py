@@ -9,6 +9,7 @@ import click
 from jinja2 import Template
 
 from .creator import fill_template, import_template, write_review
+from .utils import replace_enclosed_text_tags
 
 
 def export_review(data, root=os.getcwd(), extension='md'):
@@ -54,8 +55,8 @@ def replace_track_tags(content):
 
 def wiki_to_markdown(string):
     """Translates the string from vimwiki format to markdown."""
-    string = re.sub('\*', '**', string)
-    string = re.sub('_', '*', string)
+    string = replace_enclosed_text_tags(string, '\*', '**')
+    string = replace_enclosed_text_tags(string, '_', '*')
     return string
 
 
