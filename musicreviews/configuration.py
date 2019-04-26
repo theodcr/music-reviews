@@ -34,7 +34,7 @@ def load_config(load_template=False):
 
 def template_config_path():
     """Returns path to package template configuration."""
-    return resource_filename(Requirement.parse("music-reviews"), TEMPLATE_FILENAME)
+    return resource_filename(Requirement.parse(APP_NAME), TEMPLATE_FILENAME)
 
 
 def config_path():

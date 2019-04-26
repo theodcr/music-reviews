@@ -29,7 +29,7 @@ def main(ctx, username):
         config_content = ctx.invoke(config)
 
     root_dir = os.path.abspath(config_content['path']['reviews_directory'])
-    click.echo(ui.style_info_path("Review library in directory", root_dir))
+    click.echo(ui.style_info_path("Loading review library in directory", root_dir))
     albums = reader.build_database(root_dir)
 
     if username is None:

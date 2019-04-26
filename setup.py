@@ -8,7 +8,7 @@ with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
 
 
 setup(
-    name='music-reviews',
+    name='musicreviews',
     version='0.1',
     author='theolamayo',
     description='CLI for music reviews management',
