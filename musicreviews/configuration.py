@@ -4,8 +4,8 @@ from pkg_resources import Requirement, resource_filename
 
 import click
 
+from .utils import write_file
 
-APP_NAME = 'musicreviews'
 CONFIG_FILENAME = 'config.cfg'
 TEMPLATE_FILENAME = 'config.template.cfg'
 
@@ -15,9 +15,7 @@ def write_config(config):
     directory = config_directory()
     if not os.path.exists(directory):
         os.makedirs(directory)
-    path = config_path()
-    with open(path, 'w') as configfile:
-        config.write(configfile)
+    write_file(config, config_path())
     return path
 
 
@@ -34,7 +32,7 @@ def load_config(load_template=False):
 
 def template_config_path():
     """Returns path to package template configuration."""
-    return resource_filename(Requirement.parse(APP_NAME), TEMPLATE_FILENAME)
+    return resource_filename(Requirement.parse(__package__), TEMPLATE_FILENAME)
 
 
 def config_path():
@@ -44,4 +42,4 @@ def config_path():
 
 def config_directory():
     """Returns local package configuration directory."""
-    return os.path.join(click.get_app_dir(APP_NAME))
+    return click.get_app_dir(__package__)

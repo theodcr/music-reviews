@@ -94,8 +94,7 @@ def queue(ctx):
             )
         click.echo(ui.style_info(f"Queue contains {len(queue)} albums"))
         # save current queue
-        with open(queue_path, 'w') as file_content:
-            file_content.write(json.dumps(queue))
+        utils.write_file(json.dumps(queue), queue_path)
 
     # show artists in queue
     artists_in_queue = sorted(set([album['artist'] for album in queue]))
@@ -113,24 +112,20 @@ def queue(ctx):
         matches = queue
 
     # prompt for review creation and delete reviewed albums from queue
-    uris_to_pop = []
     idx = 0
     length = len(matches)
-    for album in matches:
+    for match in matches:
         idx += 1
         click.echo(
             click.style(f"Item {idx}/{length}: ", fg='white')
-            + ui.style_album(album['artist'], album['album'], album['year'])
+            + ui.style_album(match['artist'], match['album'], match['year'])
         )
         if click.confirm(ui.style_prompt("Review this album")):
             # pop album from queue only if review creation is confirmed
-            if ctx.invoke(create, uri=album['uri']):
-                uris_to_pop.append(album['uri'])
-                # rewrite queue in case procedure is canceled later
-                with open(queue_path, 'w') as file_content:
-                    file_content.write(
-                        json.dumps([album for album in queue if album['uri'] not in uris_to_pop])
-                    )
+            if ctx.invoke(create, uri=match['uri']):
+                queue = [album for album in queue if album['uri'] != match['uri']]
+                # rewrite queue in case procedure is cancelled later
+                utils.write_file(json.dumps(queue), queue_path)
 
 
 @main.command()
