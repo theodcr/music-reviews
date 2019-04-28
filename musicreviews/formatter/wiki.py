@@ -3,8 +3,6 @@ Functions for writing indexed reviews lists in vimwiki format.
 Formatters take an integer index and a dictionary as inputs.
 """
 
-import re
-
 
 def format_header(string):
     """Returns the string as a header in the vimwiki format."""

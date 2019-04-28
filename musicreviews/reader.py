@@ -44,16 +44,16 @@ def build_database(root_dir=os.getcwd(), placeholders=False):
             album = empty_album()
             with open(file_path, 'r') as file_content:
                 if placeholders:
-                    album = decode_placeholders(file_content, album)
+                    album = read_review_with_placeholders(file_content, album)
                 else:
-                    album = decode_yaml(file_content, album)
+                    album = read_review_with_header(file_content, album)
             album['artist_tag'] = artist_tag
             album['album_tag'] = os.path.splitext(os.path.basename(file_path))[0]
             albums.append(album)
     return albums
 
 
-def decode_yaml(file_content, album):
+def read_review_with_header(file_content, album):
     """Read the content of a review to find the album tags written in a YAML header."""
     review = file_content.read()
     __, header, album['content'] = re.split(
@@ -64,7 +64,7 @@ def decode_yaml(file_content, album):
     return album
 
 
-def decode_placeholders(file_content, album):
+def read_review_with_placeholders(file_content, album):
     """Read the content of a review to find the album tags written as placeholders."""
     while True:
         words = file_content.readline().split()
