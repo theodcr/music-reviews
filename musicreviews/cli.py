@@ -234,7 +234,7 @@ def create(ctx, uri, manual, y):
         review = creator.fill_template(
             template, artist, album, year, rating, uri, picks=tracks_idx, tracks=tracks
         )
-        creator.write_review(review, folder, filename, root=root_dir)
+        io.write_review(review, folder, filename, root=root_dir)
         click.echo(style_info("Review created"))
         return True
     return False

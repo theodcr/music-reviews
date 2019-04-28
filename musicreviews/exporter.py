@@ -8,9 +8,9 @@ import re
 import click
 from jinja2 import Template
 
-from .creator import fill_template, write_review
-from .io import read_file
-from .formatter.utils import replace_enclosed_text_tags
+from .creator import fill_template
+from .io import read_file, write_review
+from .formatter.utils import replace_enclosed_text_tags, replace_track_tags
 
 
 def export_review(data, root=os.getcwd(), extension='md'):
@@ -47,11 +47,6 @@ def export_review(data, root=os.getcwd(), extension='md'):
         extension=extension,
         overwrite=True
     )
-
-
-def replace_track_tags(content):
-    """Replaces tags like {4} to formatting compatible tags like {tracks[4]}."""
-    return re.sub('{(\d+)}', '{tracks[\\1]}', content)
 
 
 def wiki_to_markdown(string):
