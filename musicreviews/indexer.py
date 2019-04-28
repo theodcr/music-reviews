@@ -9,7 +9,8 @@ import os
 
 from jinja2 import Template
 
-from . import wiki_formatter as formatter
+from .formatter import wiki as formatter
+from .formatter import utils
 from .io import read_file, write_file
 
 SORTED_STATES = ['P', 'X', 'O', 'o', '.', ' ']
@@ -44,7 +45,7 @@ def sort_artists(albums):
     sorted_artists = sorted(artists, key=lambda x: x['rating'], reverse=True)
     return (
         sorted_artists,
-        formatter.parse_list(sorted_artists, formatter.format_artist),
+        utils.parse_list(sorted_artists, formatter.format_artist),
     )
 
 
@@ -53,7 +54,7 @@ def sort_ratings(albums):
     sorted_albums = sorted(albums, key=lambda x: x['rating'], reverse=True)
     return (
         sorted_albums,
-        formatter.parse_list(sorted_albums, formatter.format_album),
+        utils.parse_list(sorted_albums, formatter.format_album),
     )
 
 
@@ -69,7 +70,9 @@ def sort_ratings_by_year(albums):
         )
     return (
         sorted_albums,
-        formatter.parse_categorised_lists(sorted_albums, formatter.format_album),
+        utils.parse_categorised_lists(
+            sorted_albums, formatter.format_header, formatter.format_album
+        ),
     )
 
 
@@ -87,7 +90,9 @@ def sort_ratings_by_decade(albums):
         )
     return (
         sorted_albums,
-        formatter.parse_categorised_lists(sorted_albums, formatter.format_album),
+        utils.parse_categorised_lists(
+            sorted_albums, formatter.format_header, formatter.format_album
+        ),
     )
 
 
@@ -96,7 +101,7 @@ def all_reviews(albums):
     sorted_albums = sorted(albums, key=lambda x: (x['artist_tag'], x['year']))
     return (
         sorted_albums,
-        formatter.parse_list(sorted_albums, formatter.format_review),
+        utils.parse_list(sorted_albums, formatter.format_review),
     )
 
 
@@ -105,7 +110,7 @@ def sort_reviews_date(albums):
     sorted_albums = sorted(albums, key=lambda x: x['date'], reverse=True)
     return (
         sorted_albums,
-        formatter.parse_list(sorted_albums, formatter.format_review),
+        utils.parse_list(sorted_albums, formatter.format_review),
     )
 
 
@@ -121,8 +126,9 @@ def sort_reviews_state(albums):
         ]
     return (
         sorted_albums,
-        formatter.parse_categorised_lists(
+        utils.parse_categorised_lists(
             filtered_albums,
+            formatter.format_header,
             formatter.format_review,
             sorted_keys=(STATES_DESCRIPTION[state] for state in SORTED_STATES),
         ),
@@ -157,7 +163,9 @@ def playlists_by_year(albums):
             sorted_tracks[year].extend(tracks)
     return (
         sorted_tracks,
-        formatter.parse_categorised_lists(sorted_tracks, formatter.format_track),
+        utils.parse_categorised_lists(
+            sorted_tracks, formatter.format_header, formatter.format_track
+        ),
     )
 
 
