@@ -8,9 +8,9 @@ import re
 
 import click
 
+from .formatter.yaml import escape_yaml_specials
 from .io import write_file
 from .ui import style_info, style_error
-from .utils import escape_yaml_specials
 
 
 def fill_template(
