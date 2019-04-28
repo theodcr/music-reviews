@@ -1,6 +1,13 @@
 """
-Helpers for CLI appearence and UI.
+Helpers for CLI UI and specific prompts.
 """
+
+import re
+try:
+    import readline
+    readline_available = True
+except ImportError:
+    readline_available = False
 
 import click
 
@@ -47,3 +54,41 @@ def style_album(artist, album, year):
 def style_info_path(message, path):
     """Returns a unified style for information about a path."""
     return style_info(message) + ' ' + click.style(click.format_filename(path), fg='white')
+
+
+def check_integer_input(value, min_value, max_value):
+    """Converts and checks if the integer from the click prompt is in the given range."""
+    try:
+        value = int(value)
+    except ValueError:
+        raise click.BadParameter(f"{value} is not a valid integer", param=value)
+    if min_value <= value <= max_value:
+        return value
+    raise click.BadParameter(f"{value} is not between {min_value} and {max_value}")
+
+
+def list_integers_input(string, min_value, max_value):
+    """Converts and checks a string containing a list of integers."""
+    indices = set(re.split('\W+', string))
+    indices.discard('')
+    clean_indices = [check_integer_input(idx, min_value, max_value) for idx in indices]
+    return clean_indices
+
+
+def completion_input(prompt_text, commands, **kwargs):
+    """Returns a click prompt with tab-completion on the given list of commands."""
+
+    def complete(text, state):
+        """Completion function for readline."""
+        for cmd in commands:
+            if cmd.startswith(text):
+                if not state:
+                    return cmd
+                else:
+                    state -= 1
+
+    if readline_available:
+        readline.parse_and_bind("tab: complete")
+        readline.set_completer(complete)
+        # tab completion on commands will stay enabled outside this scope
+    return click.prompt(prompt_text, **kwargs)

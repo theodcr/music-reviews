@@ -9,7 +9,7 @@ from functools import partial
 
 import click
 
-from musicreviews import configuration, creator, exporter, formatter, indexer, io, reader, ui, utils
+from musicreviews import configuration, creator, exporter, formatter, indexer, io, reader, ui
 from powerspot.helpers import get_username
 from powerspot.operations import get_album, get_artist_albums, get_saved_albums, search_artist
 
@@ -106,7 +106,7 @@ def queue(ctx):
         click.echo(ui.style_enumerate(i, artist))
 
     # prompt the user for a direct artist search
-    artist = utils.completion_input(ui.style_prompt("Search artist in queue"), artists_in_queue)
+    artist = ui.completion_input(ui.style_prompt("Search artist in queue"), artists_in_queue)
     matches = [album for album in queue if album['artist'] == artist]
 
     # if no matches, prompt the user for each album in the queue
@@ -141,12 +141,12 @@ def create(ctx, uri, manual, y):
     known_artists = [x['artist'] for x in ctx.obj['albums']]
     if manual:
         # manual input of data
-        artist = utils.completion_input(ui.style_prompt("Artist"), known_artists)
+        artist = ui.completion_input(ui.style_prompt("Artist"), known_artists)
         album = click.prompt(ui.style_prompt("Album"))
         year = click.prompt(
             ui.style_prompt("Year"),
             value_proc=partial(
-                utils.check_integer_input,
+                ui.check_integer_input,
                 min_value=int(ctx.obj['config']['creation']['min_year']),
                 max_value=datetime.datetime.now().year,
             ),
@@ -154,13 +154,13 @@ def create(ctx, uri, manual, y):
         # arbitrary maximum number of tracks
         tracks_idx = click.prompt(
             ui.style_prompt("Favorite tracks numbers"),
-            value_proc=partial(utils.list_integers_input, min_value=1, max_value=100),
+            value_proc=partial(ui.list_integers_input, min_value=1, max_value=100),
         )
         tracks = None
     else:
         if uri is None:
             # incremental search to select album in Spotify collection
-            artist_query = utils.completion_input(ui.style_prompt("Artist search"), known_artists)
+            artist_query = ui.completion_input(ui.style_prompt("Artist search"), known_artists)
 
             res_artists = search_artist(artist_query)['items']
             artists = [artist['name'] for artist in res_artists]
@@ -169,7 +169,7 @@ def create(ctx, uri, manual, y):
             artist_idx = click.prompt(
                 ui.style_prompt("Choose artist index"),
                 value_proc=partial(
-                    utils.check_integer_input, min_value=0, max_value=len(artists) - 1
+                    ui.check_integer_input, min_value=0, max_value=len(artists) - 1
                 ),
                 default=0,
             )
@@ -184,7 +184,7 @@ def create(ctx, uri, manual, y):
             album_idx = click.prompt(
                 ui.style_prompt("Choose album index"),
                 value_proc=partial(
-                    utils.check_integer_input, min_value=0, max_value=len(albums) - 1
+                    ui.check_integer_input, min_value=0, max_value=len(albums) - 1
                 ),
                 default=0,
             )
@@ -201,13 +201,13 @@ def create(ctx, uri, manual, y):
 
         tracks_idx = click.prompt(
             ui.style_prompt("Favorite tracks numbers"),
-            value_proc=partial(utils.list_integers_input, min_value=1, max_value=len(tracks)),
+            value_proc=partial(ui.list_integers_input, min_value=1, max_value=len(tracks)),
         )
 
     rating = click.prompt(
         ui.style_prompt("Rating"),
         value_proc=partial(
-            utils.check_integer_input,
+            ui.check_integer_input,
             min_value=int(ctx.obj['config']['creation']['min_rating']),
             max_value=int(ctx.obj['config']['creation']['max_rating']),
         ),
@@ -287,7 +287,7 @@ def export(ctx, all, format):
     else:
         # prompt to choose artist then album to export
         artist_tags = [x['artist_tag'] for x in ctx.obj['albums']]
-        artist_tag = utils.completion_input(
+        artist_tag = ui.completion_input(
             ui.style_prompt("Artist tag of review to export"),
             artist_tags,
             type=click.Choice(artist_tags),
@@ -299,7 +299,7 @@ def export(ctx, all, format):
         click.echo(ui.style_info("Album reviews tags:"))
         for i, tag in enumerate(album_tags):
             click.echo(ui.style_enumerate(i, tag))
-        album_tag = utils.completion_input(
+        album_tag = ui.completion_input(
             ui.style_prompt("Album tag of review to export"),
             album_tags,
             type=click.Choice(album_tags),
