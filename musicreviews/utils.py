@@ -62,8 +62,7 @@ def alphanumeric_lowercase(string):
     """Returns a lowercase version of the string with non-alphanumeric
     characters stripped out.
     """
-    regex = re.compile('[^a-zA-Z0-9]')
-    return regex.sub('', string).lower()
+    return re.sub('[^a-zA-Z0-9]', '', string).lower()
 
 
 def escape_yaml_specials(string):
