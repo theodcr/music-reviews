@@ -9,7 +9,7 @@ from functools import partial
 
 import click
 
-from musicreviews import configuration, creator, exporter, indexer, io, reader, ui, utils
+from musicreviews import configuration, creator, exporter, formatter, indexer, io, reader, ui, utils
 from powerspot.helpers import get_username
 from powerspot.operations import get_album, get_artist_albums, get_saved_albums, search_artist
 
@@ -214,8 +214,8 @@ def create(ctx, uri, manual, y):
     )
 
     root_dir = ctx.obj['root_dir']
-    folder = utils.alphanumeric_lowercase(artist)
-    filename = utils.alphanumeric_lowercase(album)
+    folder = formatter.utils.alphanumeric_lowercase(artist)
+    filename = formatter.utils.alphanumeric_lowercase(album)
     click.echo(
         '\n'
         + click.style("Creating review for album:", fg='cyan')

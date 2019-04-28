@@ -10,7 +10,7 @@ from jinja2 import Template
 
 from .creator import fill_template, write_review
 from .io import read_file
-from .utils import replace_enclosed_text_tags
+from .formatter.utils import replace_enclosed_text_tags
 
 
 def export_review(data, root=os.getcwd(), extension='md'):

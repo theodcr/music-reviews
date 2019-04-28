@@ -48,23 +48,3 @@ def completion_input(prompt_text, commands, **kwargs):
         readline.set_completer(complete)
         # tab completion on commands will stay enabled outside this scope
     return click.prompt(prompt_text, **kwargs)
-
-
-def alphanumeric_lowercase(string):
-    """Returns a lowercase version of the string with non-alphanumeric
-    characters stripped out.
-    """
-    return re.sub('[^a-zA-Z0-9]', '', string).lower()
-
-
-def replace_enclosed_text_tags(string, tag_to_sub, opening_tag, closing_tag=None):
-    """Replaces tags around enclosed text.
-    For example _test_ -> **test** or <b>test</b>
-    """
-    closing_tag = closing_tag or opening_tag
-    string = re.sub(
-        '{0}([^{0}]+){0}'.format(tag_to_sub),
-        f'{opening_tag}\\1{closing_tag}',
-        string
-    )
-    return string
