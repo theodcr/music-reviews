@@ -8,13 +8,14 @@ import re
 import click
 from jinja2 import Template
 
-from .creator import fill_template, import_template, write_review
+from .creator import fill_template, write_review
+from .io import read_file
 from .utils import replace_enclosed_text_tags
 
 
 def export_review(data, root=os.getcwd(), extension='md'):
     """Exports review in given format. Formats metadata and content."""
-    template = import_template(root, 'template.' + extension)
+    template = read_file(root, 'template.' + extension)
     data['content'] = replace_track_tags(data['content']).format(**data)
 
     if extension == 'md':

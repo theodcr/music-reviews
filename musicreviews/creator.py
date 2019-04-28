@@ -8,15 +8,9 @@ import re
 
 import click
 
+from .io import write_file
 from .ui import style_info, style_error
-from .utils import escape_yaml_specials, write_file
-
-
-def import_template(root=os.getcwd(), filename="template.wiki"):
-    """Returns the review template as a string."""
-    with open(os.path.join(root, filename)) as file_content:
-        template = file_content.read()
-    return template
+from .utils import escape_yaml_specials
 
 
 def fill_template(

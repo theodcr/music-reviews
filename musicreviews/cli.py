@@ -9,7 +9,7 @@ from functools import partial
 
 import click
 
-from musicreviews import configuration, creator, exporter, indexer, reader, ui, utils
+from musicreviews import configuration, creator, exporter, indexer, io, reader, ui, utils
 from powerspot.helpers import get_username
 from powerspot.operations import get_album, get_artist_albums, get_saved_albums, search_artist
 
@@ -97,7 +97,7 @@ def queue(ctx):
             )
         click.echo(ui.style_info(f"Queue contains {len(queue)} albums"))
         # save current queue
-        utils.write_file(json.dumps(queue), queue_path)
+        io.write_file(json.dumps(queue), queue_path)
 
     # show artists in queue
     artists_in_queue = sorted(set([album['artist'] for album in queue]))
@@ -128,7 +128,7 @@ def queue(ctx):
             if ctx.invoke(create, uri=match['uri']):
                 queue = [album for album in queue if album['uri'] != match['uri']]
                 # rewrite queue in case procedure is cancelled later
-                utils.write_file(json.dumps(queue), queue_path)
+                io.write_file(json.dumps(queue), queue_path)
 
 
 @main.command()
@@ -230,7 +230,7 @@ def create(ctx, uri, manual, y):
         + '\n'
     )
     if click.confirm(ui.style_prompt("Confirm creation of review"), default=True):
-        template = creator.import_template(root=root_dir)
+        template = io.read_file(root_dir, 'template.wiki')
         review = creator.fill_template(
             template, artist, album, year, rating, uri, picks=tracks_idx, tracks=tracks
         )

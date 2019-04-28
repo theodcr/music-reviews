@@ -10,8 +10,7 @@ import os
 from jinja2 import Template
 
 from . import wiki_formatter as formatter
-from .creator import import_template
-from .utils import write_file
+from .io import read_file, write_file
 
 SORTED_STATES = ['P', 'X', 'O', 'o', '.', ' ']
 STATES_DESCRIPTION = {
@@ -190,7 +189,7 @@ def generate_all_lists(albums, root_dir):
 
 def generate_html_index(albums, root_dir):
     """WIP: writes a single HTML index."""
-    template = import_template(root_dir, 'template_index.html')
+    template = read_file(root_dir, 'template_index.html')
     template = Template(template)
     sorted_albums = sort_ratings_by_year(albums)[0]
     rendered = template.render(sorted_albums=sorted_albums)

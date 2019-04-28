@@ -12,14 +12,6 @@ except ImportError:
 import click
 
 
-def write_file(content, path, newline=False):
-    """Writes the given content in a file, with an optional newline at the end."""
-    with open(path, 'w') as file_content:
-        file_content.write(content)
-        if newline:
-            file_content.write("\n")
-
-
 def check_integer_input(value, min_value, max_value):
     """Converts and checks if the integer from the click prompt is in the given range."""
     try:
