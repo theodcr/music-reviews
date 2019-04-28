@@ -47,7 +47,10 @@ def main(ctx, username):
 def index(ctx):
     """Generate various reviews indexes and lists."""
     indexer.generate_all_lists(ctx.obj['albums'], ctx.obj['root_dir'])
-    click.echo(ui.style_info("Lists generated"))
+    click.echo(ui.style_info("Wiki indexes generated"))
+    # WIP: html indexing could be moved to export command
+    indexer.generate_html_index(ctx.obj['albums'], ctx.obj['root_dir'])
+    click.echo(ui.style_info("HTML indexes generated"))
 
 
 @main.command()
