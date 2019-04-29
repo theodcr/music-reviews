@@ -1,5 +1,5 @@
 """
-Functions for building the database of reviews by reading the present files.
+Helpers for reading files from disk, and building the database of reviews.
 """
 
 import glob
@@ -10,6 +10,13 @@ import yaml
 
 START_HEADER = '---\n'
 END_HEADER = '\n\.\.\.\n'
+
+
+def read_file(root, filename):
+    """Reads the file and returns its content as a string."""
+    with open(os.path.join(root, filename)) as file_content:
+        content = file_content.read()
+    return content
 
 
 def empty_album():
@@ -75,5 +82,4 @@ def read_review_with_placeholders(file_content, album):
     album['year'] = int(album['year'])
     album['rating'] = int(album['rating'])
     album['content'] = file_content.read()
-    print(album)
     return album

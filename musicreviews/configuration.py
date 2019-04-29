@@ -4,7 +4,7 @@ from pkg_resources import Requirement, resource_filename
 
 import click
 
-from .io import write_file
+from .writer import write_file
 
 CONFIG_FILENAME = 'config.cfg'
 TEMPLATE_FILENAME = 'config.template.cfg'

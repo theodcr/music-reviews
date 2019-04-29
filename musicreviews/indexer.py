@@ -11,7 +11,8 @@ from jinja2 import Template
 
 from .formatter import wiki as formatter
 from .formatter import utils
-from .io import read_file, write_file
+from .reader import read_file
+from .writer import write_file
 
 SORTED_STATES = ['P', 'X', 'O', 'o', '.', ' ']
 STATES_DESCRIPTION = {

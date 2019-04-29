@@ -9,7 +9,7 @@ from functools import partial
 
 import click
 
-from musicreviews import configuration, creator, exporter, formatter, indexer, io, reader, ui
+from musicreviews import configuration, formatter, indexer, reader, ui, writer
 from powerspot.helpers import get_username
 from powerspot.operations import get_album, get_artist_albums, get_saved_albums, search_artist
 
@@ -97,7 +97,7 @@ def queue(ctx):
             )
         click.echo(ui.style_info(f"Queue contains {len(queue)} albums"))
         # save current queue
-        io.write_file(json.dumps(queue), queue_path)
+        writer.write_file(json.dumps(queue), queue_path)
 
     # show artists in queue
     artists_in_queue = sorted(set([album['artist'] for album in queue]))
@@ -128,7 +128,7 @@ def queue(ctx):
             if ctx.invoke(create, uri=match['uri']):
                 queue = [album for album in queue if album['uri'] != match['uri']]
                 # rewrite queue in case procedure is cancelled later
-                io.write_file(json.dumps(queue), queue_path)
+                writer.write_file(json.dumps(queue), queue_path)
 
 
 @main.command()
@@ -230,11 +230,11 @@ def create(ctx, uri, manual, y):
         + '\n'
     )
     if click.confirm(ui.style_prompt("Confirm creation of review"), default=True):
-        template = io.read_file(root_dir, 'template.wiki')
-        review = creator.fill_template(
+        template = reader.read_file(root_dir, 'template.wiki')
+        review = writer.fill_template(
             template, artist, album, year, rating, uri, picks=tracks_idx, tracks=tracks
         )
-        io.write_review(review, folder, filename, root=root_dir)
+        writer.write_review(review, folder, filename, root=root_dir)
         click.echo(style_info("Review created"))
         return True
     return False
@@ -311,7 +311,7 @@ def export(ctx, all, format):
     export_dir = ctx.obj['config']['path']['export_directory']
     click.echo(ui.style_info_path("Exporting in directory", export_dir))
     for album in albums_to_export:
-        exporter.export_review(album, root=export_dir, extension=format)
+        writer.export_review(album, root=export_dir, extension=format)
     click.echo(ui.style_info("Reviews exported"))
 
 
