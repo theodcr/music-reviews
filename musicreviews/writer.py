@@ -12,7 +12,7 @@ from .formatter import html, markdown, utils, yaml
 from .reader import read_file
 
 
-def fill_template(
+def fill_review_template(
     template,
     artist,
     album,
@@ -70,7 +70,7 @@ def export_review(data, root, extension='md'):
         # ensure tracks are sorted
         tracks = [data['tracks'][i] for i in sorted(data['tracks'])]
         # use general review template
-        formatted_review = fill_template(
+        formatted_review = fill_review_template(
             template=template,
             artist=data['artist'],
             album=data['album'],

@@ -231,7 +231,7 @@ def create(ctx, uri, manual, y):
     )
     if click.confirm(ui.style_prompt("Confirm creation of review"), default=True):
         template = reader.read_file(root_dir, 'template.wiki')
-        review = writer.fill_template(
+        review = writer.fill_review_template(
             template, artist, album, year, rating, uri, picks=tracks_idx, tracks=tracks
         )
         writer.write_review(review, folder, filename, root=root_dir)
@@ -313,27 +313,6 @@ def export(ctx, all, format):
     for album in albums_to_export:
         writer.export_review(album, root=export_dir, extension=format)
     click.echo(ui.style_info("Reviews exported"))
-
-
-@main.command()
-@click.pass_context
-def debug(ctx):
-    """debug"""
-    sorted_albums = indexer.sort_ratings_by_year(ctx.obj['albums'])[0]
-    picks = {}
-    for year, albums in sorted_albums.items():
-        picks[year] = []
-        for album in albums:
-            print(album)
-            return
-            album_data = get_album(album['uri'])
-            picks[year].append(
-                [
-                    track['uri']
-                    for i, track in enumerate(album_date['tracks']['items'])
-                    if i + 1 in album['picks']
-                ]
-            )
 
 
 if __name__ == '__main__':
