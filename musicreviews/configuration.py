@@ -7,7 +7,7 @@ import click
 from .writer import write_file
 
 CONFIG_FILENAME = 'config.cfg'
-TEMPLATE_FILENAME = 'config.template.cfg'
+TEMPLATE_FILENAME = 'templates/config.template.cfg'
 
 
 def write_config(config):
