@@ -235,7 +235,7 @@ def create(ctx, uri, manual, y):
             template, artist, album, year, rating, uri, picks=tracks_idx, tracks=tracks
         )
         writer.write_review(review, folder, filename, root=root_dir)
-        click.echo(style_info("Review created"))
+        click.echo(ui.style_info("Review created"))
         return True
     return False
 

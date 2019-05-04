@@ -4,6 +4,8 @@ Functions for writing header of reviews in YAML format.
 
 import re
 
+from .utils import alphanumeric_lowercase
+
 
 def escape_yaml_specials(string):
     """Surrounds the given string with quotes if it is not conform to YAML syntax."""

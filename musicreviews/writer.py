@@ -10,6 +10,7 @@ import click
 
 from .formatter import html, markdown, utils, yaml
 from .reader import read_file
+from .ui import style_error
 
 
 def fill_review_template(
