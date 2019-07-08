@@ -86,6 +86,14 @@ def export_review(data, root, extension='md'):
         )
     else:
         data['content'] = html.wiki_to_html(data['content'])
+        data['tracks'] = '\n'.join(
+            [
+                f'<li><b>{track}</b></li>'
+                if data['picks'] is not None and index in data['picks']
+                else f'<li>{track}</li>'
+                for index, track in sorted(data['tracks'].items())
+            ]
+        )
         formatted_review = template.format(**data)
     write_review(
         content=formatted_review,
