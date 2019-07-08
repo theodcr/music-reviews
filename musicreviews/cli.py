@@ -10,7 +10,7 @@ from functools import partial
 import click
 
 from musicreviews import configuration, formatter, indexer, reader, ui, writer
-from powerspot.helpers import get_username
+from powerspot.cli import get_username
 from powerspot.operations import get_album, get_artist_albums, get_saved_albums, search_artist
 
 
