@@ -86,7 +86,7 @@ def export_review(data, root, extension='md'):
         )
     else:
         data['content'] = html.wiki_to_html(data['content'])
-        formatted_review = html.fill_html(template, data)
+        formatted_review = template.format(**data)
     write_review(
         content=formatted_review,
         folder=data['artist_tag'],
