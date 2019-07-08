@@ -94,6 +94,7 @@ def export_review(data, root, extension='md'):
                 for index, track in sorted(data['tracks'].items())
             ]
         )
+        data['rating_color'] = html.rating_to_rbg_color(data['rating'])
         formatted_review = template.format(**data)
     write_review(
         content=formatted_review,
