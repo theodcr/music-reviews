@@ -282,7 +282,9 @@ def export(ctx, all, index, format):
     """Exports a review or all reviews to markdown or HTML."""
     export_dir = ctx.obj['config']['path']['export_directory']
     if index:
-        indexer.generate_all_indexes(ctx.obj['albums'], export_dir, extension=format)
+        indexer.generate_all_indexes(
+            ctx.obj['albums'], export_dir, extension=format, tag="ol"
+        )
         click.echo(ui.style_info("HTML indexes generated"))
         return
     if all:
