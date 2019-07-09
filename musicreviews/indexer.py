@@ -9,7 +9,6 @@ import os
 
 from jinja2 import Template
 
-from .formatter import wiki as formatter
 from .formatter import utils
 from .reader import read_file
 from .writer import write_file
@@ -25,7 +24,7 @@ STATES_DESCRIPTION = {
 }
 
 
-def sort_artists(albums):
+def sort_artists(formatter, albums):
     """Returns the artists sorted by decreasing mean album rating.
     Only artists with more than 1 reviewed albums are considered.
     """
@@ -50,7 +49,7 @@ def sort_artists(albums):
     )
 
 
-def sort_ratings(albums):
+def sort_ratings(formatter, albums):
     """Returns the rated albums sorted by decreasing rating."""
     sorted_albums = sorted(albums, key=lambda x: x['rating'], reverse=True)
     return (
@@ -59,7 +58,7 @@ def sort_ratings(albums):
     )
 
 
-def sort_ratings_by_year(albums):
+def sort_ratings_by_year(formatter, albums):
     """Returns the rated albums sorted by decreasing year and rating."""
     years = set([album['year'] for album in albums])
     sorted_albums = {}
@@ -77,7 +76,7 @@ def sort_ratings_by_year(albums):
     )
 
 
-def sort_ratings_by_decade(albums):
+def sort_ratings_by_decade(formatter, albums):
     """Returns the rated albums sorted by decreasing decade and rating."""
     for album in albums:
         album['decade'] = compute_decade(album['year'])
@@ -97,7 +96,7 @@ def sort_ratings_by_decade(albums):
     )
 
 
-def all_reviews(albums):
+def all_reviews(formatter, albums):
     """Returns a list of all album reviews and their state."""
     sorted_albums = sorted(albums, key=lambda x: (x['artist_tag'], x['year']))
     return (
@@ -106,7 +105,7 @@ def all_reviews(albums):
     )
 
 
-def sort_reviews_date(albums):
+def sort_reviews_date(formatter, albums):
     """Returns the reviews sorted by generation date."""
     sorted_albums = sorted(albums, key=lambda x: x['date'], reverse=True)
     return (
@@ -115,7 +114,7 @@ def sort_reviews_date(albums):
     )
 
 
-def sort_reviews_state(albums):
+def sort_reviews_state(formatter, albums):
     """Returns the reviews sorted by state."""
     sorted_albums = sorted(albums, key=lambda x: (x['artist_tag'], x['year']))
     filtered_albums = {}
@@ -136,7 +135,7 @@ def sort_reviews_state(albums):
     )
 
 
-def playlists_by_year(albums):
+def playlists_by_year(formatter, albums):
     """Returns yearly playlists of favorite tracks from albums
     sorted by decreasing year and decreasing rating.
     """
@@ -180,26 +179,21 @@ def compute_decade(year):
     return 10 * (year // 10)
 
 
-def generate_all_lists(albums, root_dir):
-    """Writes all possible indexes in vimwiki format."""
+def generate_all_lists(albums, root_dir, extension='wiki'):
+    """Writes all possible indexes format."""
+    if extension == 'html':
+        formatter = __import__('musicreviews').formatter.html
+    else:
+        formatter = __import__('musicreviews').formatter.wiki
     pipelines = (
-        (sort_ratings, 'sorted_albums.wiki'),
-        (sort_ratings_by_year, 'sorted_by_year.wiki'),
-        (sort_ratings_by_decade, 'sorted_by_decade.wiki'),
-        (all_reviews, 'reviews.wiki'),
-        (sort_reviews_state, 'reviews_state.wiki'),
-        (sort_reviews_date, 'reviews_date.wiki'),
-        (sort_artists, 'sorted_artists.wiki'),
-        (playlists_by_year, 'playlists_by_year.wiki'),
+        (sort_ratings, f'sorted_albums.{extension}'),
+        (sort_ratings_by_year, f'sorted_by_year.{extension}'),
+        (sort_ratings_by_decade, f'sorted_by_decade.{extension}'),
+        (all_reviews, f'reviews.{extension}'),
+        (sort_reviews_state, f'reviews_state.{extension}'),
+        (sort_reviews_date, f'reviews_date.{extension}'),
+        (sort_artists, f'sorted_artists.{extension}'),
+        (playlists_by_year, f'playlists_by_year.{extension}'),
     )
     for function, file_name in pipelines:
-        write_file(function(albums)[1], os.path.join(root_dir, file_name))
-
-
-def generate_html_index(albums, root_dir):
-    """WIP: writes a single HTML index."""
-    template = read_file(root_dir, 'template_index.html')
-    template = Template(template)
-    sorted_albums = sort_ratings_by_year(albums)[0]
-    rendered = template.render(sorted_albums=sorted_albums)
-    write_file(rendered, os.path.join(root_dir, 'sorted_by_year.html'))
+        write_file(function(formatter, albums)[1], os.path.join(root_dir, file_name))
