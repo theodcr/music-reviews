@@ -29,7 +29,7 @@ def main(ctx, username):
         config_content = ctx.invoke(config)
 
     root_dir = os.path.abspath(config_content['path']['reviews_directory'])
-    click.echo(ui.style_info_path("Loading review library in directory", root_dir))
+    click.echo(ui.style_info_path("Loading review library from directory", root_dir))
     albums = reader.build_database(root_dir)
 
     if username is None:
@@ -309,7 +309,7 @@ def export(ctx, all, format):
         albums_to_export = [album for album in artist_albums if album['album_tag'] == album_tag]
 
     export_dir = ctx.obj['config']['path']['export_directory']
-    click.echo(ui.style_info_path("Exporting in directory", export_dir))
+    click.echo(ui.style_info_path("Exporting to directory", export_dir))
     for album in albums_to_export:
         writer.export_review(album, root=export_dir, extension=format)
     click.echo(ui.style_info("Reviews exported"))
