@@ -7,10 +7,7 @@ Each indexer function returns:
 
 import os
 
-from jinja2 import Template
-
 from .formatter import utils
-from .reader import read_file
 from .writer import write_file
 
 SORTED_STATES = ['P', 'X', 'O', 'o', '.', ' ']
@@ -179,7 +176,7 @@ def compute_decade(year):
     return 10 * (year // 10)
 
 
-def generate_all_lists(albums, root_dir, extension='wiki'):
+def generate_all_indexes(albums, root_dir, extension='wiki'):
     """Writes all possible indexes format."""
     if extension == 'html':
         formatter = __import__('musicreviews').formatter.html
