@@ -95,6 +95,9 @@ def export_review(data, root, extension='md'):
             ]
         )
         data['rating_color'] = html.rating_to_rbg_color(data['rating'])
+        data['cover_url'] = html.get_cover_url(
+            root, data['artist_tag'], data['album_tag'], data['uri']
+        )
         formatted_review = template.format(**data)
     write_review(
         content=formatted_review,

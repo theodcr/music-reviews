@@ -3,8 +3,13 @@ Helpers for formatting reviews to HTML.
 """
 
 import colorsys
+import json
+import os
 import re
 
+from powerspot.operations import get_album
+
+from ..ui import style_info
 from .utils import replace_enclosed_text_tags
 
 
@@ -29,3 +34,21 @@ def rating_to_rbg_color(rating):
             (rating - limit) / (100 - limit) / 3, 1, 1
         )
     )
+
+
+def get_cover_url(root, artist_tag, album_tag, uri):
+    """Return URL to album cover using Spotify data.
+
+    If data has already retrieved, use it, else retrieve it from Spotify.
+    """
+    data_path = os.path.join(root, artist_tag, album_tag + '.json')
+    if os.path.exists(data_path):
+        with open(data_path, 'r') as file_content:
+            album_data = json.load(file_content)
+    else:
+        style_info("Album data not retrieved yet, retrieving from Spotify")
+        album_data = get_album(uri)
+        with open(data_path, 'w') as file_content:
+            file_content.write(json.dumps(album_data))
+    url = album_data['images'][0]['url']
+    return url
