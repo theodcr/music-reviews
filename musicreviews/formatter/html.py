@@ -1,5 +1,7 @@
 """
 Helpers for formatting reviews to HTML.
+Functions for writing indexed reviews lists in HTML format.
+(Dummy arguments to respect standard formatter definition.)
 """
 
 import colorsys
@@ -52,3 +54,31 @@ def get_cover_url(root, artist_tag, album_tag, uri):
             file_content.write(json.dumps(album_data))
     url = album_data['images'][0]['url']
     return url
+
+
+def format_header(string):
+    """Returns the string as a header in HTML format."""
+    return "<h1>{}</h1>\n".format(string)
+
+
+def format_artist(__, data):
+    """Returns a formatted HTML line describing the artist."""
+    return "<li>[[{artist_tag}/|{artist}]] - {rating:.1f}</li>\n".format(**data)
+
+
+def format_album(__, data):
+    """Returns a formatted HTML line describing the album."""
+    return (
+        "<li>{artist} - {album} - {year} - {rating} - "
+        + "[[{artist_tag}/{album_tag}|review]]</li>\n"
+    ).format(**data)
+
+
+def format_track(__, data):
+    """Returns a formatted HTML line describing the track."""
+    return "<li>{artist} - {album} - {track}<li>\n".format(**data)
+
+
+def format_review(__, data):
+    """Returns a formatted line showing the review state and its reference tags."""
+    return "<li>[{state}] [[{artist_tag}/{album_tag}]]</li>\n".format(**data)
