@@ -3,6 +3,26 @@ Functions for writing indexed reviews lists in vimwiki format.
 Formatters take an integer index and a dictionary as inputs.
 """
 
+from . import utils
+
+parse_list = utils.parse_list
+
+
+def parse_categorised_lists(
+    data,
+    header_formatter,
+    formatter,
+    sorted_keys=None,
+):
+    """Parses each element in data using a formatter function.
+    Data is a dict, each key is a category and each value is a list of dicts.
+    Adds a header for each category.
+    """
+    output = utils.parse_categorised_lists(
+        data, header_formatter, formatter, parse_list, sorted_keys
+    )
+    return output
+
 
 def format_header(string):
     """Returns the string as a header in the vimwiki format."""

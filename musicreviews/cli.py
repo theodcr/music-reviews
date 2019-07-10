@@ -29,7 +29,7 @@ def main(ctx, username):
         config_content = ctx.invoke(config)
 
     root_dir = os.path.abspath(config_content['path']['reviews_directory'])
-    click.echo(ui.style_info_path("Loading review library in directory", root_dir))
+    click.echo(ui.style_info_path("Loading review library from directory", root_dir))
     albums = reader.build_database(root_dir)
 
     if username is None:
@@ -46,11 +46,10 @@ def main(ctx, username):
 @click.pass_context
 def index(ctx):
     """Generate various reviews indexes and lists."""
-    indexer.generate_all_lists(ctx.obj['albums'], ctx.obj['root_dir'])
+    indexer.generate_all_indexes(
+        ctx.obj['albums'], ctx.obj['root_dir'], extension='wiki'
+    )
     click.echo(ui.style_info("Wiki indexes generated"))
-    # WIP: html indexing could be moved to export command
-    indexer.generate_html_index(ctx.obj['albums'], ctx.obj['root_dir'])
-    click.echo(ui.style_info("HTML indexes generated"))
 
 
 @main.command()
@@ -279,9 +278,17 @@ def config(ctx):
 @main.command()
 @click.pass_context
 @click.option('--all', '-a', is_flag=True, help="export all reviews in library")
+@click.option('--index', '-i', is_flag=True, help="build index of in export format")
 @click.argument('format', type=click.Choice(['md', 'html']))
-def export(ctx, all, format):
+def export(ctx, all, index, format):
     """Exports a review or all reviews to markdown or HTML."""
+    export_dir = ctx.obj['config']['path']['export_directory']
+    if index:
+        indexer.generate_all_indexes(
+            ctx.obj['albums'], export_dir, extension=format,
+        )
+        click.echo(ui.style_info("HTML indexes generated"))
+        return
     if all:
         albums_to_export = ctx.obj['albums']
     else:
@@ -308,8 +315,7 @@ def export(ctx, all, format):
 
         albums_to_export = [album for album in artist_albums if album['album_tag'] == album_tag]
 
-    export_dir = ctx.obj['config']['path']['export_directory']
-    click.echo(ui.style_info_path("Exporting in directory", export_dir))
+    click.echo(ui.style_info_path("Exporting to directory", export_dir))
     for album in albums_to_export:
         writer.export_review(album, root=export_dir, extension=format)
     click.echo(ui.style_info("Reviews exported"))
