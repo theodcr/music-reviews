@@ -100,7 +100,10 @@ def format_album(__, data):
 
 def format_track(__, data):
     """Returns a formatted HTML line describing the track."""
-    return "<li>{artist} - {album} - {track}<li>\n".format(**data)
+    return (
+        "<li><a href='{artist_tag}/{album_tag}.html'>{artist} - {album}</a>"
+        " - {track}</li>\n"
+    ).format(**data)
 
 
 def format_review(__, data):

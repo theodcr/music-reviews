@@ -151,6 +151,8 @@ def playlists_by_year(formatter, albums):
                 continue
             tracks = [
                 {
+                    'artist_tag': album['artist_tag'],
+                    'album_tag': album['album_tag'],
                     'artist': album['artist'],
                     'album': album['album'],
                     'track': album['tracks'][p],
