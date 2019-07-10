@@ -12,13 +12,13 @@ import re
 from powerspot.operations import get_album
 
 from ..ui import style_info
-from .utils import replace_enclosed_text_tags
+from . import utils
 
 
 def wiki_to_html(string):
     """Translates the string from vimwiki format to HTML."""
-    string = replace_enclosed_text_tags(string, '\*', '<b>', '</b>')
-    string = replace_enclosed_text_tags(string, '_', '<i>', '</i>')
+    string = utils.replace_enclosed_text_tags(string, '\*', '<b>', '</b>')
+    string = utils.replace_enclosed_text_tags(string, '_', '<i>', '</i>')
     string = re.sub('\n\n', '</p><p>', string)
     return string
 
@@ -54,6 +54,30 @@ def get_cover_url(root, artist_tag, album_tag, uri):
             file_content.write(json.dumps(album_data))
     url = album_data['images'][0]['url']
     return url
+
+
+def parse_list(data, formatter, index_shift=1):
+    """Parses each element in data using a formatter function.
+    Data is a list of dicts.
+    """
+    output = '<ol>\n' + utils.parse_list(data, formatter) + '</ol>\n'
+    return output
+
+
+def parse_categorised_lists(
+    data,
+    header_formatter,
+    formatter,
+    sorted_keys=None,
+):
+    """Parses each element in data using a formatter function.
+    Data is a dict, each key is a category and each value is a list of dicts.
+    Adds a header for each category.
+    """
+    output = utils.parse_categorised_lists(
+        data, header_formatter, formatter, parse_list, sorted_keys
+    )
+    return output
 
 
 def format_header(string):

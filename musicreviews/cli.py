@@ -46,7 +46,9 @@ def main(ctx, username):
 @click.pass_context
 def index(ctx):
     """Generate various reviews indexes and lists."""
-    indexer.generate_all_indexes(ctx.obj['albums'], ctx.obj['root_dir'])
+    indexer.generate_all_indexes(
+        ctx.obj['albums'], ctx.obj['root_dir'], extension='wiki'
+    )
     click.echo(ui.style_info("Wiki indexes generated"))
 
 
@@ -283,7 +285,7 @@ def export(ctx, all, index, format):
     export_dir = ctx.obj['config']['path']['export_directory']
     if index:
         indexer.generate_all_indexes(
-            ctx.obj['albums'], export_dir, extension=format, tag="ol"
+            ctx.obj['albums'], export_dir, extension=format,
         )
         click.echo(ui.style_info("HTML indexes generated"))
         return

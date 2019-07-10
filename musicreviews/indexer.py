@@ -2,12 +2,11 @@
 Functions for generating various sorted lists and indexes of the reviews and ratings.
 Each indexer function returns:
 - sorted data as a dictionary
-- parsed data as a string in vimwiki format
+- parsed data as a formatted string in wanted format (wiki or HTML)
 """
 
 import os
 
-from .formatter import utils
 from .writer import write_file
 
 SORTED_STATES = ['P', 'X', 'O', 'o', '.', ' ']
@@ -21,7 +20,7 @@ STATES_DESCRIPTION = {
 }
 
 
-def sort_artists(formatter, albums, **kwargs):
+def sort_artists(formatter, albums):
     """Returns the artists sorted by decreasing mean album rating.
     Only artists with more than 1 reviewed albums are considered.
     """
@@ -42,20 +41,20 @@ def sort_artists(formatter, albums, **kwargs):
     sorted_artists = sorted(artists, key=lambda x: x['rating'], reverse=True)
     return (
         sorted_artists,
-        utils.parse_list(sorted_artists, formatter.format_artist, **kwargs),
+        formatter.parse_list(sorted_artists, formatter.format_artist),
     )
 
 
-def sort_ratings(formatter, albums, **kwargs):
+def sort_ratings(formatter, albums):
     """Returns the rated albums sorted by decreasing rating."""
     sorted_albums = sorted(albums, key=lambda x: x['rating'], reverse=True)
     return (
         sorted_albums,
-        utils.parse_list(sorted_albums, formatter.format_album, **kwargs),
+        formatter.parse_list(sorted_albums, formatter.format_album),
     )
 
 
-def sort_ratings_by_year(formatter, albums, **kwargs):
+def sort_ratings_by_year(formatter, albums):
     """Returns the rated albums sorted by decreasing year and rating."""
     years = set([album['year'] for album in albums])
     sorted_albums = {}
@@ -67,13 +66,13 @@ def sort_ratings_by_year(formatter, albums, **kwargs):
         )
     return (
         sorted_albums,
-        utils.parse_categorised_lists(
-            sorted_albums, formatter.format_header, formatter.format_album, **kwargs
+        formatter.parse_categorised_lists(
+            sorted_albums, formatter.format_header, formatter.format_album
         ),
     )
 
 
-def sort_ratings_by_decade(formatter, albums, **kwargs):
+def sort_ratings_by_decade(formatter, albums):
     """Returns the rated albums sorted by decreasing decade and rating."""
     for album in albums:
         album['decade'] = compute_decade(album['year'])
@@ -87,31 +86,31 @@ def sort_ratings_by_decade(formatter, albums, **kwargs):
         )
     return (
         sorted_albums,
-        utils.parse_categorised_lists(
-            sorted_albums, formatter.format_header, formatter.format_album, **kwargs
+        formatter.parse_categorised_lists(
+            sorted_albums, formatter.format_header, formatter.format_album
         ),
     )
 
 
-def all_reviews(formatter, albums, **kwargs):
+def all_reviews(formatter, albums):
     """Returns a list of all album reviews and their state."""
     sorted_albums = sorted(albums, key=lambda x: (x['artist_tag'], x['year']))
     return (
         sorted_albums,
-        utils.parse_list(sorted_albums, formatter.format_review, **kwargs),
+        formatter.parse_list(sorted_albums, formatter.format_review),
     )
 
 
-def sort_reviews_date(formatter, albums, **kwargs):
+def sort_reviews_date(formatter, albums):
     """Returns the reviews sorted by generation date."""
     sorted_albums = sorted(albums, key=lambda x: x['date'], reverse=True)
     return (
         sorted_albums,
-        utils.parse_list(sorted_albums, formatter.format_review, **kwargs),
+        formatter.parse_list(sorted_albums, formatter.format_review),
     )
 
 
-def sort_reviews_state(formatter, albums, **kwargs):
+def sort_reviews_state(formatter, albums):
     """Returns the reviews sorted by state."""
     sorted_albums = sorted(albums, key=lambda x: (x['artist_tag'], x['year']))
     filtered_albums = {}
@@ -123,17 +122,16 @@ def sort_reviews_state(formatter, albums, **kwargs):
         ]
     return (
         sorted_albums,
-        utils.parse_categorised_lists(
+        formatter.parse_categorised_lists(
             filtered_albums,
             formatter.format_header,
             formatter.format_review,
-            sorted_keys=(STATES_DESCRIPTION[state] for state in SORTED_STATES),
-            **kwargs
+            sorted_keys=(STATES_DESCRIPTION[state] for state in SORTED_STATES)
         ),
     )
 
 
-def playlists_by_year(formatter, albums, **kwargs):
+def playlists_by_year(formatter, albums):
     """Returns yearly playlists of favorite tracks from albums
     sorted by decreasing year and decreasing rating.
     """
@@ -161,8 +159,8 @@ def playlists_by_year(formatter, albums, **kwargs):
             sorted_tracks[year].extend(tracks)
     return (
         sorted_tracks,
-        utils.parse_categorised_lists(
-            sorted_tracks, formatter.format_header, formatter.format_track, **kwargs
+        formatter.parse_categorised_lists(
+            sorted_tracks, formatter.format_header, formatter.format_track
         ),
     )
 
@@ -177,7 +175,7 @@ def compute_decade(year):
     return 10 * (year // 10)
 
 
-def generate_all_indexes(albums, root_dir, extension='wiki', **kwargs):
+def generate_all_indexes(albums, root_dir, extension='wiki'):
     """Writes all possible indexes format."""
     if extension == 'html':
         formatter = __import__('musicreviews').formatter.html
@@ -195,5 +193,5 @@ def generate_all_indexes(albums, root_dir, extension='wiki', **kwargs):
     )
     for function, file_name in pipelines:
         write_file(
-            function(formatter, albums, **kwargs)[1], os.path.join(root_dir, file_name)
+            function(formatter, albums)[1], os.path.join(root_dir, file_name)
         )

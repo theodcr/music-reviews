@@ -6,14 +6,11 @@ Helpers for review and index formatting.
 import re
 
 
-def parse_list(data, formatter, tag='', index_shift=1):
+def parse_list(data, formatter, index_shift=1):
     """Parses each element in data using a formatter function.
     Data is a list of dicts.
-    Optional tag, mainly for HTML.
     """
     output = ''.join([formatter(i + index_shift, item) for i, item in enumerate(data)])
-    if tag:
-        output = f'<{tag}>\n' + output + f'</{tag}>\n'
     return output
 
 
@@ -21,8 +18,8 @@ def parse_categorised_lists(
     data,
     header_formatter,
     formatter,
+    list_parser,
     sorted_keys=None,
-    **kwargs
 ):
     """Parses each element in data using a formatter function.
     Data is a dict, each key is a category and each value is a list of dicts.
@@ -32,7 +29,7 @@ def parse_categorised_lists(
         sorted_keys = sorted(data.keys(), reverse=True)
     output = ''.join(
         [
-            header_formatter(key) + parse_list(data[key], formatter, **kwargs)
+            header_formatter(key) + list_parser(data[key], formatter)
             for key in sorted_keys
         ]
     )
