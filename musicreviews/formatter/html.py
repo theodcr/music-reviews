@@ -87,14 +87,14 @@ def format_header(string):
 
 def format_artist(__, data):
     """Returns a formatted HTML line describing the artist."""
-    return "<li>[[{artist_tag}/|{artist}]] - {rating:.1f}</li>\n".format(**data)
+    return "<li>{artist} - {rating:.1f}</li>\n".format(**data)
 
 
 def format_album(__, data):
     """Returns a formatted HTML line describing the album."""
     return (
         "<li>{artist} - {album} - {year} - {rating} - "
-        + "[[{artist_tag}/{album_tag}|review]]</li>\n"
+        "<a href='{artist_tag}/{album_tag}.html'>review</a></li>\n"
     ).format(**data)
 
 
@@ -105,4 +105,7 @@ def format_track(__, data):
 
 def format_review(__, data):
     """Returns a formatted line showing the review state and its reference tags."""
-    return "<li>[{state}] [[{artist_tag}/{album_tag}]]</li>\n".format(**data)
+    return (
+        "<li>[{state}] <a href='{artist_tag}/{album_tag}.html'>"
+        "{artist} - {album}</a></li>\n"
+    ).format(**data)
