@@ -7,6 +7,7 @@ Each indexer function returns:
 
 import os
 
+from .reader import read_file
 from .writer import write_file
 
 SORTED_STATES = ['P', 'X', 'O', 'o', '.', ' ']
@@ -182,16 +183,20 @@ def generate_all_indexes(albums, root_dir, extension='wiki'):
     else:
         formatter = __import__('musicreviews').formatter.wiki
     pipelines = (
-        (sort_ratings, f'sorted_albums.{extension}'),
-        (sort_ratings_by_year, f'sorted_by_year.{extension}'),
-        (sort_ratings_by_decade, f'sorted_by_decade.{extension}'),
-        (all_reviews, f'reviews.{extension}'),
-        (sort_reviews_state, f'reviews_state.{extension}'),
-        (sort_reviews_date, f'reviews_date.{extension}'),
-        (sort_artists, f'sorted_artists.{extension}'),
-        (playlists_by_year, f'playlists_by_year.{extension}'),
+        (sort_ratings, 'sorted_albums'),
+        (sort_ratings_by_year, 'sorted_by_year'),
+        (sort_ratings_by_decade, 'sorted_by_decade'),
+        (all_reviews, 'reviews'),
+        (sort_reviews_state, 'reviews_state'),
+        (sort_reviews_date, 'reviews_date'),
+        (sort_artists, 'sorted_artists'),
+        (playlists_by_year, 'playlists_by_year'),
     )
-    for function, file_name in pipelines:
-        write_file(
-            function(formatter, albums)[1], os.path.join(root_dir, file_name)
-        )
+    for function, index_name in pipelines:
+        content = function(formatter, albums)[1]
+        # specific case for html: fill an html template
+        if extension == 'html':
+            index_template = read_file(root_dir, 'template_index.html')
+            title = index_name.replace('_', ' ').title()
+            content = index_template.format(title=title, content=content)
+        write_file(content, os.path.join(root_dir, f'{index_name}.{extension}'))
