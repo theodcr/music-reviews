@@ -11,7 +11,12 @@ import click
 
 from musicreviews import configuration, formatter, indexer, reader, ui, writer
 from powerspot.cli import get_username
-from powerspot.operations import get_album, get_artist_albums, get_saved_albums, search_artist
+from powerspot.operations import (
+    get_album,
+    get_artist_albums,
+    get_saved_albums,
+    search_artist,
+)
 
 
 @click.group(chain=True)

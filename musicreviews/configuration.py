@@ -1,8 +1,8 @@
 import os
 from configparser import ConfigParser
-from pkg_resources import Requirement, resource_filename
 
 import click
+from pkg_resources import Requirement, resource_filename
 
 from .writer import write_file
 

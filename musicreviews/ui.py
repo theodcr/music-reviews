@@ -3,13 +3,15 @@ Helpers for CLI UI and specific prompts.
 """
 
 import re
+
+import click
+
 try:
     import readline
     readline_available = True
 except ImportError:
     readline_available = False
 
-import click
 
 GREET = """
     __  ___           _      ____            _
