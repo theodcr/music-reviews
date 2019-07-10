@@ -16,7 +16,6 @@ def write_config(config):
     if not os.path.exists(directory):
         os.makedirs(directory)
     write_file(config, config_path())
-    return path
 
 
 def load_config(load_template=False):

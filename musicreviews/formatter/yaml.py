@@ -15,7 +15,7 @@ def escape_yaml_specials(string):
     elif bool(re.search('^"', string)):
         return "'" + string + "'"
     elif bool(
-        re.search("^'|^\? |: |^,|^&|^%|^@|^!|^\||^\*|^#|^- |^[|^]|^{|^}|^>", string)
+        re.search(r"^'|^\? |: |^,|^&|^%|^@|^!|^\||^\*|^#|^- |^[|^]|^{|^}|^>", string)
     ):
         return '"' + string + '"'
     else:

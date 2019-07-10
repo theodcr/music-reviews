@@ -13,7 +13,7 @@ except ImportError:
     readline_available = False
 
 
-GREET = """
+GREET = r"""
     __  ___           _      ____            _
    /  |/  /_  _______(_)____/ __ \___ _   __(_)__ _      _______
   / /|_/ / / / / ___/ / ___/ /_/ / _ \ | / / / _ \ | /| / / ___/
@@ -71,7 +71,7 @@ def check_integer_input(value, min_value, max_value):
 
 def list_integers_input(string, min_value, max_value):
     """Converts and checks a string containing a list of integers."""
-    indices = set(re.split('\W+', string))
+    indices = set(re.split(r'\W+', string))
     indices.discard('')
     clean_indices = [check_integer_input(idx, min_value, max_value) for idx in indices]
     return clean_indices

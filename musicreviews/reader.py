@@ -8,8 +8,8 @@ import re
 
 import yaml
 
-START_HEADER = '---\n'
-END_HEADER = '\n\.\.\.\n'
+START_HEADER = r'---\n'
+END_HEADER = r'\n\.\.\.\n'
 
 
 def read_file(root, filename):

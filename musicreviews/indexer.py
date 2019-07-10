@@ -139,7 +139,6 @@ def playlists_by_year(formatter, albums):
     years = set([album['year'] for album in albums])
     sorted_tracks = {}
     for year in sorted(years, reverse=True):
-        i = 0
         sorted_tracks[year] = []
         sorted_albums = sorted(
             [x for x in albums if x['year'] == year],

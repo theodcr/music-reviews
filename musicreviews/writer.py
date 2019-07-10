@@ -38,7 +38,6 @@ def fill_review_template(
         picks_string = ''
     if tracks is not None:
         # indent track list
-        track = ''
         tracks_string = '\n'.join(
             [
                 f'    {i+1}: {yaml.escape_yaml_specials(track)}'
