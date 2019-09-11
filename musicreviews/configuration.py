@@ -6,8 +6,8 @@ from pkg_resources import Requirement, resource_filename
 
 from .writer import write_file
 
-CONFIG_FILENAME = 'config.cfg'
-TEMPLATE_FILENAME = 'templates/config.template.cfg'
+CONFIG_FILENAME = "config.cfg"
+TEMPLATE_FILENAME = "templates/config.template.cfg"
 
 
 def write_config(config):

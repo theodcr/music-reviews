@@ -24,28 +24,28 @@ def fill_review_template(
     tracks=None,
     state=None,
     content=None,
-    date=None
+    date=None,
 ):
     """Converts the fields and fills the template review."""
     if date is None:
         date = datetime.datetime.now().strftime("%Y-%m-%d")
-    uri = uri or ''
-    state = state or '.'
-    content = content or ''
+    uri = uri or ""
+    state = state or "."
+    content = content or ""
     if picks is not None:
-        picks_string = '\n'.join([f'- {pick}' for pick in picks])
+        picks_string = "\n".join([f"- {pick}" for pick in picks])
     else:
-        picks_string = ''
+        picks_string = ""
     if tracks is not None:
         # indent track list
-        tracks_string = '\n'.join(
+        tracks_string = "\n".join(
             [
-                f'    {i+1}: {yaml.escape_yaml_specials(track)}'
+                f"    {i+1}: {yaml.escape_yaml_specials(track)}"
                 for i, track in enumerate(tracks)
             ]
         )
     else:
-        tracks_string = ''
+        tracks_string = ""
     return template.format(
         date=date,
         artist=yaml.escape_yaml_specials(artist),
@@ -60,69 +60,64 @@ def fill_review_template(
     )
 
 
-def export_review(data, root, extension='md'):
+def export_review(data, root, extension="md"):
     """Exports review in given format. Formats metadata and content."""
-    template = read_file(root, 'template.' + extension)
-    data['content'] = utils.replace_track_tags(data['content']).format(**data)
+    template = read_file(root, "template." + extension)
+    data["content"] = utils.replace_track_tags(data["content"]).format(**data)
 
-    if extension == 'md':
-        data['content'] = markdown.wiki_to_markdown(data['content'])
+    if extension == "md":
+        data["content"] = markdown.wiki_to_markdown(data["content"])
         # ensure tracks are sorted
-        tracks = [data['tracks'][i] for i in sorted(data['tracks'])]
+        tracks = [data["tracks"][i] for i in sorted(data["tracks"])]
         # use general review template
         formatted_review = fill_review_template(
             template=template,
-            artist=data['artist'],
-            album=data['album'],
-            year=data['year'],
-            rating=data['rating'],
-            uri=data['uri'],
-            picks=data['picks'],
+            artist=data["artist"],
+            album=data["album"],
+            year=data["year"],
+            rating=data["rating"],
+            uri=data["uri"],
+            picks=data["picks"],
             tracks=tracks,
-            state=data['state'],
-            content=data['content'],
-            date=data['date']
+            state=data["state"],
+            content=data["content"],
+            date=data["date"],
         )
     else:
-        data['content'] = html.wiki_to_html(data['content'])
-        data['tracks'] = '\n'.join(
+        data["content"] = html.wiki_to_html(data["content"])
+        data["tracks"] = "\n".join(
             [
-                f'<li><b>{track}</b></li>'
-                if data['picks'] is not None and index in data['picks']
-                else f'<li>{track}</li>'
-                for index, track in sorted(data['tracks'].items())
+                f"<li><b>{track}</b></li>"
+                if data["picks"] is not None and index in data["picks"]
+                else f"<li>{track}</li>"
+                for index, track in sorted(data["tracks"].items())
             ]
         )
-        data['rating_color'] = html.rating_to_rbg_color(data['rating'])
-        data['cover_url'] = html.get_cover_url(
-            root, data['artist_tag'], data['album_tag'], data['uri']
+        data["rating_color"] = html.rating_to_rbg_color(data["rating"])
+        data["cover_url"] = html.get_cover_url(
+            root, data["artist_tag"], data["album_tag"], data["uri"]
         )
         formatted_review = template.format(**data)
     write_review(
         content=formatted_review,
-        folder=data['artist_tag'],
-        filename=data['album_tag'],
+        folder=data["artist_tag"],
+        filename=data["album_tag"],
         root=root,
         extension=extension,
-        overwrite=True
+        overwrite=True,
     )
 
 
 def write_file(content, path, newline=False):
     """Writes the given content in a file, with an optional newline at the end."""
-    with open(path, 'w') as file_content:
+    with open(path, "w") as file_content:
         file_content.write(content)
         if newline:
             file_content.write("\n")
 
 
 def write_review(
-    content,
-    folder,
-    filename,
-    root=os.getcwd(),
-    extension='wiki',
-    overwrite=False
+    content, folder, filename, root=os.getcwd(), extension="wiki", overwrite=False
 ):
     """Writes the review file using the given data.
     Returns True to confirm review creation (or if review already exists).
@@ -130,7 +125,7 @@ def write_review(
     """
     if not os.path.exists(os.path.join(root, folder)):
         os.makedirs(os.path.join(root, folder))
-        click.echo(click.style("Artist not known yet, created folder", fg='cyan'))
+        click.echo(click.style("Artist not known yet, created folder", fg="cyan"))
 
     filepath = os.path.join(root, folder, filename + "." + extension)
 
