@@ -1,13 +1,13 @@
 import os
 from configparser import ConfigParser
-from pkg_resources import Requirement, resource_filename
 
 import click
+from pkg_resources import Requirement, resource_filename
 
 from .writer import write_file
 
-CONFIG_FILENAME = 'config.cfg'
-TEMPLATE_FILENAME = 'templates/config.template.cfg'
+CONFIG_FILENAME = "config.cfg"
+TEMPLATE_FILENAME = "templates/config.template.cfg"
 
 
 def write_config(config):
@@ -16,7 +16,6 @@ def write_config(config):
     if not os.path.exists(directory):
         os.makedirs(directory)
     write_file(config, config_path())
-    return path
 
 
 def load_config(load_template=False):

@@ -17,9 +17,9 @@ from . import utils
 
 def wiki_to_html(string):
     """Translates the string from vimwiki format to HTML."""
-    string = utils.replace_enclosed_text_tags(string, '\*', '<b>', '</b>')
-    string = utils.replace_enclosed_text_tags(string, '_', '<i>', '</i>')
-    string = re.sub('\n\n', '</p><p>', string)
+    string = utils.replace_enclosed_text_tags(string, r"\*", "<b>", "</b>")
+    string = utils.replace_enclosed_text_tags(string, "_", "<i>", "</i>")
+    string = re.sub("\n\n", "</p><p>", string)
     return string
 
 
@@ -32,9 +32,8 @@ def rating_to_rbg_color(rating):
     if rating <= limit:
         rating = 0
     return tuple(
-        color*100 for color in colorsys.hsv_to_rgb(
-            (rating - limit) / (100 - limit) / 3, 1, 1
-        )
+        color * 100
+        for color in colorsys.hsv_to_rgb((rating - limit) / (100 - limit) / 3, 1, 1)
     )
 
 
@@ -43,16 +42,16 @@ def get_cover_url(root, artist_tag, album_tag, uri):
 
     If data has already retrieved, use it, else retrieve it from Spotify.
     """
-    data_path = os.path.join(root, artist_tag, album_tag + '.json')
+    data_path = os.path.join(root, artist_tag, album_tag + ".json")
     if os.path.exists(data_path):
-        with open(data_path, 'r') as file_content:
+        with open(data_path, "r") as file_content:
             album_data = json.load(file_content)
     else:
         style_info("Album data not retrieved yet, retrieving from Spotify")
         album_data = get_album(uri)
-        with open(data_path, 'w') as file_content:
+        with open(data_path, "w") as file_content:
             file_content.write(json.dumps(album_data))
-    url = album_data['images'][0]['url']
+    url = album_data["images"][0]["url"]
     return url
 
 
@@ -60,16 +59,11 @@ def parse_list(data, formatter, index_shift=1):
     """Parses each element in data using a formatter function.
     Data is a list of dicts.
     """
-    output = '<ol>\n' + utils.parse_list(data, formatter) + '</ol>\n'
+    output = "<ol>\n" + utils.parse_list(data, formatter) + "</ol>\n"
     return output
 
 
-def parse_categorised_lists(
-    data,
-    header_formatter,
-    formatter,
-    sorted_keys=None,
-):
+def parse_categorised_lists(data, header_formatter, formatter, sorted_keys=None):
     """Parses each element in data using a formatter function.
     Data is a dict, each key is a category and each value is a list of dicts.
     Adds a header for each category.
