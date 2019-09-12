@@ -8,12 +8,7 @@ from . import utils
 parse_list = utils.parse_list
 
 
-def parse_categorised_lists(
-    data,
-    header_formatter,
-    formatter,
-    sorted_keys=None,
-):
+def parse_categorised_lists(data, header_formatter, formatter, sorted_keys=None):
     """Parses each element in data using a formatter function.
     Data is a dict, each key is a category and each value is a list of dicts.
     Adds a header for each category.
@@ -57,7 +52,7 @@ def format_review(__, data):
 def format_rating(album):
     """Format the album rating in a short note in vimwiki syntax."""
     output = f"\n*Note :* {album['rating']}/100"
-    if album['rating'] % 10 != 0:
+    if album["rating"] % 10 != 0:
         output += f", arrondi à {round(album['rating']/10)}/10"
     output += "\n"
     return output
