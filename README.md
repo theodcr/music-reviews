@@ -1,6 +1,6 @@
 # musicreviews
 
-Python package for managing written music reviews. Uses my other package [powerspot](https://github.com/theolamayo/powerspot).
+Python package for managing written music reviews. Uses my other package [powerspot](https://github.com/theodcr/powerspot).
 
 This package helps managing collections of music album reviews written in text format according to a custom template (currently a wiki format with a YAML header). The command-line interface lets you:
 - create reviews:
