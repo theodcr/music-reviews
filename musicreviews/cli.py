@@ -14,6 +14,7 @@ from powerspot.cli import get_username
 from powerspot.operations import (
     get_album,
     get_artist_albums,
+    get_playing_track,
     get_saved_albums,
     search_artist,
 )
@@ -139,10 +140,11 @@ def queue(ctx):
 
 @main.command()
 @click.option("--uri", "-u", help="direct input of album URI")
+@click.option("--playing", "-p", is_flag=True, help="use currently playing album")
 @click.option("--manual", "-m", is_flag=True, help="manual input of album data")
 @click.option("-y", is_flag=True, help="confirm review creation")
 @click.pass_context
-def create(ctx, uri, manual, y):
+def create(ctx, uri, playing, manual, y):
     """Create a review using data retrieved from Spotify or manually entered."""
     known_artists = [x["artist"] for x in ctx.obj["albums"]]
     if manual:
@@ -164,6 +166,12 @@ def create(ctx, uri, manual, y):
         )
         tracks = None
     else:
+        if playing:
+            # album from currently playing track
+            track = get_playing_track(ctx.obj["username"])
+            if track is not None:
+                uri = track["item"]["album"]["uri"]
+
         if uri is None:
             # incremental search to select album in Spotify collection
             artist_query = ui.completion_input(
