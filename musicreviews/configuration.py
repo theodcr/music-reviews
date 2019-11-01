@@ -4,8 +4,6 @@ from configparser import ConfigParser
 import click
 from pkg_resources import Requirement, resource_filename
 
-from .writer import write_file
-
 CONFIG_FILENAME = "config.cfg"
 TEMPLATE_FILENAME = "templates/config.template.cfg"
 
@@ -15,7 +13,9 @@ def write_config(config):
     directory = config_directory()
     if not os.path.exists(directory):
         os.makedirs(directory)
-    write_file(config, config_path())
+    with open(config_path(), "w") as file_content:
+        config.write(file_content)
+    return config_path()
 
 
 def load_config(load_template=False):

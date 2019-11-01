@@ -185,7 +185,7 @@ def create(ctx, uri, manual, y):
 
             res_albums = get_artist_albums(
                 artist_uri, country=ctx.obj["config"]["spotify"]["country"]
-            )["items"]
+            )
             albums = [album["name"] for album in res_albums]
             for i, album in enumerate(albums):
                 click.echo(ui.style_enumerate(i, album))
