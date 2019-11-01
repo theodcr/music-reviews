@@ -211,6 +211,13 @@ def create(ctx, uri, playing, manual, y):
         album = album_data["name"]
         year = album_data["release_date"][:4]
         tracks = [track["name"] for track in album_data["tracks"]["items"]]
+
+        click.echo(
+            "\n"
+            + click.style("Creating review for album: ", fg="cyan")
+            + ui.style_album(artist, album, year)
+        )
+
         # list tracks, starting at index 1
         for i, track in enumerate(tracks):
             click.echo(ui.style_enumerate(i + 1, track))
@@ -235,17 +242,11 @@ def create(ctx, uri, playing, manual, y):
     folder = formatter.utils.alphanumeric_lowercase(artist)
     filename = formatter.utils.alphanumeric_lowercase(album)
     click.echo(
-        "\n"
-        + click.style("Creating review for album:", fg="cyan")
-        + "\n"
-        + ui.style_album(artist, album, year)
-        + "\n"
-        + click.style("Filename: ", fg="cyan")
+        click.style("Creating review at: ", fg="cyan")
         + click.style(root_dir + "/", fg="white")
         + click.style(folder, fg="magenta", bold=True)
         + click.style("/", fg="white")
         + click.style(filename, fg="blue", bold=True)
-        + "\n"
     )
     if click.confirm(ui.style_prompt("Confirm creation of review"), default=True):
         template = reader.read_file(root_dir, "template.wiki")
