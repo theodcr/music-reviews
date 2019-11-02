@@ -9,6 +9,7 @@ import json
 import os
 import re
 
+import click
 from powerspot.operations import get_album
 
 from ..ui import style_info
@@ -42,13 +43,16 @@ def get_cover_url(root, artist_tag, album_tag, uri):
 
     If data has already retrieved, use it, else retrieve it from Spotify.
     """
-    data_path = os.path.join(root, artist_tag, album_tag + ".json")
+    directory = os.path.join(root, artist_tag)
+    data_path = os.path.join(directory, album_tag + ".json")
     if os.path.exists(data_path):
         with open(data_path, "r") as file_content:
             album_data = json.load(file_content)
     else:
-        style_info("Album data not retrieved yet, retrieving from Spotify")
+        click.echo(style_info("Album data not retrieved yet, retrieving from Spotify"))
         album_data = get_album(uri)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
         with open(data_path, "w") as file_content:
             file_content.write(json.dumps(album_data))
     url = album_data["images"][0]["url"]
