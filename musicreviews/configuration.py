@@ -11,11 +11,11 @@ TEMPLATE_FILENAME = "templates/config.template.cfg"
 def write_config(config):
     """Writes config object in local config path and returns this path."""
     directory = config_directory()
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    with open(config_path(), "w") as file_content:
+    os.makedirs(directory, exist_ok=True)
+    path = config_path()
+    with open(path, "w") as file_content:
         config.write(file_content)
-    return config_path()
+    return path
 
 
 def load_config(load_template=False):

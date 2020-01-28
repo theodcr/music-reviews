@@ -31,8 +31,8 @@ def main(ctx, username):
     config_path, config_content = configuration.load_config()
     click.echo(ui.style_info_path("Loading configuration at", config_path))
     if config_content is None:
-        click.echo(ui.style_error("Configuration not found, running config command"))
-        config_content = ctx.invoke(config)
+        click.echo(ui.style_error("Configuration not found, running setup command"))
+        config_content = ctx.invoke(setup)
 
     root_dir = os.path.abspath(config_content["path"]["reviews_directory"])
     click.echo(ui.style_info_path("Loading review library from directory", root_dir))
@@ -261,7 +261,7 @@ def create(ctx, uri, playing, manual, y):
 
 @main.command()
 @click.pass_context
-def config(ctx):
+def setup(ctx):
     """Configure review library settings."""
     __, template_config = configuration.load_config(load_template=True)
     __, config = configuration.load_config()
@@ -295,7 +295,7 @@ def config(ctx):
 
     click.echo(
         ui.style_info_path(
-            "Saving configuration at", configuration.write_config(config)
+            "Saved configuration at", configuration.write_config(config)
         )
     )
     return config
