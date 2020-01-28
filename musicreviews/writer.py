@@ -60,52 +60,30 @@ def fill_review_template(
     )
 
 
-def export_review(data, root, extension="md"):
-    """Exports review in given format. Formats metadata and content."""
-    template = read_file(root, "template." + extension)
+def export_review(data, root):
+    """Exports review to HTML. Formats metadata and content."""
+    template = read_file(root, "template.html")
     data["content"] = utils.replace_track_tags(data["content"]).format(**data)
-
-    if extension == "md":
-        # TODO: delete
-        data["content"] = markdown.wiki_to_markdown(data["content"])
-        # ensure tracks are sorted
-        tracks = [data["tracks"][i] for i in sorted(data["tracks"])]
-        # use general review template
-        formatted_review = fill_review_template(
-            template=template,
-            artist=data["artist"],
-            album=data["album"],
-            year=data["year"],
-            rating=data["rating"],
-            uri=data["uri"],
-            picks=data["picks"],
-            tracks=tracks,
-            state=data["state"],
-            content=data["content"],
-            date=data["date"],
-        )
-    else:
-        # TODO: markdown to html
-        data["content"] = html.wiki_to_html(data["content"])
-        data["tracks"] = "\n".join(
-            [
-                f"<li><b>{track}</b></li>"
-                if data["picks"] is not None and index in data["picks"]
-                else f"<li>{track}</li>"
-                for index, track in sorted(data["tracks"].items())
-            ]
-        )
-        data["rating_color"] = html.rating_to_rbg_color(data["rating"])
-        data["cover_url"] = html.get_cover_url(
-            root, data["artist_tag"], data["album_tag"], data["uri"]
-        )
-        formatted_review = template.format(**data)
+    data["content"] = html.markdown_to_html(data["content"])
+    data["tracks"] = "\n".join(
+        [
+            f"<li><b>{track}</b></li>"
+            if data["picks"] is not None and index in data["picks"]
+            else f"<li>{track}</li>"
+            for index, track in sorted(data["tracks"].items())
+        ]
+    )
+    data["rating_color"] = html.rating_to_rbg_color(data["rating"])
+    data["cover_url"] = html.get_cover_url(
+        root, data["artist_tag"], data["album_tag"], data["uri"]
+    )
+    formatted_review = template.format(**data)
     write_review(
         content=formatted_review,
         folder=data["artist_tag"],
         filename=data["album_tag"],
         root=root,
-        extension=extension,
+        extension="html",
         overwrite=True,
     )
 

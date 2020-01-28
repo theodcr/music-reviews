@@ -16,10 +16,10 @@ from ..ui import style_info
 from . import utils
 
 
-def wiki_to_html(string):
-    """Translates the string from vimwiki format to HTML."""
-    string = utils.replace_enclosed_text_tags(string, r"\*", "<b>", "</b>")
-    string = utils.replace_enclosed_text_tags(string, "_", "<i>", "</i>")
+def markdown_to_html(string):
+    """Translates the string from markdown format to HTML."""
+    string = utils.replace_enclosed_text_tags(string, r"\*\*", "<b>", "</b>")
+    string = utils.replace_enclosed_text_tags(string, "\*", "<i>", "</i>")
     string = re.sub("\n\n", "</p><p>", string)
     return string
 

@@ -309,12 +309,11 @@ def setup(ctx):
 @click.pass_context
 @click.option("--all", "-a", is_flag=True, help="export all reviews in library")
 @click.option("--index", "-i", is_flag=True, help="build and export indexes")
-@click.argument("format", type=click.Choice(["md", "html"]))
-def export(ctx, all, index, format):
-    """Exports a review or all reviews to markdown or HTML."""
+def export(ctx, all, index):
+    """Exports a review or all reviews to HTML."""
     export_dir = ctx.obj["config"]["path"]["export_directory"]
     if index:
-        indexer.generate_all_indexes(ctx.obj["albums"], export_dir, extension=format)
+        indexer.generate_all_indexes(ctx.obj["albums"], export_dir, extension="html")
         click.echo(ui.style_info("Indexes generated"))
         return
     if all:
@@ -349,7 +348,7 @@ def export(ctx, all, index, format):
 
     click.echo(ui.style_info_path("Exporting to directory", export_dir))
     for album in albums_to_export:
-        writer.export_review(album, root=export_dir, extension=format)
+        writer.export_review(album, root=export_dir)
     click.echo(ui.style_info("Reviews exported"))
 
 
