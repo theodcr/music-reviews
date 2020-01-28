@@ -31,9 +31,7 @@ def format_artist(index, data):
 
 def format_album(index, data):
     """Returns a formatted line of text describing the album."""
-    return (
-        "{}. {artist} - {album} - {year} - {rating}\n"
-    ).format(index, **data)
+    return "{}. {artist} - {album} - {year} - {rating}\n".format(index, **data)
 
 
 def format_track(index, data):

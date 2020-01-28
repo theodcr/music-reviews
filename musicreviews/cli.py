@@ -52,9 +52,7 @@ def main(ctx, username):
 @click.pass_context
 def index(ctx):
     """Generate various reviews indexes and lists."""
-    indexer.generate_all_indexes(
-        ctx.obj["albums"], ctx.obj["root_dir"], extension="md"
-    )
+    indexer.generate_all_indexes(ctx.obj["albums"], ctx.obj["root_dir"], extension="md")
     click.echo(ui.style_info("Indexes generated"))
 
 
