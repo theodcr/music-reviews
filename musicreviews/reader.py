@@ -36,10 +36,9 @@ def empty_album():
     }
 
 
-def build_database(root_dir=os.getcwd(), placeholders=False):
+def build_database(root_dir=os.getcwd()):
     """Finds reviews and builds a database using their tags and content.
     By default decodes the yaml header to decode tags.
-    If placeholders is set to True, docdes tags written as '%tag: value'.
     """
     albums = []
     # find reviews in folders
@@ -50,10 +49,7 @@ def build_database(root_dir=os.getcwd(), placeholders=False):
         for file_path in glob.glob(os.path.join(root_dir, artist_tag, "*.md")):
             album = empty_album()
             with open(file_path, "r") as file_content:
-                if placeholders:
-                    album = read_review_with_placeholders(file_content, album)
-                else:
-                    album = read_review_with_header(file_content, album)
+                album = read_review_with_header(file_content, album)
             album["artist_tag"] = artist_tag
             album["album_tag"] = os.path.splitext(os.path.basename(file_path))[0]
             albums.append(album)
@@ -68,18 +64,4 @@ def read_review_with_header(file_content, album):
     )
     for key, value in yaml.safe_load(header).items():
         album[key] = value
-    return album
-
-
-def read_review_with_placeholders(file_content, album):
-    """Read the content of a review to find the album tags written as placeholders."""
-    while True:
-        words = file_content.readline().split()
-        if len(words) == 0 or words[0][0] != "%":
-            break
-        tag = words[0][1:]
-        album[tag] = " ".join(words[1:])
-    album["year"] = int(album["year"])
-    album["rating"] = int(album["rating"])
-    album["content"] = file_content.read()
     return album
