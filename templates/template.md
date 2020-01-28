@@ -10,5 +10,5 @@ tracks:
 picks:
 {picks}
 state: {state}
-...
+---
 {content}

@@ -9,7 +9,7 @@ import re
 import yaml
 
 START_HEADER = r"---\n"
-END_HEADER = r"\n\.\.\.\n"
+END_HEADER = r"\n---\n"
 
 
 def read_file(root, filename):
