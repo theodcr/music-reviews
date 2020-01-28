@@ -2,6 +2,7 @@
 Functions for writing indexed reviews lists in vimwiki format.
 Formatters take an integer index and a dictionary as inputs.
 """
+# TODO: simplify and move to markdown formatter
 
 from . import utils
 

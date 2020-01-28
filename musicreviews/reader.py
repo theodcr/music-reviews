@@ -47,7 +47,7 @@ def build_database(root_dir=os.getcwd(), placeholders=False):
         f for f in os.listdir(root_dir) if os.path.isdir(os.path.join(root_dir, f))
     ]
     for artist_tag in artist_tags:
-        for file_path in glob.glob(os.path.join(root_dir, artist_tag, "*.wiki")):
+        for file_path in glob.glob(os.path.join(root_dir, artist_tag, "*.md")):
             album = empty_album()
             with open(file_path, "r") as file_content:
                 if placeholders:

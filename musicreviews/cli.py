@@ -53,9 +53,9 @@ def main(ctx, username):
 def index(ctx):
     """Generate various reviews indexes and lists."""
     indexer.generate_all_indexes(
-        ctx.obj["albums"], ctx.obj["root_dir"], extension="wiki"
+        ctx.obj["albums"], ctx.obj["root_dir"], extension="md"
     )
-    click.echo(ui.style_info("Wiki indexes generated"))
+    click.echo(ui.style_info("Indexes generated"))
 
 
 @main.command()
@@ -249,7 +249,7 @@ def create(ctx, uri, playing, manual, y):
         + click.style(filename, fg="blue", bold=True)
     )
     if click.confirm(ui.style_prompt("Confirm creation of review"), default=True):
-        template = reader.read_file(root_dir, "template.wiki")
+        template = reader.read_file(root_dir, "template.md")
         review = writer.fill_review_template(
             template, artist, album, year, rating, uri, picks=tracks_idx, tracks=tracks
         )

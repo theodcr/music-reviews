@@ -2,7 +2,7 @@
 
 Python package for managing written music reviews. Uses my other package [powerspot](https://github.com/theodcr/powerspot).
 
-This package helps managing collections of music album reviews written in text format according to a custom template (currently a wiki format with a YAML header). The command-line interface lets you:
+This package helps managing collections of music album reviews written in markdown with YAML front matter. The command-line interface lets you:
 - create reviews:
     - by searching for an album on Spotify
     - by selecting an album saved on your Spotify account
@@ -34,7 +34,7 @@ picks:
 - 4
 - 5
 state: .
-...
+---
 
 (content is written here)
 ```

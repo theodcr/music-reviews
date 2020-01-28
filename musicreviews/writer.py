@@ -66,6 +66,7 @@ def export_review(data, root, extension="md"):
     data["content"] = utils.replace_track_tags(data["content"]).format(**data)
 
     if extension == "md":
+        # TODO: delete
         data["content"] = markdown.wiki_to_markdown(data["content"])
         # ensure tracks are sorted
         tracks = [data["tracks"][i] for i in sorted(data["tracks"])]
@@ -84,6 +85,7 @@ def export_review(data, root, extension="md"):
             date=data["date"],
         )
     else:
+        # TODO: markdown to html
         data["content"] = html.wiki_to_html(data["content"])
         data["tracks"] = "\n".join(
             [
@@ -117,7 +119,7 @@ def write_file(content, path, newline=False):
 
 
 def write_review(
-    content, folder, filename, root=os.getcwd(), extension="wiki", overwrite=False
+    content, folder, filename, root=os.getcwd(), extension="md", overwrite=False
 ):
     """Writes the review file using the given data.
     Returns True to confirm review creation (or if review already exists).

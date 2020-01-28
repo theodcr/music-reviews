@@ -2,7 +2,7 @@
 Functions for generating various sorted lists and indexes of the reviews and ratings.
 Each indexer function returns:
 - sorted data as a dictionary
-- parsed data as a formatted string in wanted format (wiki or HTML)
+- parsed data as a formatted string in wanted format (markdown or HTML)
 """
 
 import os
@@ -168,11 +168,12 @@ def compute_decade(year):
     return 10 * (year // 10)
 
 
-def generate_all_indexes(albums, root_dir, extension="wiki"):
+def generate_all_indexes(albums, root_dir, extension="md"):
     """Writes all possible indexes format."""
     if extension == "html":
         formatter = __import__("musicreviews").formatter.html
     else:
+        # TODO: use markdown formatter once available
         formatter = __import__("musicreviews").formatter.wiki
     pipelines = (
         (sort_ratings, "sorted_albums"),
