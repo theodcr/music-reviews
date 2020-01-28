@@ -7,6 +7,7 @@ import os
 import re
 
 import yaml
+import frontmatter
 
 START_HEADER = r"---\n"
 END_HEADER = r"\n---\n"
@@ -37,9 +38,7 @@ def empty_album():
 
 
 def build_database(root_dir=os.getcwd()):
-    """Finds reviews and builds a database using their tags and content.
-    By default decodes the yaml header to decode tags.
-    """
+    """Finds reviews and builds a database using their header and content."""
     albums = []
     # find reviews in folders
     artist_tags = [
@@ -48,20 +47,10 @@ def build_database(root_dir=os.getcwd()):
     for artist_tag in artist_tags:
         for file_path in glob.glob(os.path.join(root_dir, artist_tag, "*.md")):
             album = empty_album()
-            with open(file_path, "r") as file_content:
-                album = read_review_with_header(file_content, album)
+            with open(file_path, "r") as f:
+                post = frontmatter.load(f)
+            album.update(post.to_dict())
             album["artist_tag"] = artist_tag
             album["album_tag"] = os.path.splitext(os.path.basename(file_path))[0]
             albums.append(album)
     return albums
-
-
-def read_review_with_header(file_content, album):
-    """Read the content of a review to find the album tags written in a YAML header."""
-    review = file_content.read()
-    __, header, album["content"] = re.split(
-        f"{START_HEADER}|{END_HEADER}", review, maxsplit=2
-    )
-    for key, value in yaml.safe_load(header).items():
-        album[key] = value
-    return album
