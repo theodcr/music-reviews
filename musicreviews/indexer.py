@@ -173,8 +173,7 @@ def generate_all_indexes(albums, root_dir, extension="md"):
     if extension == "html":
         formatter = __import__("musicreviews").formatter.html
     else:
-        # TODO: use markdown formatter once available
-        formatter = __import__("musicreviews").formatter.wiki
+        formatter = __import__("musicreviews").formatter.markdown
     pipelines = (
         (sort_ratings, "sorted_albums"),
         (sort_ratings_by_year, "sorted_by_year"),
