@@ -8,7 +8,7 @@ import os
 
 import click
 
-from .formatter import html, markdown, utils, yaml
+from .formatter import html, markdown, utils
 from .reader import read_file
 from .ui import style_error
 
@@ -40,7 +40,7 @@ def fill_review_template(
         # indent track list
         tracks_string = "\n".join(
             [
-                f"    {i+1}: {yaml.escape_yaml_specials(track)}"
+                f"    {i+1}: {utils.escape_yaml_specials(track)}"
                 for i, track in enumerate(tracks)
             ]
         )
@@ -48,8 +48,8 @@ def fill_review_template(
         tracks_string = ""
     return template.format(
         date=date,
-        artist=yaml.escape_yaml_specials(artist),
-        album=yaml.escape_yaml_specials(album),
+        artist=utils.escape_yaml_specials(artist),
+        album=utils.escape_yaml_specials(album),
         year=year,
         uri=uri,
         rating=rating,

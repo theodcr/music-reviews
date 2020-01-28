@@ -53,3 +53,18 @@ def replace_enclosed_text_tags(string, tag_to_sub, opening_tag, closing_tag=None
 def replace_track_tags(content):
     """Replaces tags like {4} to formatting compatible tags like {tracks[4]}."""
     return re.sub(r"{(\d+)}", "{tracks[\\1]}", content)
+
+
+def escape_yaml_specials(string):
+    """Surrounds the given string with quotes if it is not conform to YAML syntax."""
+    alpha_string = alphanumeric_lowercase(string)
+    if alpha_string == "yes" or alpha_string == "no":
+        return '"' + string + '"'
+    elif bool(re.search('^"', string)):
+        return "'" + string + "'"
+    elif bool(
+        re.search(r"^'|^\? |: |^,|^&|^%|^@|^!|^\||^\*|^#|^- |^[|^]|^{|^}|^>", string)
+    ):
+        return '"' + string + '"'
+    else:
+        return string
