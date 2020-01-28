@@ -1,3 +1,3 @@
-from . import html, markdown, utils, wiki, yaml
+from . import html, markdown, utils, yaml
 
-__all__ = ["html", "markdown", "utils", "wiki", "yaml"]
+__all__ = ["html", "markdown", "utils", "yaml"]
