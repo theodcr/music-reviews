@@ -294,8 +294,12 @@ def setup(ctx):
                 config[category_name][field] = new_value
 
     click.echo(
+        ui.style_info_path("Saved configuration at", configuration.write_config(config))
+    )
+    click.echo(
         ui.style_info_path(
-            "Saved configuration at", configuration.write_config(config)
+            "Copied review template to",
+            configuration.copy_template_review(ctx.obj["root_dir"]),
         )
     )
     return config
