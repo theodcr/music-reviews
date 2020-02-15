@@ -297,7 +297,17 @@ def setup(ctx):
     click.echo(
         ui.style_info_path(
             "Copied review template to",
-            configuration.copy_template_review(ctx.obj["root_dir"]),
+            configuration.copy_template_review(
+                config["path"]["reviews_directory"]
+            ),
+        )
+    )
+    click.echo(
+        ui.style_info_path(
+            "Copied HTML export templates to",
+            configuration.copy_template_html(
+                config["path"]["export_directory"]
+            ),
         )
     )
     return config
