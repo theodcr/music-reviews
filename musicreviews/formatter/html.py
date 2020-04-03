@@ -19,7 +19,7 @@ from . import utils
 def markdown_to_html(string):
     """Translates the string from markdown format to HTML."""
     string = utils.replace_enclosed_text_tags(string, r"\*\*", "<b>", "</b>")
-    string = utils.replace_enclosed_text_tags(string, "\*", "<i>", "</i>")
+    string = utils.replace_enclosed_text_tags(string, r"\*", "<i>", "</i>")
     string = re.sub("\n\n", "</p><p>", string)
     return string
 
