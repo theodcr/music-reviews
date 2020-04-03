@@ -17,6 +17,19 @@ def write_config(config):
     return path
 
 
+def copy_template_html(export_dir):
+    """Copies the template HTML files to the export directory."""
+    for name in ["template.html", "template_index.html"]:
+        template_path = resource_filename(
+            Requirement.parse(__package__), "templates/" + name
+        )
+        with open(template_path) as file_content:
+            template = file_content.read()
+        write_path = os.path.join(export_dir, name)
+        write_file(template, write_path)
+    return export_dir
+
+
 def copy_template_review(root_dir):
     """Copies the template review to the reviews library directory."""
     template_path = resource_filename(

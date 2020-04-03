@@ -312,6 +312,14 @@ def setup(ctx):
             "Copied review template to", configuration.copy_template_review(root_dir),
         )
     )
+    click.echo(
+        ui.style_info_path(
+            "Copied HTML export templates to",
+            configuration.copy_template_html(
+                config["path"]["export_directory"]
+            ),
+        )
+    )
     return config
 
 
