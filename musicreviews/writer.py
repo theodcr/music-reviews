@@ -8,7 +8,7 @@ import os
 
 import click
 
-from .formatter import html, markdown, utils
+from .formatter import html, utils
 from .reader import read_file
 from .ui import style_error
 
@@ -21,6 +21,7 @@ def fill_review_template(
     rating,
     uri=None,
     picks=None,
+    tags=None,
     tracks=None,
     state=None,
     content=None,
@@ -36,6 +37,13 @@ def fill_review_template(
         picks_string = "\n".join([f"- {pick}" for pick in picks])
     else:
         picks_string = ""
+    if tags is not None:
+        if isinstance(tags, str):
+            tags_string = f"- {tags}"
+        else:
+            tags_string = "\n".join([f"- {tag}" for tag in tags])
+    else:
+        tags_string = ""
     if tracks is not None:
         # indent track list
         tracks_string = "\n".join(
@@ -54,6 +62,7 @@ def fill_review_template(
         uri=uri,
         rating=rating,
         picks=picks_string,
+        tags=tags_string,
         tracks=tracks_string,
         state=state,
         content=content,
@@ -73,6 +82,10 @@ def export_review(data, root):
             for index, track in sorted(data["tracks"].items())
         ]
     )
+    if data["tags"] is None:
+        # tags are optional
+        data["tags"] = []
+    data["tags"] = ", ".join(data["tags"])
     data["rating_color"] = html.rating_to_rbg_color(data["rating"])
     data["cover_url"] = html.get_cover_url(
         root, data["artist_tag"], data["album_tag"], data["uri"]

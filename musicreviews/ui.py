@@ -80,6 +80,13 @@ def list_integers_input(string, min_value, max_value):
     return clean_indices
 
 
+def list_strings_input(string):
+    """Converts and checks a string containing a list of strings."""
+    strings = set(re.split(r"\W+", string))
+    strings.discard("")
+    return strings
+
+
 def completion_input(prompt_text, commands, **kwargs):
     """Returns a click prompt with tab-completion on the given list of commands."""
 

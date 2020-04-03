@@ -4,9 +4,7 @@ Helpers for reading files from disk, and building the database of reviews.
 
 import glob
 import os
-import re
 
-import yaml
 import frontmatter
 
 START_HEADER = r"---\n"
@@ -34,6 +32,7 @@ def empty_album():
         "picks": None,
         "state": " ",
         "content": "",
+        "tags": None,
     }
 
 

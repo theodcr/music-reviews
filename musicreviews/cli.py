@@ -221,7 +221,7 @@ def create(ctx, uri, playing, manual, y):
             click.echo(ui.style_enumerate(i + 1, track))
 
         tracks_idx = click.prompt(
-            ui.style_prompt("Favorite tracks numbers"),
+            ui.style_prompt("Favorite tracks numbers (comma separated)"),
             value_proc=partial(
                 ui.list_integers_input, min_value=1, max_value=len(tracks)
             ),
@@ -234,6 +234,10 @@ def create(ctx, uri, playing, manual, y):
             min_value=int(ctx.obj["config"]["creation"]["min_rating"]),
             max_value=int(ctx.obj["config"]["creation"]["max_rating"]),
         ),
+    )
+
+    tags = click.prompt(
+        ui.style_prompt("Tags (comma separated)"), value_proc=ui.list_strings_input
     )
 
     root_dir = ctx.obj["root_dir"]
@@ -249,7 +253,15 @@ def create(ctx, uri, playing, manual, y):
     if click.confirm(ui.style_prompt("Confirm creation of review"), default=True):
         template = reader.read_file(root_dir, "template.md")
         review = writer.fill_review_template(
-            template, artist, album, year, rating, uri, picks=tracks_idx, tracks=tracks
+            template,
+            artist,
+            album,
+            year,
+            rating,
+            uri,
+            picks=tracks_idx,
+            tracks=tracks,
+            tags=tags,
         )
         writer.write_review(review, folder, filename, root=root_dir)
         click.echo(ui.style_info("Review created"))
@@ -294,10 +306,10 @@ def setup(ctx):
     click.echo(
         ui.style_info_path("Saved configuration at", configuration.write_config(config))
     )
+    root_dir = os.path.abspath(config["path"]["reviews_directory"])
     click.echo(
         ui.style_info_path(
-            "Copied review template to",
-            configuration.copy_template_review(ctx.obj["root_dir"]),
+            "Copied review template to", configuration.copy_template_review(root_dir),
         )
     )
     return config
