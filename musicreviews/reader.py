@@ -28,6 +28,7 @@ def empty_album():
         "year": 0,
         "rating": 0,
         "uri": None,
+        "cover": None,
         "tracks": None,
         "picks": None,
         "state": " ",

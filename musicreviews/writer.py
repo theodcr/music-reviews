@@ -20,6 +20,7 @@ def fill_review_template(
     year,
     rating,
     uri=None,
+    cover=None,
     picks=None,
     tags=None,
     tracks=None,
@@ -31,6 +32,7 @@ def fill_review_template(
     if date is None:
         date = datetime.datetime.now().strftime("%Y-%m-%d")
     uri = uri or ""
+    cover = cover or ""
     state = state or "."
     content = content or ""
     if picks is not None:
@@ -60,6 +62,7 @@ def fill_review_template(
         album=utils.escape_yaml_specials(album),
         year=year,
         uri=uri,
+        cover=cover,
         rating=rating,
         picks=picks_string,
         tags=tags_string,
@@ -83,13 +86,10 @@ def export_review(data, root):
         ]
     )
     if data["tags"] is None:
-        # tags are optional
+        # tags are optional -> may be None
         data["tags"] = []
     data["tags"] = ", ".join(data["tags"])
     data["rating_color"] = html.rating_to_rbg_color(data["rating"])
-    data["cover_url"] = html.get_cover_url(
-        root, data["artist_tag"], data["album_tag"], data["uri"]
-    )
     formatted_review = template.format(**data)
     write_review(
         content=formatted_review,

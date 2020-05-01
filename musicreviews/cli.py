@@ -167,6 +167,7 @@ def create(ctx, uri, playing, manual, y):
             value_proc=partial(ui.list_integers_input, min_value=1, max_value=100),
         )
         tracks = None
+        cover = None
     else:
         if playing:
             # album from currently playing track
@@ -216,6 +217,7 @@ def create(ctx, uri, playing, manual, y):
             return False
         year = album_data["release_date"][:4]
         tracks = [track["name"] for track in album_data["tracks"]["items"]]
+        cover = album_data["images"][0]["url"]
 
         click.echo(
             "\n"
@@ -266,6 +268,7 @@ def create(ctx, uri, playing, manual, y):
             year,
             rating,
             uri,
+            cover,
             picks=tracks_idx,
             tracks=tracks,
             tags=tags,

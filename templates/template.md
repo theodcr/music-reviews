@@ -4,6 +4,7 @@ artist: {artist}
 album: {album}
 year: {year}
 uri: {uri}
+cover: {cover}
 rating: {rating}
 tracks:
 {tracks}
