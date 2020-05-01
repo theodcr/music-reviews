@@ -43,7 +43,7 @@ def format_review(__, data):
     """Returns a formatted line showing the review state and its reference tags.
     Dummy argument to respect standard formatter definition.
     """
-    return "- [{state}] {artist} - {album}]]\n".format(**data)
+    return "- [{state}] {artist} - {album}\n".format(**data)
 
 
 def format_rating(album):
