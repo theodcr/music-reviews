@@ -145,10 +145,14 @@ def queue(ctx):
 def create(ctx, uri, playing, manual, y):
     """Create a review using data retrieved from Spotify or manually entered."""
     known_artists = [x["artist"] for x in ctx.obj["albums"]]
+    known_albums = [x["album"] for x in ctx.obj["albums"]]
     if manual:
         # manual input of data
         artist = ui.completion_input(ui.style_prompt("Artist"), known_artists)
         album = click.prompt(ui.style_prompt("Album"))
+        if artist in known_artists and album in known_albums:
+            click.echo(ui.style_error("Review already exists, operation aborted"))
+            return False
         year = click.prompt(
             ui.style_prompt("Year"),
             value_proc=partial(
@@ -207,6 +211,9 @@ def create(ctx, uri, playing, manual, y):
         # retrieve useful fields from Spotify data
         artist = album_data["artists"][0]["name"]
         album = album_data["name"]
+        if artist in known_artists and album in known_albums:
+            click.echo(ui.style_error("Review already exists, operation aborted"))
+            return False
         year = album_data["release_date"][:4]
         tracks = [track["name"] for track in album_data["tracks"]["items"]]
 
