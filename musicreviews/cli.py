@@ -12,10 +12,13 @@ import click
 from musicreviews import configuration, formatter, indexer, reader, ui, writer
 from powerspot.cli import get_username
 from powerspot.operations import (
+    create_playlist,
     get_album,
     get_artist_albums,
     get_playing_track,
+    get_playlists,
     get_saved_albums,
+    replace_playlist_tracks,
     search_artist,
 )
 
@@ -378,6 +381,45 @@ def export(ctx, all, index):
     for album in albums_to_export:
         writer.export_review(album, root=export_dir)
     click.echo(ui.style_info("Reviews exported"))
+
+
+@main.command()
+@click.option("--all", "-a", is_flag=True, help="create playlists for all years")
+@click.pass_context
+def playlists(ctx, all):
+    """Upload/update playlists of yearly favorite tracks to Spotify account."""
+    years = set([album["year"] for album in ctx.obj["albums"]])
+    if not all:
+        year = click.prompt(
+            ui.style_prompt("Year to upload"),
+            value_proc=partial(ui.check_integer_known, possibles=years),
+        )
+        years = [year]
+
+    playlists = get_playlists(ctx.obj["username"])
+    for year in years:
+        name = f"{year} favorite tracks"
+        try:
+            playlist_id = next(pl["id"] for pl in playlists if pl["name"] == name)
+        except StopIteration:
+            # playlist does not exist
+            res = create_playlist(username=ctx.obj["username"], name=name, public=False)
+            playlist_id = res["id"]
+        sorted_albums = sorted(
+            [x for x in ctx.obj["albums"] if x["year"] == year],
+            key=lambda x: x["rating"],
+            reverse=True,
+        )
+        year_tracks = []
+        for album in sorted_albums:
+            if album["picks"] is None:
+                continue
+            album_data = get_album(album["uri"])
+            track_ids = [track["uri"] for track in album_data["tracks"]["items"]]
+            year_tracks += [track_ids[i - 1] for i in album["picks"]]
+        replace_playlist_tracks(
+            username=ctx.obj["username"], playlist_id=playlist_id, track_ids=year_tracks
+        )
 
 
 if __name__ == "__main__":
