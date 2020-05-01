@@ -61,7 +61,18 @@ def style_info_path(message, path):
     )
 
 
-def check_integer_input(value, min_value, max_value):
+def check_integer_known(value, possibles):
+    """Converts and checks if the integer from the prompt is in gives possibilities."""
+    try:
+        value = int(value)
+    except ValueError:
+        raise click.BadParameter(f"{value} is not a valid integer", param=value)
+    if value in possibles:
+        return value
+    raise click.BadParameter(f"{value} is not known")
+
+
+def check_integer_range(value, min_value, max_value):
     """Converts and checks if the integer from the click prompt is in given range."""
     try:
         value = int(value)
@@ -72,11 +83,11 @@ def check_integer_input(value, min_value, max_value):
     raise click.BadParameter(f"{value} is not between {min_value} and {max_value}")
 
 
-def list_integers_input(string, min_value, max_value):
+def list_integers_range(string, min_value, max_value):
     """Converts and checks a string containing a list of integers."""
     indices = set(re.split(r"\W+", string))
     indices.discard("")
-    clean_indices = [check_integer_input(idx, min_value, max_value) for idx in indices]
+    clean_indices = [check_integer_range(idx, min_value, max_value) for idx in indices]
     return clean_indices
 
 

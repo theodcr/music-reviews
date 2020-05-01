@@ -156,7 +156,7 @@ def create(ctx, uri, playing, manual, y):
         year = click.prompt(
             ui.style_prompt("Year"),
             value_proc=partial(
-                ui.check_integer_input,
+                ui.check_integer_range,
                 min_value=int(ctx.obj["config"]["creation"]["min_year"]),
                 max_value=datetime.datetime.now().year,
             ),
@@ -164,7 +164,7 @@ def create(ctx, uri, playing, manual, y):
         # arbitrary maximum number of tracks
         tracks_idx = click.prompt(
             ui.style_prompt("Favorite tracks numbers"),
-            value_proc=partial(ui.list_integers_input, min_value=1, max_value=100),
+            value_proc=partial(ui.list_integers_range, min_value=1, max_value=100),
         )
         tracks = None
         cover = None
@@ -188,7 +188,7 @@ def create(ctx, uri, playing, manual, y):
             artist_idx = click.prompt(
                 ui.style_prompt("Choose artist index"),
                 value_proc=partial(
-                    ui.check_integer_input, min_value=0, max_value=len(artists) - 1
+                    ui.check_integer_range, min_value=0, max_value=len(artists) - 1
                 ),
                 default=0,
             )
@@ -203,7 +203,7 @@ def create(ctx, uri, playing, manual, y):
             album_idx = click.prompt(
                 ui.style_prompt("Choose album index"),
                 value_proc=partial(
-                    ui.check_integer_input, min_value=0, max_value=len(albums) - 1
+                    ui.check_integer_range, min_value=0, max_value=len(albums) - 1
                 ),
                 default=0,
             )
@@ -232,14 +232,14 @@ def create(ctx, uri, playing, manual, y):
         tracks_idx = click.prompt(
             ui.style_prompt("Favorite tracks numbers (comma separated)"),
             value_proc=partial(
-                ui.list_integers_input, min_value=1, max_value=len(tracks)
+                ui.list_integers_range, min_value=1, max_value=len(tracks)
             ),
         )
 
     rating = click.prompt(
         ui.style_prompt("Rating"),
         value_proc=partial(
-            ui.check_integer_input,
+            ui.check_integer_range,
             min_value=int(ctx.obj["config"]["creation"]["min_rating"]),
             max_value=int(ctx.obj["config"]["creation"]["max_rating"]),
         ),
