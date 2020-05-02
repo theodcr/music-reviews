@@ -1,13 +1,15 @@
 # musicreviews
 
-Python package for managing written music reviews. Uses my other package [powerspot](https://github.com/theodcr/powerspot).
+Python package for managing a collection of personal music reviews I write. Uses my other package [powerspot](https://github.com/theodcr/powerspot).
 
-This package helps managing collections of music album reviews written in markdown with YAML front matter. The command-line interface lets you:
+Music album reviews are written in Markdown with YAML front matter. The command-line interface lets you:
 - create reviews:
-    - by searching for an album on Spotify
+    - for the album currently playing on your Spotify account
     - by selecting an album saved on your Spotify account
+    - by searching for an album on Spotify
     - by manually entering metadata
 - create indexes by year, decade, rating and more
+- automatically generate and upload "yearly favorite tracks" playlists
 - track review writing progression
 - convert reviews and indexes to HTML to create a full static website
 
