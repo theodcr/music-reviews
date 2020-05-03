@@ -53,7 +53,7 @@ def parse_categorised_lists(data, header_formatter, formatter, sorted_keys=None)
 
 def format_header(string):
     """Returns the string as a header in HTML format."""
-    return "<h1>{}</h1>\n".format(string)
+    return f"<h1 id='{string}'>{string}</h1>\n"
 
 
 def format_artist(__, data):

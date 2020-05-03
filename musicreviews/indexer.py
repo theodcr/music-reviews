@@ -72,8 +72,6 @@ def sort_ratings_by_year(formatter, albums):
 
 def sort_ratings_by_decade(formatter, albums):
     """Returns the rated albums sorted by decreasing decade and rating."""
-    for album in albums:
-        album["decade"] = compute_decade(album["year"])
     decades = set([album["decade"] for album in albums])
     sorted_albums = {}
     for decade in sorted(decades, reverse=True):
@@ -161,11 +159,6 @@ def playlists_by_year(formatter, albums):
 def compute_artist_rating(ratings):
     """Returns an artist rating based on the ratings of its albums."""
     return float(sum(ratings)) / max(len(ratings), 1)
-
-
-def compute_decade(year):
-    """Returns the decade of the given year."""
-    return 10 * (year // 10)
 
 
 def generate_all_indexes(albums, root_dir, extension="md", base_url=None):

@@ -34,7 +34,13 @@ def empty_album():
         "state": " ",
         "content": "",
         "tags": None,
+        "decade": 0,
     }
+
+
+def compute_decade(year):
+    """Returns the decade of the given year."""
+    return 10 * (year // 10)
 
 
 def build_database(root_dir=os.getcwd()):
@@ -52,5 +58,6 @@ def build_database(root_dir=os.getcwd()):
             album.update(post.to_dict())
             album["artist_tag"] = artist_tag
             album["album_tag"] = os.path.splitext(os.path.basename(file_path))[0]
+            album["decade"] = compute_decade(album["year"])
             albums.append(album)
     return albums
