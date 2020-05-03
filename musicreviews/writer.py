@@ -88,7 +88,10 @@ def export_review(data, root, base_url=None):
     if data["tags"] is None:
         # tags are optional -> may be None
         data["tags"] = []
-    data["tags"] = ", ".join(data["tags"])
+    # ref to tags index
+    data["tags"] = ", ".join(
+        [f'<a href="../reviews_tags.html#{tag}">{tag}</a>' for tag in data["tags"]]
+    )
     data["rating_color"] = html.rating_to_rbg_color(data["rating"])
     if base_url is not None:
         data["base_url"] = base_url
