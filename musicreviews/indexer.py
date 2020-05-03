@@ -40,7 +40,9 @@ def sort_artists(formatter, albums):
                     "rating": rating,
                 }
             )
-    sorted_artists = sorted(artists, key=lambda x: x["rating"], reverse=True)
+    sorted_artists = sorted(
+        artists, key=lambda x: (x["rating"], x["artist"]), reverse=True
+    )
     return (
         sorted_artists,
         formatter.parse_list(sorted_artists, formatter.format_artist),
