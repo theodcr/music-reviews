@@ -168,7 +168,7 @@ def compute_decade(year):
     return 10 * (year // 10)
 
 
-def generate_all_indexes(albums, root_dir, extension="md"):
+def generate_all_indexes(albums, root_dir, extension="md", base_url=None):
     """Writes all possible indexes format."""
     if extension == "html":
         formatter = __import__("musicreviews").formatter.html
@@ -190,5 +190,7 @@ def generate_all_indexes(albums, root_dir, extension="md"):
         if extension == "html":
             index_template = read_file(root_dir, "template_index.html")
             title = index_name.replace("_", " ").title()
-            content = index_template.format(title=title, content=content)
+            content = index_template.format(
+                title=title, base_url=base_url, content=content
+            )
         write_file(content, os.path.join(root_dir, f"{index_name}.{extension}"))

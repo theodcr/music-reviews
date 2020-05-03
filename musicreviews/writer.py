@@ -72,7 +72,7 @@ def fill_review_template(
     )
 
 
-def export_review(data, root):
+def export_review(data, root, base_url=None):
     """Exports review to HTML. Formats metadata and content."""
     template = read_file(root, "template.html")
     data["content"] = utils.replace_track_tags(data["content"]).format(**data)
@@ -90,6 +90,8 @@ def export_review(data, root):
         data["tags"] = []
     data["tags"] = ", ".join(data["tags"])
     data["rating_color"] = html.rating_to_rbg_color(data["rating"])
+    if base_url is not None:
+        data["base_url"] = base_url
     formatted_review = template.format(**data)
     write_review(
         content=formatted_review,

@@ -379,7 +379,9 @@ def export(ctx, all, index):
 
     click.echo(ui.style_info_path("Exporting to directory", export_dir))
     for album in albums_to_export:
-        writer.export_review(album, root=export_dir)
+        writer.export_review(
+            album, root=export_dir, base_url=ctx.obj["config"]["web"]["base_url"]
+        )
     click.echo(ui.style_info("Reviews exported"))
 
 
