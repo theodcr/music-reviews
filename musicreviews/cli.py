@@ -338,17 +338,21 @@ def setup(ctx):
 
 @main.command()
 @click.pass_context
-@click.option("--all", "-a", is_flag=True, help="export all reviews in library")
-@click.option("--index", "-i", is_flag=True, help="build and export indexes")
+@click.option("--all", "-a", is_flag=True, help="export all reviews and indexes in library")
+@click.option("--index", "-i", is_flag=True, help="export indexes")
 def export(ctx, all, index):
     """Exports a review or all reviews to HTML."""
     export_dir = ctx.obj["config"]["path"]["export_directory"]
+    click.echo(ui.style_info_path("Exporting to directory", export_dir))
+
     if index:
         indexer.generate_all_indexes(ctx.obj["albums"], export_dir, extension="html")
         click.echo(ui.style_info("Indexes generated"))
         return
     if all:
         albums_to_export = ctx.obj["albums"]
+        indexer.generate_all_indexes(albums_to_export, export_dir, extension="html")
+        click.echo(ui.style_info("Indexes generated"))
     else:
         # prompt to choose artist then album to export
         artist_tags = [x["artist_tag"] for x in ctx.obj["albums"]]
@@ -377,7 +381,6 @@ def export(ctx, all, index):
             album for album in artist_albums if album["album_tag"] == album_tag
         ]
 
-    click.echo(ui.style_info_path("Exporting to directory", export_dir))
     for album in albums_to_export:
         writer.export_review(
             album, root=export_dir, base_url=ctx.obj["config"]["web"]["base_url"]
