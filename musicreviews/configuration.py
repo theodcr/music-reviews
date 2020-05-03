@@ -18,8 +18,8 @@ def write_config(config):
 
 
 def copy_template_html(export_dir):
-    """Copies the template HTML files to the export directory."""
-    for name in ["template.html", "template_index.html"]:
+    """Copies the HTML/CSS template files to the export directory."""
+    for name in ["template.html", "template_index.html", "style.css"]:
         template_path = resource_filename(
             Requirement.parse(__package__), "templates/" + name
         )

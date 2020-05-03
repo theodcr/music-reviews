@@ -3,29 +3,33 @@
 
   <head>
     <meta charset="utf-8">
-    <title>Review of {album} by {artist}</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kognise/water.css@latest/dist/dark.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <base href="{base_url}">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>Review of {album} by {artist}</title>
   </head>
 
   <body>
-    <a href="../index.html">Back to index</a>
-    <a href="../sorted_by_year.html#{year}">Back to {year}</a>
-    <a href="../sorted_by_decade.html#{decade}">Back to {decade}</a>
+    <a href="index.html">Back to index</a>
+    <a href="sorted_by_year.html#{year}">Back to {year}</a>
+    <a href="sorted_by_decade.html#{decade}">Back to the {decade}s</a>
     <hr>
-    <center><img align="middle", src="{cover}" width="300"></center>
-    <h1>{album}</h2>
-    <h2>{artist}</h3>
-    <h3>{year}</h3>
-    <h2 style="color:rgb{rating_color}">{rating}</h2>
-    <p><i>{tags}</i></p>
-    <ol>
-      {tracks}
-    </ol>
+    <header>
+      <center>
+        <img align="middle", src="{cover}" width="300">
+        <h1>{album}</h2>
+        <h2>{artist}</h3>
+        <h3>{year}</h3>
+        <h2 style="color:rgb{rating_color}">{rating}</h2>
+      </center>
+      <p><i>{tags}</i></p>
+      <ol>
+{tracks}
+      </ol>
+    </header>
     <hr>
     <p>
-      {content}
+{content}
     </p>
   </body>
 
