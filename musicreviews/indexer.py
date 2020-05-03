@@ -5,6 +5,7 @@ Each indexer function returns:
 - parsed data as a formatted string in wanted format (markdown or HTML)
 """
 
+from itertools import chain
 import os
 
 from .reader import read_file
@@ -156,6 +157,29 @@ def playlists_by_year(formatter, albums):
     )
 
 
+def all_tags(formatter, albums):
+    """Returns for each tag albums sorted by decreasing rating."""
+    tags = sorted(set(chain.from_iterable(
+        [album["tags"] for album in albums if album["tags"] is not None]
+    )))
+    sorted_albums = {}
+    for tag in tags:
+        sorted_albums[tag] = sorted(
+            [x for x in albums if x["tags"] is not None and tag in x["tags"]],
+            key=lambda x: x["rating"],
+            reverse=True,
+        )
+    return (
+        sorted_albums,
+        formatter.parse_categorised_lists(
+            sorted_albums,
+            formatter.format_header,
+            formatter.format_album,
+            sorted_keys=tags
+        ),
+    )
+
+
 def compute_artist_rating(ratings):
     """Returns an artist rating based on the ratings of its albums."""
     return float(sum(ratings)) / max(len(ratings), 1)
@@ -174,6 +198,7 @@ def generate_all_indexes(albums, root_dir, extension="md", base_url=None):
         (all_reviews, "reviews"),
         (sort_reviews_state, "reviews_state"),
         (sort_reviews_date, "reviews_date"),
+        (all_tags, "reviews_tags"),
         (sort_artists, "sorted_artists"),
         (playlists_by_year, "playlists_by_year"),
     )
