@@ -1,8 +1,6 @@
 """
 Functions for generating various sorted lists and indexes of the reviews and ratings.
-Each indexer function returns:
-- sorted data as a dictionary
-- parsed data as a formatted string in wanted format (markdown or HTML)
+Each indexer function returns parsed data as a formatted string in wanted format (markdown or HTML).
 """
 
 from itertools import chain
@@ -43,16 +41,13 @@ def sort_artists(formatter, albums):
     sorted_artists = sorted(
         artists, key=lambda x: (x["rating"], x["artist"]), reverse=True
     )
-    return (
-        sorted_artists,
-        formatter.parse_list(sorted_artists, formatter.format_artist),
-    )
+    return formatter.parse_list(sorted_artists, formatter.format_artist)
 
 
 def sort_ratings(formatter, albums):
     """Returns the rated albums sorted by decreasing rating."""
     sorted_albums = sorted(albums, key=lambda x: x["rating"], reverse=True)
-    return (sorted_albums, formatter.parse_list(sorted_albums, formatter.format_album))
+    return formatter.parse_list(sorted_albums, formatter.format_album)
 
 
 def sort_ratings_by_year(formatter, albums):
@@ -65,11 +60,8 @@ def sort_ratings_by_year(formatter, albums):
             key=lambda x: x["rating"],
             reverse=True,
         )
-    return (
-        sorted_albums,
-        formatter.parse_categorised_lists(
-            sorted_albums, formatter.format_header, formatter.format_album
-        ),
+    return formatter.parse_categorised_lists(
+        sorted_albums, formatter.format_header, formatter.format_album
     )
 
 
@@ -83,24 +75,21 @@ def sort_ratings_by_decade(formatter, albums):
             key=lambda x: x["rating"],
             reverse=True,
         )
-    return (
-        sorted_albums,
-        formatter.parse_categorised_lists(
-            sorted_albums, formatter.format_header, formatter.format_album
-        ),
+    return formatter.parse_categorised_lists(
+        sorted_albums, formatter.format_header, formatter.format_album
     )
 
 
 def all_reviews(formatter, albums):
     """Returns a list of all album reviews and their state."""
     sorted_albums = sorted(albums, key=lambda x: (x["artist_tag"], x["year"]))
-    return (sorted_albums, formatter.parse_list(sorted_albums, formatter.format_review))
+    return formatter.parse_list(sorted_albums, formatter.format_review)
 
 
 def sort_reviews_date(formatter, albums):
     """Returns the reviews sorted by generation date."""
     sorted_albums = sorted(albums, key=lambda x: x["date"], reverse=True)
-    return (sorted_albums, formatter.parse_list(sorted_albums, formatter.format_review))
+    return formatter.parse_list(sorted_albums, formatter.format_review)
 
 
 def sort_reviews_state(formatter, albums):
@@ -113,14 +102,11 @@ def sort_reviews_state(formatter, albums):
         filtered_albums[state_description] = [
             x for x in sorted_albums if x["state"] == state
         ]
-    return (
-        sorted_albums,
-        formatter.parse_categorised_lists(
-            filtered_albums,
-            formatter.format_header,
-            formatter.format_review,
-            sorted_keys=(STATES_DESCRIPTION[state] for state in SORTED_STATES),
-        ),
+    return formatter.parse_categorised_lists(
+        filtered_albums,
+        formatter.format_header,
+        formatter.format_review,
+        sorted_keys=(STATES_DESCRIPTION[state] for state in SORTED_STATES),
     )
 
 
@@ -151,11 +137,8 @@ def playlists_by_year(formatter, albums):
                 for p in album["picks"]
             ]
             sorted_tracks[year].extend(tracks)
-    return (
-        sorted_tracks,
-        formatter.parse_categorised_lists(
-            sorted_tracks, formatter.format_header, formatter.format_track
-        ),
+    return formatter.parse_categorised_lists(
+        sorted_tracks, formatter.format_header, formatter.format_track
     )
 
 
@@ -171,14 +154,11 @@ def all_tags(formatter, albums):
             key=lambda x: x["rating"],
             reverse=True,
         )
-    return (
+    return formatter.parse_categorised_lists(
         sorted_albums,
-        formatter.parse_categorised_lists(
-            sorted_albums,
-            formatter.format_header,
-            formatter.format_album,
-            sorted_keys=tags
-        ),
+        formatter.format_header,
+        formatter.format_album,
+        sorted_keys=tags
     )
 
 
@@ -205,7 +185,7 @@ def generate_all_indexes(albums, root_dir, extension="md", base_url=None):
         (playlists_by_year, "playlists_by_year"),
     )
     for function, index_name in pipelines:
-        content = function(formatter, albums)[1]
+        content = function(formatter, albums)
         # specific case for html: fill an html template
         if extension == "html":
             index_template = read_file(root_dir, "template_index.html")
