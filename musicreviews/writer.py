@@ -108,7 +108,7 @@ def export_review(data, root, base_url=None):
 
 def write_file(content, path, newline=False):
     """Writes the given content in a file, with an optional newline at the end."""
-    with open(path, "w") as file_content:
+    with open(path, "w", encoding="utf8") as file_content:
         file_content.write(content)
         if newline:
             file_content.write("\n")

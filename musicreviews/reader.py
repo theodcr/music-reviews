@@ -13,7 +13,7 @@ END_HEADER = r"\n---\n"
 
 def read_file(root, filename):
     """Reads the file and returns its content as a string."""
-    with open(os.path.join(root, filename)) as file_content:
+    with open(os.path.join(root, filename), encoding="utf8") as file_content:
         content = file_content.read()
     return content
 
@@ -53,7 +53,7 @@ def build_database(root_dir=os.getcwd()):
     for artist_tag in artist_tags:
         for file_path in glob.glob(os.path.join(root_dir, artist_tag, "*.md")):
             album = empty_album()
-            with open(file_path, "r") as f:
+            with open(file_path, "r", encoding="utf8") as f:
                 post = frontmatter.load(f)
             album.update(post.to_dict())
             album["artist_tag"] = artist_tag
