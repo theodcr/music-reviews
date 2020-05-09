@@ -388,6 +388,22 @@ def export(ctx, all, index):
         writer.export_review(album, root=export_dir, base_url=base_url)
     click.echo(ui.style_info("Reviews exported"))
 
+    # build artist indexes
+    artist_tags = set([album["artist_tag"] for album in albums_to_export])
+    for artist_tag in artist_tags:
+        specific_albums = sorted(
+            [x for x in albums_to_export if x["artist_tag"] == artist_tag],
+            key=lambda x: (x["year"], x["rating"]), reverse=True
+        )
+        content = formatter.html.parse_list(specific_albums, formatter.html.format_album)
+        index_template = reader.read_file(export_dir, "template_index.html")
+        title = specific_albums[0]["artist"]
+        content = index_template.format(
+            title=title, base_url=base_url, content=content
+        )
+        writer.write_file(content, os.path.join(export_dir, artist_tag, "index.html"))
+    click.echo(ui.style_info("Artist indexes generated"))
+
 
 @main.command()
 @click.option("--all", "-a", is_flag=True, help="create playlists for all years")

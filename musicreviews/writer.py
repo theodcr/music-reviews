@@ -73,7 +73,7 @@ def fill_review_template(
 
 
 def export_review(data, root, base_url=None):
-    """Exports review to HTML. Formats metadata and content."""
+    """Exports review(s) to HTML. Formats metadata and content."""
     template = read_file(root, "template.html")
     data["content"] = utils.replace_track_tags(data["content"]).format(**data)
     data["content"] = html.markdown_to_html(data["content"])
