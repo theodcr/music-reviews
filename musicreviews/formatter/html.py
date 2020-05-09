@@ -36,7 +36,7 @@ def parse_list(data, formatter, index_shift=1):
     """Parses each element in data using a formatter function.
     Data is a list of dicts.
     """
-    output = "<ol>\n" + utils.parse_list(data, formatter) + "</ol>\n"
+    output = "<ul>\n" + utils.parse_list(data, formatter) + "</ul>\n"
     return output
 
 
