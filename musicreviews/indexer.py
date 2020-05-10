@@ -80,9 +80,9 @@ def sort_ratings_by_decade(formatter, albums):
     )
 
 
-def all_reviews(formatter, albums):
+def sort_reviews_name(formatter, albums):
     """Returns a list of all album reviews and their state."""
-    sorted_albums = sorted(albums, key=lambda x: (x["artist_tag"], x["year"]))
+    sorted_albums = sorted(albums, key=lambda x: (x["artist_tag"], x["album_tag"]))
     return formatter.parse_list(sorted_albums, formatter.format_review)
 
 
@@ -174,15 +174,15 @@ def generate_all_indexes(albums, root_dir, extension="md", base_url=None):
     else:
         formatter = __import__("musicreviews").formatter.markdown
     pipelines = (
-        (sort_ratings, "sorted_albums"),
-        (sort_ratings_by_year, "sorted_by_year"),
-        (sort_ratings_by_decade, "sorted_by_decade"),
-        (all_reviews, "reviews"),
-        (sort_reviews_state, "reviews_state"),
-        (sort_reviews_date, "reviews_date"),
-        (all_tags, "reviews_tags"),
-        (sort_artists, "sorted_artists"),
-        (playlists_by_year, "playlists_by_year"),
+        (sort_ratings, "albumsrating"),
+        (sort_ratings_by_year, "years"),
+        (sort_ratings_by_decade, "decades"),
+        (sort_reviews_name, "albumsname"),
+        (sort_reviews_state, "states"),
+        (sort_reviews_date, "albumsdate"),
+        (all_tags, "tags"),
+        (sort_artists, "artists"),
+        (playlists_by_year, "playlists"),
     )
     for function, index_name in pipelines:
         content = function(formatter, albums)
