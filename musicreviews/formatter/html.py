@@ -58,7 +58,10 @@ def format_header(string):
 
 def format_artist(__, data):
     """Returns a formatted HTML line describing the artist."""
-    return "<li>{artist} - {rating:.1f}</li>\n".format(**data)
+    return (
+        "<li><a href='{artist_tag}/index.html'>{artist}</a>"
+        "- {rating:.1f}</li>\n"
+    ).format(**data)
 
 
 def format_album(__, data):
