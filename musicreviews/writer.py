@@ -77,21 +77,12 @@ def export_review(data, root, base_url=None):
     template = read_file(root, "template.html")
     data["content"] = utils.replace_track_tags(data["content"]).format(**data)
     data["content"] = html.markdown_to_html(data["content"])
-    data["tracks"] = "\n".join(
-        [
-            f"<li><b>{track}</b></li>"
-            if data["picks"] is not None and index in data["picks"]
-            else f"<li>{track}</li>"
-            for index, track in sorted(data["tracks"].items())
-        ]
-    )
+    data["tracks"] = html.format_tracks_picks(data["tracks"], data["picks"])
     if data["tags"] is None:
         # tags are optional -> may be None
         data["tags"] = []
     # ref to tags index
-    data["tags"] = ", ".join(
-        [f'<a href="reviews_tags.html#{tag}">{tag}</a>' for tag in data["tags"]]
-    )
+    data["tags"] = html.format_tags(data["tags"])
     data["rating_color"] = html.rating_to_rbg_color(data["rating"])
     if base_url is not None:
         data["base_url"] = base_url

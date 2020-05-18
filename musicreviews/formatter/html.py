@@ -19,7 +19,7 @@ def markdown_to_html(string):
 
 
 def rating_to_rbg_color(rating):
-    """Convert integer rating to HTML RBG color tuple.
+    """Converts integer rating to HTML RBG color tuple.
 
     Red if rating <= 30, else gradient from red to green.
     """
@@ -29,6 +29,25 @@ def rating_to_rbg_color(rating):
     return tuple(
         color * 100
         for color in colorsys.hsv_to_rgb((rating - limit) / (100 - limit) / 3, 1, 1)
+    )
+
+
+def format_tags(tags):
+    """Formats tags as comma-separated list of urls to tags index."""
+    return ", ".join(
+        [f'<a href="reviews_tags.html#{tag}">{tag}</a>' for tag in tags]
+    )
+
+
+def format_tracks_picks(tracks, picks):
+    """Formats tracks as a list, with picks in bold."""
+    return "\n".join(
+        [
+            f"<li><b>{track}</b></li>"
+            if picks is not None and index in picks
+            else f"<li>{track}</li>"
+            for index, track in sorted(tracks.items())
+        ]
     )
 
 
