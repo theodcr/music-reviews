@@ -19,7 +19,7 @@ STATES_DESCRIPTION = {
     " ": "Non noté ou inconnu",
 }
 
-def artists(formatter, albums):
+def artists_by_name(formatter, albums):
     """Returns the artists sorted by name."""
     artist_tags = set([album["artist_tag"] for album in albums])
     artists = []
@@ -34,7 +34,7 @@ def artists(formatter, albums):
     return formatter.parse_list(artists, formatter.format_artist)
 
 
-def sort_artists(formatter, albums):
+def artists_by_rating(formatter, albums):
     """Returns the artists sorted by decreasing mean album rating.
     Only artists with more than 1 reviewed albums are considered.
     """
@@ -58,13 +58,13 @@ def sort_artists(formatter, albums):
     return formatter.parse_list(sorted_artists, formatter.format_artist_rating)
 
 
-def sort_ratings(formatter, albums):
+def albums_by_rating(formatter, albums):
     """Returns the rated albums sorted by decreasing rating."""
     sorted_albums = sorted(albums, key=lambda x: x["rating"], reverse=True)
     return formatter.parse_list(sorted_albums, formatter.format_album)
 
 
-def sort_ratings_by_year(formatter, albums):
+def albums_by_year(formatter, albums):
     """Returns the rated albums sorted by decreasing year and rating."""
     years = set([album["year"] for album in albums])
     sorted_albums = {}
@@ -79,7 +79,7 @@ def sort_ratings_by_year(formatter, albums):
     )
 
 
-def sort_ratings_by_decade(formatter, albums):
+def albums_by_decade(formatter, albums):
     """Returns the rated albums sorted by decreasing decade and rating."""
     decades = set([album["decade"] for album in albums])
     sorted_albums = {}
@@ -94,19 +94,19 @@ def sort_ratings_by_decade(formatter, albums):
     )
 
 
-def sort_reviews_name(formatter, albums):
+def albums_by_name(formatter, albums):
     """Returns a list of all album reviews sorted by artist and name."""
     sorted_albums = sorted(albums, key=lambda x: (x["artist_tag"], x["album_tag"]))
     return formatter.parse_list(sorted_albums, formatter.format_album)
 
 
-def sort_reviews_date(formatter, albums):
+def albums_by_date(formatter, albums):
     """Returns the reviews sorted by generation date."""
     sorted_albums = sorted(albums, key=lambda x: x["date"], reverse=True)
     return formatter.parse_list(sorted_albums, formatter.format_album)
 
 
-def sort_reviews_state(formatter, albums):
+def reviews_by_state(formatter, albums):
     """Returns the reviews sorted by state."""
     sorted_albums = sorted(albums, key=lambda x: (x["artist_tag"], x["year"]))
     filtered_albums = {}
@@ -156,7 +156,7 @@ def playlists_by_year(formatter, albums):
     )
 
 
-def all_tags(formatter, albums):
+def tags_by_name(formatter, albums):
     """Returns for each tag albums sorted by decreasing rating."""
     tags = sorted(set(chain.from_iterable(
         [album["tags"] for album in albums if album["tags"] is not None]
@@ -188,15 +188,15 @@ def generate_all_indexes(albums, root_dir, extension="md", base_url=None):
     else:
         formatter = __import__("musicreviews").formatter.markdown
     pipelines = (
-        (sort_ratings, "albumsrating"),
-        (sort_ratings_by_year, "years"),
-        (sort_ratings_by_decade, "decades"),
-        (sort_reviews_name, "albums"),
-        (sort_reviews_date, "albumsdate"),
-        (sort_reviews_state, "states"),
-        (all_tags, "tags"),
-        (sort_artists, "artistsrating"),
-        (artists, "artists"),
+        (albums_by_rating, "albumsrating"),
+        (albums_by_year, "years"),
+        (albums_by_decade, "decades"),
+        (albums_by_name, "albums"),
+        (albums_by_date, "albumsdate"),
+        (reviews_by_state, "states"),
+        (tags_by_name, "tags"),
+        (artists_by_name, "artists"),
+        (artists_by_rating, "artistsrating"),
         (playlists_by_year, "playlists"),
     )
     for function, index_name in pipelines:
