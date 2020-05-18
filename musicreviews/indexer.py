@@ -19,6 +19,20 @@ STATES_DESCRIPTION = {
     " ": "Non noté ou inconnu",
 }
 
+def artists(formatter, albums):
+    """Returns the artists sorted by name."""
+    artist_tags = set([album["artist_tag"] for album in albums])
+    artists = []
+    for artist_tag in sorted(artist_tags):
+        specific_albums = [x for x in albums if x["artist_tag"] == artist_tag]
+        artists.append(
+            {
+                "artist_tag": artist_tag,
+                "artist": specific_albums[0]["artist"],
+            }
+        )
+    return formatter.parse_list(artists, formatter.format_artist)
+
 
 def sort_artists(formatter, albums):
     """Returns the artists sorted by decreasing mean album rating.
@@ -41,7 +55,7 @@ def sort_artists(formatter, albums):
     sorted_artists = sorted(
         artists, key=lambda x: (x["rating"], x["artist"]), reverse=True
     )
-    return formatter.parse_list(sorted_artists, formatter.format_artist)
+    return formatter.parse_list(sorted_artists, formatter.format_artist_rating)
 
 
 def sort_ratings(formatter, albums):
@@ -81,15 +95,15 @@ def sort_ratings_by_decade(formatter, albums):
 
 
 def sort_reviews_name(formatter, albums):
-    """Returns a list of all album reviews and their state."""
+    """Returns a list of all album reviews sorted by artist and name."""
     sorted_albums = sorted(albums, key=lambda x: (x["artist_tag"], x["album_tag"]))
-    return formatter.parse_list(sorted_albums, formatter.format_review)
+    return formatter.parse_list(sorted_albums, formatter.format_album)
 
 
 def sort_reviews_date(formatter, albums):
     """Returns the reviews sorted by generation date."""
     sorted_albums = sorted(albums, key=lambda x: x["date"], reverse=True)
-    return formatter.parse_list(sorted_albums, formatter.format_review)
+    return formatter.parse_list(sorted_albums, formatter.format_album)
 
 
 def sort_reviews_state(formatter, albums):
@@ -177,11 +191,12 @@ def generate_all_indexes(albums, root_dir, extension="md", base_url=None):
         (sort_ratings, "albumsrating"),
         (sort_ratings_by_year, "years"),
         (sort_ratings_by_decade, "decades"),
-        (sort_reviews_name, "albumsname"),
-        (sort_reviews_state, "states"),
+        (sort_reviews_name, "albums"),
         (sort_reviews_date, "albumsdate"),
+        (sort_reviews_state, "states"),
         (all_tags, "tags"),
-        (sort_artists, "artists"),
+        (sort_artists, "artistsrating"),
+        (artists, "artists"),
         (playlists_by_year, "playlists"),
     )
     for function, index_name in pipelines:
