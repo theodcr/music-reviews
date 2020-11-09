@@ -84,10 +84,10 @@ def queue(ctx):
         for uri in queue_uris - saved_uris:
             album = next(album for album in queue if album["uri"] == uri)
             click.echo(
-                click.style(f"Unreviewed album was removed from library: ", fg="white")
+                click.style("Unreviewed album was removed from library: ", fg="white")
                 + ui.style_album(album["artist"], album["album"], album["year"])
             )
-            if click.confirm(ui.style_prompt(f"Remove from queue"), default=True):
+            if click.confirm(ui.style_prompt("Remove from queue"), default=True):
                 queue_uris.remove(uri)
                 queue.remove(album)
         # add new uris to queue
@@ -148,14 +148,17 @@ def queue(ctx):
 def create(ctx, uri, playing, manual, y):
     """Create a review using data retrieved from Spotify or manually entered."""
     known_artists = [x["artist"] for x in ctx.obj["albums"]]
-    known_albums = [x["album"] for x in ctx.obj["albums"]]
     if manual:
         # manual input of data
         artist = ui.completion_input(ui.style_prompt("Artist"), known_artists)
         album = click.prompt(ui.style_prompt("Album"))
-        if artist in known_artists and album in known_albums:
-            click.echo(ui.style_error("Review already exists, operation aborted"))
-            return False
+        if artist in known_artists:
+            artist_albums = [
+                x["album"] for x in ctx.obj["albums"] if x["artist"] == artist
+            ]
+            if album in artist_albums:
+                click.echo(ui.style_error("Review already exists, operation aborted"))
+                return False
         year = click.prompt(
             ui.style_prompt("Year"),
             value_proc=partial(
@@ -215,9 +218,13 @@ def create(ctx, uri, playing, manual, y):
         # retrieve useful fields from Spotify data
         artist = album_data["artists"][0]["name"]
         album = album_data["name"]
-        if artist in known_artists and album in known_albums:
-            click.echo(ui.style_error("Review already exists, operation aborted"))
-            return False
+        if artist in known_artists:
+            artist_albums = [
+                x["album"] for x in ctx.obj["albums"] if x["artist"] == artist
+            ]
+            if album in artist_albums:
+                click.echo(ui.style_error("Review already exists, operation aborted"))
+                return False
         year = album_data["release_date"][:4]
         tracks = [track["name"] for track in album_data["tracks"]["items"]]
         cover = album_data["images"][0]["url"]
@@ -338,7 +345,9 @@ def setup(ctx):
 
 @main.command()
 @click.pass_context
-@click.option("--all", "-a", is_flag=True, help="export all reviews and indexes in library")
+@click.option(
+    "--all", "-a", is_flag=True, help="export all reviews and indexes in library"
+)
 @click.option("--index", "-i", is_flag=True, help="export indexes")
 def export(ctx, all, index):
     """Exports a review or all reviews to HTML."""
@@ -393,14 +402,15 @@ def export(ctx, all, index):
     for artist_tag in artist_tags:
         specific_albums = sorted(
             [x for x in albums_to_export if x["artist_tag"] == artist_tag],
-            key=lambda x: (x["year"], x["rating"]), reverse=True
+            key=lambda x: (x["year"], x["rating"]),
+            reverse=True,
         )
-        content = formatter.html.parse_list(specific_albums, formatter.html.format_album)
+        content = formatter.html.parse_list(
+            specific_albums, formatter.html.format_album
+        )
         index_template = reader.read_file(export_dir, "template_index.html")
         title = specific_albums[0]["artist"]
-        content = index_template.format(
-            title=title, base_url=base_url, content=content
-        )
+        content = index_template.format(title=title, base_url=base_url, content=content)
         writer.write_file(content, os.path.join(export_dir, artist_tag, "index.html"))
     click.echo(ui.style_info("Artist indexes generated"))
 
