@@ -394,6 +394,7 @@ def export(ctx, all, index):
         ]
 
     for album in albums_to_export:
+        click.echo(ui.style_info(f"{album['artist_tag']}/{album['album_tag']}"))
         writer.export_review(album, root=export_dir, base_url=base_url)
     click.echo(ui.style_info("Reviews exported"))
 

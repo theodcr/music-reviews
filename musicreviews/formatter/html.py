@@ -34,9 +34,7 @@ def rating_to_rbg_color(rating):
 
 def format_tags(tags):
     """Formats tags as comma-separated list of urls to tags index."""
-    return ", ".join(
-        [f'<a href="reviews_tags.html#{tag}">{tag}</a>' for tag in tags]
-    )
+    return ", ".join([f'<a href="reviews_tags.html#{tag}">{tag}</a>' for tag in tags])
 
 
 def format_tracks_picks(tracks, picks):
@@ -83,8 +81,7 @@ def format_artist(__, data):
 def format_artist_rating(__, data):
     """Returns a formatted HTML line describing the artist and its rating."""
     return (
-        "<li><a href='{artist_tag}/index.html'>{artist}</a>"
-        " - {rating:.1f}</li>\n"
+        "<li><a href='{artist_tag}/index.html'>{artist}</a>" " - {rating:.1f}</li>\n"
     ).format(**data)
 
 
