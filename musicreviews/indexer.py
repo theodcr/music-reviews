@@ -1,6 +1,7 @@
 """
 Functions for generating various sorted lists and indexes of the reviews and ratings.
-Each indexer function returns parsed data as a formatted string in wanted format (markdown or HTML).
+Each indexer function returns parsed data as a formatted string in wanted format
+(markdown or HTML).
 """
 
 from itertools import chain
@@ -18,6 +19,7 @@ STATES_DESCRIPTION = {
     ".": "Noté et idées",
     " ": "Non noté ou inconnu",
 }
+
 
 def artists_by_name(formatter, albums):
     """Returns the artists sorted by name."""
@@ -156,11 +158,38 @@ def playlists_by_year(formatter, albums):
     )
 
 
+def playlists_by_date(formatter, albums):
+    """Returns a single playlist of favorite tracks from albums
+    sorted by decreasing review date.
+    """
+    sorted_tracks = []
+    sorted_albums = sorted(albums, key=lambda x: x["date"], reverse=True)
+    for album in sorted_albums:
+        if album["picks"] is None:
+            continue
+        tracks = [
+            {
+                "artist_tag": album["artist_tag"],
+                "album_tag": album["album_tag"],
+                "artist": album["artist"],
+                "album": album["album"],
+                "track": album["tracks"][p],
+            }
+            for p in album["picks"]
+        ]
+        sorted_tracks.extend(tracks)
+    return formatter.parse_list(sorted_tracks, formatter.format_track)
+
+
 def tags_by_name(formatter, albums):
     """Returns for each tag albums sorted by decreasing rating."""
-    tags = sorted(set(chain.from_iterable(
-        [album["tags"] for album in albums if album["tags"] is not None]
-    )))
+    tags = sorted(
+        set(
+            chain.from_iterable(
+                [album["tags"] for album in albums if album["tags"] is not None]
+            )
+        )
+    )
     sorted_albums = {}
     for tag in tags:
         sorted_albums[tag] = sorted(
@@ -169,10 +198,7 @@ def tags_by_name(formatter, albums):
             reverse=True,
         )
     return formatter.parse_categorised_lists(
-        sorted_albums,
-        formatter.format_header,
-        formatter.format_album,
-        sorted_keys=tags
+        sorted_albums, formatter.format_header, formatter.format_album, sorted_keys=tags
     )
 
 
@@ -198,6 +224,7 @@ def generate_all_indexes(albums, root_dir, extension="md", base_url=None):
         (artists_by_name, "artists"),
         (artists_by_rating, "artistsrating"),
         (playlists_by_year, "playlists"),
+        (playlists_by_date, "playlistsdate"),
     )
     for function, index_name in pipelines:
         content = function(formatter, albums)
