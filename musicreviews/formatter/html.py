@@ -35,7 +35,7 @@ def rating_to_rbg_color(rating):
 def format_tags(tags):
     """Formats tags as comma-separated list of urls to tags index."""
     return ", ".join(
-        [f'<a href="reviews_tags.html#{tag}">{tag}</a>' for tag in tags]
+        [f'<a href="tags.html#{tag}">{tag}</a>' for tag in tags]
     )
 
 

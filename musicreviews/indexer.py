@@ -157,7 +157,7 @@ def playlists_by_year(formatter, albums):
 
 
 def tags_by_name(formatter, albums):
-    """Returns for each tag albums sorted by decreasing rating."""
+    """Returns for each tag albums sorted by artist and album name."""
     tags = sorted(set(chain.from_iterable(
         [album["tags"] for album in albums if album["tags"] is not None]
     )))
@@ -165,8 +165,7 @@ def tags_by_name(formatter, albums):
     for tag in tags:
         sorted_albums[tag] = sorted(
             [x for x in albums if x["tags"] is not None and tag in x["tags"]],
-            key=lambda x: x["rating"],
-            reverse=True,
+            key=lambda x: (x["artist_tag"], x["album_tag"]),
         )
     return formatter.parse_categorised_lists(
         sorted_albums,
