@@ -52,7 +52,7 @@ def replace_enclosed_text_tags(string, tag_to_sub, opening_tag, closing_tag=None
 
 def replace_track_tags(content):
     """Replaces tags like {4} to formatting compatible tags like {tracks[4]}."""
-    return re.sub(r"{(\d+)}", "{tracks[\\1]}", content)
+    return re.sub(r"{(\d+)}", '<i>{tracks[\\1]}</i>', content)
 
 
 def escape_yaml_specials(string):
