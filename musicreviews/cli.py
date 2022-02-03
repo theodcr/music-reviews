@@ -269,7 +269,7 @@ def create(ctx, uri, playing, manual, y):
         + click.style("/", fg="white")
         + click.style(filename, fg="blue", bold=True)
     )
-    if click.confirm(ui.style_prompt("Confirm creation of review"), default=True):
+    if click.confirm(ui.style_prompt("Confirm creation of review"), default=True) or y:
         template = reader.read_file(root_dir, "template.md")
         review = writer.fill_review_template(
             template,
@@ -453,6 +453,31 @@ def playlists(ctx, all):
         replace_playlist_tracks(
             username=ctx.obj["username"], playlist_id=playlist_id, track_ids=year_tracks
         )
+
+
+@main.command()
+@click.option("--year", "-y", help="years filter, for example 2016")
+@click.option("--rating", "-r", help="rating filter, for example 82")
+@click.option("--tags", "-t", help="tags filter, for example rock,electro")
+@click.option("--sort", "-s", help="sorting fields, for example rating")
+@click.option("--ascending", "-a", is_flag=True, help="sort by ascending value")
+@click.pass_context
+def query(ctx, year, rating, tags, sort, ascending):
+    """Query, filter and sort reviews."""
+    # TODO: inequalities of year and rating
+    albums = ctx.obj["albums"]
+    if year is not None:
+        albums = [x for x in albums if x["year"] == int(year)]
+    if rating is not None:
+        albums = [x for x in albums if x["rating"] == int(rating)]
+    if tags is not None:
+        query_tags = set(tags.split(","))
+        albums = [x for x in albums if query_tags.issubset(set(x["tags"]))]
+    if sort is not None:
+        reverse = not ascending if ascending is not None else True
+        albums = sorted(albums, key=lambda x: x[sort], reverse=reverse)
+    for album in albums:
+            click.echo(ui.style_album(album["artist"], album["album"], album["year"]))
 
 
 if __name__ == "__main__":
