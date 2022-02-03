@@ -46,11 +46,11 @@ def style_enumerate(i, val):
 def style_album(artist, album, year):
     """Returns a unified style for albums."""
     return (
-        click.style(artist, fg="magenta", bold=True)
+        click.style(str(artist), fg="magenta", bold=True)
         + click.style(" - ", fg="white")
-        + click.style(album, fg="blue", bold=True)
+        + click.style(str(album), fg="blue", bold=True)
         + click.style(" - ", fg="white")
-        + click.style(year, fg="white", bold=True)
+        + click.style(str(year), fg="white", bold=True)
     )
 
 
