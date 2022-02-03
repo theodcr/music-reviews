@@ -8,8 +8,6 @@ import os
 from functools import partial
 
 import click
-
-from musicreviews import configuration, formatter, indexer, reader, ui, writer
 from powerspot.cli import get_username
 from powerspot.operations import (
     create_playlist,
@@ -21,6 +19,8 @@ from powerspot.operations import (
     replace_playlist_tracks,
     search_artist,
 )
+
+from musicreviews import configuration, formatter, indexer, reader, ui, writer
 
 
 @click.group(chain=True)
