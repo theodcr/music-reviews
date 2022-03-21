@@ -10,7 +10,6 @@ tracks:
 {tracks}
 picks:
 {picks}
-state: {state}
 tags:
 {tags}
 ---

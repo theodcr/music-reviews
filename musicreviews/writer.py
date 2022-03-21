@@ -24,7 +24,6 @@ def fill_review_template(
     picks=None,
     tags=None,
     tracks=None,
-    state=None,
     content=None,
     date=None,
 ):
@@ -33,7 +32,6 @@ def fill_review_template(
         date = datetime.datetime.now().strftime("%Y-%m-%d")
     uri = uri or ""
     cover = cover or ""
-    state = state or "."
     content = content or ""
     if picks is not None:
         picks_string = "\n".join([f"- {pick}" for pick in picks])
@@ -67,7 +65,6 @@ def fill_review_template(
         picks=picks_string,
         tags=tags_string,
         tracks=tracks_string,
-        state=state,
         content=content,
     )
 

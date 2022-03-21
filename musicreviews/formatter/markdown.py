@@ -44,13 +44,6 @@ def format_track(index, data):
     return "{}. {artist} - {album} - {track}\n".format(index, **data)
 
 
-def format_review(__, data):
-    """Returns a formatted line showing the review state and its reference tags.
-    Dummy argument to respect standard formatter definition.
-    """
-    return "- [{state}] {artist} - {album}\n".format(**data)
-
-
 def format_rating(album):
     """Format the album rating in a short note."""
     output = f"\n**Note :** {album['rating']}/100"

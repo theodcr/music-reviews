@@ -35,7 +35,6 @@ tracks:
 picks:
 - 4
 - 5
-state: .
 ---
 
 (content is written here)

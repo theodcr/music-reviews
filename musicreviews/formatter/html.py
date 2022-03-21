@@ -99,11 +99,3 @@ def format_track(__, data):
         "<li><a href='{artist_tag}/{album_tag}.html'>{artist} - {album}</a>"
         " - {track}</li>\n"
     ).format(**data)
-
-
-def format_review(__, data):
-    """Returns a formatted line showing the review state and its reference tags."""
-    return (
-        "<li>[{state}] <a href='{artist_tag}/{album_tag}.html'>"
-        "{artist} - {album}</a></li>\n"
-    ).format(**data)

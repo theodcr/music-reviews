@@ -10,17 +10,6 @@ import os
 from .reader import read_file
 from .writer import write_file
 
-SORTED_STATES = ["P", "X", "O", "o", ".", " "]
-STATES_DESCRIPTION = {
-    "P": "Publié",
-    "X": "Terminé (relire)",
-    "O": "En écriture",
-    "o": "Débuté",
-    ".": "Noté et idées",
-    " ": "Non noté ou inconnu",
-}
-
-
 def artists_by_name(formatter, albums):
     """Returns the artists sorted by name."""
     artist_tags = set([album["artist_tag"] for album in albums])
@@ -106,24 +95,6 @@ def albums_by_date(formatter, albums):
     """Returns the reviews sorted by generation date."""
     sorted_albums = sorted(albums, key=lambda x: x["date"], reverse=True)
     return formatter.parse_list(sorted_albums, formatter.format_album)
-
-
-def reviews_by_state(formatter, albums):
-    """Returns the reviews sorted by state."""
-    sorted_albums = sorted(albums, key=lambda x: (x["artist_tag"], x["year"]))
-    filtered_albums = {}
-    for state in SORTED_STATES:
-        # title formatting for each state
-        state_description = STATES_DESCRIPTION[state]
-        filtered_albums[state_description] = [
-            x for x in sorted_albums if x["state"] == state
-        ]
-    return formatter.parse_categorised_lists(
-        filtered_albums,
-        formatter.format_header,
-        formatter.format_review,
-        sorted_keys=(STATES_DESCRIPTION[state] for state in SORTED_STATES),
-    )
 
 
 def playlists_by_year(formatter, albums):
@@ -218,7 +189,6 @@ def generate_all_indexes(albums, root_dir, extension="md", base_url=None):
         (albums_by_decade, "decades"),
         (albums_by_name, "albums"),
         (albums_by_date, "albumsdate"),
-        (reviews_by_state, "states"),
         (tags_by_name, "tags"),
         (artists_by_name, "artists"),
         (artists_by_rating, "artistsrating"),

@@ -31,7 +31,6 @@ def empty_album():
         "cover": None,
         "tracks": None,
         "picks": None,
-        "state": " ",
         "content": "",
         "tags": None,
         "decade": 0,
