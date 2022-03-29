@@ -4,11 +4,12 @@ Each indexer function returns parsed data as a formatted string in wanted format
 (markdown or HTML).
 """
 
-from itertools import chain
 import os
+from itertools import chain
 
 from .reader import read_file
 from .writer import write_file
+
 
 def artists_by_name(formatter, albums):
     """Returns the artists sorted by name."""
@@ -97,61 +98,6 @@ def albums_by_date(formatter, albums):
     return formatter.parse_list(sorted_albums, formatter.format_album)
 
 
-def playlists_by_year(formatter, albums):
-    """Returns yearly playlists of favorite tracks from albums
-    sorted by decreasing year and decreasing rating.
-    """
-    years = set([album["year"] for album in albums])
-    sorted_tracks = {}
-    for year in sorted(years, reverse=True):
-        sorted_tracks[year] = []
-        sorted_albums = sorted(
-            [x for x in albums if x["year"] == year],
-            key=lambda x: x["rating"],
-            reverse=True,
-        )
-        for album in sorted_albums:
-            if album["picks"] is None:
-                continue
-            tracks = [
-                {
-                    "artist_tag": album["artist_tag"],
-                    "album_tag": album["album_tag"],
-                    "artist": album["artist"],
-                    "album": album["album"],
-                    "track": album["tracks"][p],
-                }
-                for p in album["picks"]
-            ]
-            sorted_tracks[year].extend(tracks)
-    return formatter.parse_categorised_lists(
-        sorted_tracks, formatter.format_header, formatter.format_track
-    )
-
-
-def playlists_by_date(formatter, albums):
-    """Returns a single playlist of favorite tracks from albums
-    sorted by decreasing review date.
-    """
-    sorted_tracks = []
-    sorted_albums = sorted(albums, key=lambda x: x["date"], reverse=True)
-    for album in sorted_albums:
-        if album["picks"] is None:
-            continue
-        tracks = [
-            {
-                "artist_tag": album["artist_tag"],
-                "album_tag": album["album_tag"],
-                "artist": album["artist"],
-                "album": album["album"],
-                "track": album["tracks"][p],
-            }
-            for p in album["picks"]
-        ]
-        sorted_tracks.extend(tracks)
-    return formatter.parse_list(sorted_tracks, formatter.format_track)
-
-
 def tags_by_name(formatter, albums):
     """Returns for each tag albums sorted by decreasing rating."""
     tags = sorted(
@@ -192,8 +138,6 @@ def generate_all_indexes(albums, root_dir, extension="md", base_url=None):
         (tags_by_name, "tags"),
         (artists_by_name, "artists"),
         (artists_by_rating, "artistsrating"),
-        (playlists_by_year, "playlists"),
-        (playlists_by_date, "playlistsdate"),
     )
     for function, index_name in pipelines:
         content = function(formatter, albums)
