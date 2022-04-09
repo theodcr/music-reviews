@@ -15,7 +15,13 @@ def parse_list(data, formatter, index_shift=1):
 
 
 def parse_categorised_lists(
-    data, header_formatter, formatter, list_parser, sorted_keys=None
+    data,
+    header_formatter,
+    formatter,
+    list_parser,
+    descriptions=None,
+    description_formatter=None,
+    sorted_keys=None,
 ):
     """Parses each element in data using a formatter function.
     Data is a dict, each key is a category and each value is a list of dicts.
@@ -23,12 +29,22 @@ def parse_categorised_lists(
     """
     if sorted_keys is None:
         sorted_keys = sorted(data.keys(), reverse=True)
-    output = "".join(
-        [
-            header_formatter(key) + list_parser(data[key], formatter)
-            for key in sorted_keys
-        ]
-    )
+    if descriptions is not None and description_formatter is not None:
+        output = "".join(
+            [
+                header_formatter(key)
+                + description_formatter(descriptions[key])
+                + list_parser(data[key], formatter)
+                for key in sorted_keys
+            ]
+        )
+    else:
+        output = "".join(
+            [
+                header_formatter(key) + list_parser(data[key], formatter)
+                for key in sorted_keys
+            ]
+        )
     return output
 
 

@@ -8,13 +8,26 @@ from . import utils
 parse_list = utils.parse_list
 
 
-def parse_categorised_lists(data, header_formatter, formatter, sorted_keys=None):
+def parse_categorised_lists(
+    data,
+    header_formatter,
+    formatter,
+    descriptions=None,
+    description_formatter=None,
+    sorted_keys=None,
+):
     """Parses each element in data using a formatter function.
     Data is a dict, each key is a category and each value is a list of dicts.
     Adds a header for each category.
     """
     output = utils.parse_categorised_lists(
-        data, header_formatter, formatter, parse_list, sorted_keys
+        data,
+        header_formatter,
+        formatter,
+        parse_list,
+        descriptions,
+        description_formatter,
+        sorted_keys,
     )
     return output
 
@@ -22,6 +35,11 @@ def parse_categorised_lists(data, header_formatter, formatter, sorted_keys=None)
 def format_header(string):
     """Returns the string as a header."""
     return "\n# {}\n\n".format(string)
+
+
+def format_description(string):
+    """Returns the string as a basic text."""
+    return f"{string}\n\n"
 
 
 def format_artist(index, data):

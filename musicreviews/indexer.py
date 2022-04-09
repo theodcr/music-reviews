@@ -7,6 +7,7 @@ Each indexer function returns parsed data as a formatted string in wanted format
 import os
 from itertools import chain
 
+from .configuration import load_config
 from .reader import read_file
 from .writer import write_file
 
@@ -108,13 +109,21 @@ def tags_by_name(formatter, albums):
         )
     )
     sorted_albums = {}
+    descriptions = {}
+    __, config = load_config()
     for tag in tags:
+        descriptions[tag] = config["tags"].get(tag)
         sorted_albums[tag] = sorted(
             [x for x in albums if x["tags"] is not None and tag in x["tags"]],
             key=lambda x: (x["artist_tag"], x["album_tag"]),
         )
     return formatter.parse_categorised_lists(
-        sorted_albums, formatter.format_header, formatter.format_album, sorted_keys=tags
+        sorted_albums,
+        formatter.format_header,
+        formatter.format_album,
+        descriptions=descriptions,
+        description_formatter=formatter.format_description,
+        sorted_keys=tags,
     )
 
 

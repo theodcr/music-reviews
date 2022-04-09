@@ -53,17 +53,30 @@ def parse_list(data, formatter, index_shift=1):
     """Parses each element in data using a formatter function.
     Data is a list of dicts.
     """
-    output = "<ul>\n" + utils.parse_list(data, formatter) + "</ul>\n"
+    output = "<ul>\n" + utils.parse_list(data, formatter, index_shift) + "</ul>\n"
     return output
 
 
-def parse_categorised_lists(data, header_formatter, formatter, sorted_keys=None):
+def parse_categorised_lists(
+    data,
+    header_formatter,
+    formatter,
+    descriptions=None,
+    description_formatter=None,
+    sorted_keys=None,
+):
     """Parses each element in data using a formatter function.
     Data is a dict, each key is a category and each value is a list of dicts.
     Adds a header for each category.
     """
     output = utils.parse_categorised_lists(
-        data, header_formatter, formatter, parse_list, sorted_keys
+        data,
+        header_formatter,
+        formatter,
+        parse_list,
+        descriptions,
+        description_formatter,
+        sorted_keys,
     )
     return output
 
@@ -71,6 +84,11 @@ def parse_categorised_lists(data, header_formatter, formatter, sorted_keys=None)
 def format_header(string):
     """Returns the string as a header in HTML format."""
     return f"<h1 id='{string}'>{string}</h1>\n"
+
+
+def format_description(string):
+    """Returns the string as a description in HTML format."""
+    return f"<p>{string}</p>\n"
 
 
 def format_artist(__, data):
