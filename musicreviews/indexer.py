@@ -99,6 +99,12 @@ def albums_by_date(formatter, albums):
     return formatter.parse_list(sorted_albums, formatter.format_album)
 
 
+def albums_by_length(formatter, albums):
+    """Returns the reviews sorted by content length."""
+    sorted_albums = sorted(albums, key=lambda x: len(x["content"]), reverse=True)
+    return formatter.parse_list(sorted_albums, formatter.format_album)
+
+
 def tags_by_name(formatter, albums):
     """Returns for each tag albums sorted by decreasing rating."""
     tags = sorted(
@@ -144,6 +150,7 @@ def generate_all_indexes(albums, root_dir, extension="md", base_url=None):
         (albums_by_decade, "decades"),
         (albums_by_name, "albums"),
         (albums_by_date, "albumsdate"),
+        (albums_by_length, "albumslength"),
         (tags_by_name, "tags"),
         (artists_by_name, "artists"),
         (artists_by_rating, "artistsrating"),
