@@ -2,6 +2,7 @@
 date: {date}
 artist: {artist}
 album: {album}
+producers:
 year: {year}
 uri: {uri}
 cover: {cover}
