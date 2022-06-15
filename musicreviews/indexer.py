@@ -138,14 +138,22 @@ def producers_by_name(formatter, albums):
     producers = sorted(
         set(
             chain.from_iterable(
-                [album["producers"] for album in albums if album["producers"] is not None]
+                [
+                    album["producers"]
+                    for album in albums
+                    if album["producers"] is not None
+                ]
             )
         )
     )
     sorted_albums = {}
     for producer in producers:
         sorted_albums[producer] = sorted(
-            [x for x in albums if x["producers"] is not None and producer in x["producers"]],
+            [
+                x
+                for x in albums
+                if x["producers"] is not None and producer in x["producers"]
+            ],
             key=lambda x: (x["artist_tag"], x["album_tag"]),
         )
     return formatter.parse_categorised_lists(

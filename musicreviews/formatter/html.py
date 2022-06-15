@@ -39,8 +39,11 @@ def format_tags(tags):
 
 def format_producers(producers):
     """Formats producers as comma-separated list of urls to producers index."""
-    return ", ".join(
-        [f'<a href="producers.html#{producer}">{producer}</a>' for producer in producers]
+    return " ".join(
+        [
+            f'<a href="producers.html#{producer}">{producer}</a>'
+            for producer in producers
+        ]
     )
 
 
