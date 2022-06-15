@@ -42,6 +42,17 @@ def compute_decade(year):
     return 10 * (year // 10)
 
 
+def build_album(artist_tag, file_path):
+    album = empty_album()
+    with open(file_path, "r", encoding="utf8") as f:
+        post = frontmatter.load(f)
+    album.update(post.to_dict())
+    album["artist_tag"] = artist_tag
+    album["album_tag"] = os.path.splitext(os.path.basename(file_path))[0]
+    album["decade"] = compute_decade(album["year"])
+    return album
+
+
 def build_database(root_dir=os.getcwd()):
     """Finds reviews and builds a database using their header and content."""
     albums = []
@@ -51,12 +62,5 @@ def build_database(root_dir=os.getcwd()):
     ]
     for artist_tag in artist_tags:
         for file_path in glob.glob(os.path.join(root_dir, artist_tag, "*.md")):
-            album = empty_album()
-            with open(file_path, "r", encoding="utf8") as f:
-                post = frontmatter.load(f)
-            album.update(post.to_dict())
-            album["artist_tag"] = artist_tag
-            album["album_tag"] = os.path.splitext(os.path.basename(file_path))[0]
-            album["decade"] = compute_decade(album["year"])
-            albums.append(album)
+            albums.append(build_album(artist_tag, file_path))
     return albums
