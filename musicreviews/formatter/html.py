@@ -37,6 +37,13 @@ def format_tags(tags):
     return ", ".join([f'<a href="tags.html#{tag}">{tag}</a>' for tag in tags])
 
 
+def format_producers(producers):
+    """Formats producers as comma-separated list of urls to producers index."""
+    return ", ".join(
+        [f'<a href="producers.html#{producer}">{producer}</a>' for producer in producers]
+    )
+
+
 def format_tracks_picks(tracks, picks):
     """Formats tracks as a list, with picks in bold."""
     return "\n".join(

@@ -106,7 +106,7 @@ def albums_by_length(formatter, albums):
 
 
 def tags_by_name(formatter, albums):
-    """Returns for each tag albums sorted by decreasing rating."""
+    """Returns for each tag's albums sorted by decreasing rating."""
     tags = sorted(
         set(
             chain.from_iterable(
@@ -133,6 +133,29 @@ def tags_by_name(formatter, albums):
     )
 
 
+def producers_by_name(formatter, albums):
+    """Returns for each producer's albums sorted by decreasing rating."""
+    producers = sorted(
+        set(
+            chain.from_iterable(
+                [album["producers"] for album in albums if album["producers"] is not None]
+            )
+        )
+    )
+    sorted_albums = {}
+    for producer in producers:
+        sorted_albums[producer] = sorted(
+            [x for x in albums if x["producers"] is not None and producer in x["producers"]],
+            key=lambda x: (x["artist_tag"], x["album_tag"]),
+        )
+    return formatter.parse_categorised_lists(
+        sorted_albums,
+        formatter.format_header,
+        formatter.format_album,
+        sorted_keys=producers,
+    )
+
+
 def compute_artist_rating(ratings):
     """Returns an artist rating based on the ratings of its albums."""
     return float(sum(ratings)) / max(len(ratings), 1)
@@ -151,6 +174,7 @@ def generate_all_indexes(albums, root_dir, extension="md", base_url=None):
         (albums_by_name, "albums"),
         (albums_by_date, "albumsdate"),
         (albums_by_length, "albumslength"),
+        (producers_by_name, "producers"),
         (tags_by_name, "tags"),
         (artists_by_name, "artists"),
         (artists_by_rating, "artistsrating"),
