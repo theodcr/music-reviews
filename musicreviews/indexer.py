@@ -12,6 +12,11 @@ from .reader import read_file
 from .writer import write_file
 
 
+def compute_artist_rating(ratings):
+    """Returns an artist rating based on the ratings of its albums."""
+    return float(sum(ratings)) / max(len(ratings), 1)
+
+
 def artists_by_name(formatter, albums):
     """Returns the artists sorted by name."""
     artist_tags = set([album["artist_tag"] for album in albums])
@@ -164,9 +169,18 @@ def producers_by_name(formatter, albums):
     )
 
 
-def compute_artist_rating(ratings):
-    """Returns an artist rating based on the ratings of its albums."""
-    return float(sum(ratings)) / max(len(ratings), 1)
+def shopping_list(formatter, albums):
+    """Returns classics and favorites not physically owned."""
+    filtered_albums = [
+        x
+        for x in albums
+        if ("fav" in x["tags"] or "classic" in x["tags"])
+        and not ("cd" in x["tags"] or "vinyl" in x["tags"])
+    ]
+    sorted_albums = sorted(
+        filtered_albums, key=lambda x: (x["artist_tag"], x["album_tag"])
+    )
+    return formatter.parse_list(sorted_albums, formatter.format_album)
 
 
 def generate_all_indexes(albums, root_dir, extension="md", base_url=None):
@@ -186,6 +200,7 @@ def generate_all_indexes(albums, root_dir, extension="md", base_url=None):
         (tags_by_name, "tags"),
         (artists_by_name, "artists"),
         (artists_by_rating, "artistsrating"),
+        (shopping_list, "shopping_list"),
     )
     for function, index_name in pipelines:
         content = function(formatter, albums)
