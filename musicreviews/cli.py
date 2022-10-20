@@ -259,6 +259,8 @@ def create(ctx, uri, playing, manual, y):
     root_dir = ctx.obj["root_dir"]
     folder = formatter.utils.alphanumeric_lowercase(artist)
     filename = formatter.utils.alphanumeric_lowercase(album)
+    if not filename:
+        filename = click.prompt(ui.style_prompt("Filename"))
     click.echo(
         click.style("Creating review at: ", fg="cyan")
         + click.style(root_dir + "/", fg="white")
