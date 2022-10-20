@@ -169,6 +169,29 @@ def producers_by_name(formatter, albums):
     )
 
 
+def labels_by_name(formatter, albums):
+    """Returns for each label's albums sorted by decreasing rating."""
+    labels = sorted(
+        set(
+            chain.from_iterable(
+                [album["labels"] for album in albums if album["labels"] is not None]
+            )
+        )
+    )
+    sorted_albums = {}
+    for label in labels:
+        sorted_albums[label] = sorted(
+            [x for x in albums if x["labels"] is not None and label in x["labels"]],
+            key=lambda x: (x["artist_tag"], x["album_tag"]),
+        )
+    return formatter.parse_categorised_lists(
+        sorted_albums,
+        formatter.format_header,
+        formatter.format_album,
+        sorted_keys=labels,
+    )
+
+
 def shopping_list(formatter, albums):
     """Returns classics and favorites not physically owned."""
     filtered_albums = [
@@ -197,6 +220,7 @@ def generate_all_indexes(albums, root_dir, extension="md", base_url=None):
         (albums_by_date, "albumsdate"),
         (albums_by_length, "albumslength"),
         (producers_by_name, "producers"),
+        (labels_by_name, "labels"),
         (tags_by_name, "tags"),
         (artists_by_name, "artists"),
         (artists_by_rating, "artistsrating"),

@@ -27,6 +27,7 @@ def empty_album():
         "album": "",
         "year": 0,
         "producers": "",
+        "labels": "",
         "rating": 0,
         "uri": None,
         "cover": None,

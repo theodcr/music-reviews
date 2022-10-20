@@ -78,9 +78,10 @@ def export_review(data, root, base_url=None):
     if data["tags"] is None:
         # tags are optional -> may be None
         data["tags"] = []
-    # ref to tags and producers index
+    # ref to tags, producers and labels index
     data["tags"] = html.format_tags(data["tags"])
     data["producers"] = html.format_producers(data["producers"])
+    data["labels"] = html.format_labels(data["labels"])
     data["rating_color"] = html.rating_to_rbg_color(data["rating"])
     if base_url is not None:
         data["base_url"] = base_url
