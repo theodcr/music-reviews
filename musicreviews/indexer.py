@@ -5,6 +5,7 @@ Each indexer function returns parsed data as a formatted string in wanted format
 """
 
 import os
+from datetime import date, timedelta
 from itertools import chain
 
 from .configuration import load_config
@@ -198,10 +199,23 @@ def shopping_list(formatter, albums):
         x
         for x in albums
         if ("fav" in x["tags"] or "classic" in x["tags"])
-        and not ("cd" in x["tags"] or "vinyl" in x["tags"])
+        and not ("cd" in x["tags"] or "vinyl" in x["tags"] or "bandcamp" in x["tags"])
     ]
     sorted_albums = sorted(
         filtered_albums, key=lambda x: (x["artist_tag"], x["album_tag"])
+    )
+    return formatter.parse_list(sorted_albums, formatter.format_album)
+
+
+def recent_albums(formatter, albums):
+    """Returns albums reviewed over the last 6 months sorted by decreasing rating."""
+    filtered_albums = [
+        x
+        for x in albums
+        if x["date"] > date.today() - timedelta(days=183)
+    ]
+    sorted_albums = sorted(
+        filtered_albums, key=lambda x: x["rating"], reverse=True
     )
     return formatter.parse_list(sorted_albums, formatter.format_album)
 
@@ -225,6 +239,7 @@ def generate_all_indexes(albums, root_dir, extension="md", base_url=None):
         (artists_by_name, "artists"),
         (artists_by_rating, "artistsrating"),
         (shopping_list, "shopping_list"),
+        (recent_albums, "recent_albums"),
     )
     for function, index_name in pipelines:
         content = function(formatter, albums)

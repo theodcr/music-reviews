@@ -36,6 +36,7 @@ def empty_album():
         "content": "",
         "tags": None,
         "decade": 0,
+        "date": "",
     }
 
 
