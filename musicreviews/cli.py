@@ -23,7 +23,10 @@ from musicreviews import configuration, formatter, indexer, reader, ui, writer
 @click.group(chain=True)
 @click.pass_context
 @click.option("--username", default=lambda: os.getenv("SPOTIFY_USER"))
-def main(ctx, username):
+@click.option("--client", default=lambda: os.getenv("SPOTIPY_CLIENT_ID"))
+@click.option("--secret", default=lambda: os.getenv("SPOTIPY_CLIENT_SECRET"))
+@click.option("--redirect", default=lambda: os.getenv("SPOTIPY_REDIRECT_URI"))
+def main(ctx, username: str, client: str, secret: str, redirect: str) -> None:
     """CLI for album reviews management."""
     click.echo(click.style(ui.GREET, fg="magenta", bold=True))
     ctx.obj = {}
