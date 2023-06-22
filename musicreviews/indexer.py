@@ -52,14 +52,18 @@ def artists_by_rating(formatter, albums):
                 }
             )
     sorted_artists = sorted(
-        artists, key=lambda x: (x["rating"], x["artist"]), reverse=True
+        artists, key=lambda x: (x["rating"], x["artist_tag"]), reverse=True
     )
     return formatter.parse_list(sorted_artists, formatter.format_artist_rating)
 
 
 def albums_by_rating(formatter, albums):
     """Returns the rated albums sorted by decreasing rating."""
-    sorted_albums = sorted(albums, key=lambda x: x["rating"], reverse=True)
+    sorted_albums = sorted(
+        albums,
+        key=lambda x: (x["rating"], x["artist_tag"], x["album_tag"]),
+        reverse=True,
+    )
     return formatter.parse_list(sorted_albums, formatter.format_album)
 
 
@@ -70,7 +74,7 @@ def albums_by_year(formatter, albums):
     for year in sorted(years, reverse=True):
         sorted_albums[year] = sorted(
             [x for x in albums if x["year"] == year],
-            key=lambda x: x["rating"],
+            key=lambda x: (x["rating"], x["artist_tag"], x["album_tag"]),
             reverse=True,
         )
     return formatter.parse_categorised_lists(
@@ -85,7 +89,7 @@ def albums_by_decade(formatter, albums):
     for decade in sorted(decades, reverse=True):
         sorted_albums[decade] = sorted(
             [x for x in albums if x["decade"] == decade],
-            key=lambda x: x["rating"],
+            key=lambda x: (x["rating"], x["artist_tag"], x["album_tag"]),
             reverse=True,
         )
     return formatter.parse_categorised_lists(
@@ -101,13 +105,19 @@ def albums_by_name(formatter, albums):
 
 def albums_by_date(formatter, albums):
     """Returns the reviews sorted by generation date."""
-    sorted_albums = sorted(albums, key=lambda x: x["date"], reverse=True)
+    sorted_albums = sorted(
+        albums, key=lambda x: (x["date"], x["artist_tag"], x["album_tag"]), reverse=True
+    )
     return formatter.parse_list(sorted_albums, formatter.format_album)
 
 
 def albums_by_length(formatter, albums):
     """Returns the reviews sorted by content length."""
-    sorted_albums = sorted(albums, key=lambda x: len(x["content"]), reverse=True)
+    sorted_albums = sorted(
+        albums,
+        key=lambda x: (len(x["content"]), x["artist_tag"], x["album_tag"]),
+        reverse=True,
+    )
     return formatter.parse_list(sorted_albums, formatter.format_album)
 
 
@@ -124,7 +134,7 @@ def tags_by_name(formatter, albums):
     descriptions = {}
     __, config = load_config()
     for tag in tags:
-        descriptions[tag] = config["tags"].get(tag)
+        descriptions[tag] = config["tags"].get(tag, "")
         sorted_albums[tag] = sorted(
             [x for x in albums if x["tags"] is not None and tag in x["tags"]],
             key=lambda x: (x["artist_tag"], x["album_tag"]),
@@ -210,12 +220,12 @@ def shopping_list(formatter, albums):
 def recent_albums(formatter, albums):
     """Returns albums reviewed over the last 6 months sorted by decreasing rating."""
     filtered_albums = [
-        x
-        for x in albums
-        if x["date"] > date.today() - timedelta(days=183)
+        x for x in albums if x["date"] > date.today() - timedelta(days=183)
     ]
     sorted_albums = sorted(
-        filtered_albums, key=lambda x: x["rating"], reverse=True
+        filtered_albums,
+        key=lambda x: (x["rating"], x["artist_tag"], x["album_tag"]),
+        reverse=True,
     )
     return formatter.parse_list(sorted_albums, formatter.format_album)
 
