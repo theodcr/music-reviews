@@ -7,9 +7,6 @@ import os
 
 import frontmatter
 
-START_HEADER = r"---\n"
-END_HEADER = r"\n---\n"
-
 
 def read_file(root, filename):
     """Reads the file and returns its content as a string."""

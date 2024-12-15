@@ -85,16 +85,15 @@ def check_integer_range(value, min_value, max_value):
 
 def list_integers_range(string, min_value, max_value):
     """Converts and checks a string containing a list of integers."""
-    indices = set(re.split(r"\W+", string))
-    indices.discard("")
-    clean_indices = [check_integer_range(idx, min_value, max_value) for idx in indices]
+    indices = re.split(r"\W+", string)
+    clean_indices = [check_integer_range(idx, min_value, max_value) for idx in indices if idx != ""]
     return clean_indices
 
 
 def list_strings_input(string):
     """Converts and checks a string containing a list of strings."""
-    strings = set(re.split(r"\W+", string))
-    strings.discard("")
+    strings = re.split(r"\W+", string)
+    strings = [i for i in strings if i != ""]
     return strings
 
 
