@@ -212,7 +212,9 @@ def shopping_list(formatter, albums):
         and not ("cd" in x["tags"] or "vinyl" in x["tags"] or "bandcamp" in x["tags"])
     ]
     sorted_albums = sorted(
-        filtered_albums, key=lambda x: (x["artist_tag"], x["album_tag"])
+        filtered_albums,
+        key=lambda x: (x["date"], x["artist_tag"], x["album_tag"]),
+        reverse=True
     )
     return formatter.parse_list(sorted_albums, formatter.format_album)
 
